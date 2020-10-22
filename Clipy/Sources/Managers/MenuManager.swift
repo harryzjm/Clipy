@@ -338,14 +338,14 @@ private extension MenuManager {
         }
 
         if !clip.thumbnailPath.isEmpty && !clip.isColorCode && isShowImage {
-            PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] _, _, object in
+            PINCache.shared.object(forKey: clip.thumbnailPath, block: { [weak menuItem] _, _, object in
                 DispatchQueue.main.async {
                     menuItem?.image = object as? NSImage
                 }
             })
         }
         if !clip.thumbnailPath.isEmpty && clip.isColorCode && isShowColorCode {
-            PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] _, _, object in
+            PINCache.shared.object(forKey: clip.thumbnailPath, block: { [weak menuItem] _, _, object in
                 DispatchQueue.main.async {
                     menuItem?.image = object as? NSImage
                 }

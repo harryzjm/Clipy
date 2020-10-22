@@ -1,4 +1,5 @@
 PODS:
+<<<<<<< HEAD
   - AEXML (4.3.0)
   - BartyCrouch (3.13.0)
   - Crashlytics (3.10.9):
@@ -34,6 +35,53 @@ PODS:
   - SwiftGen (5.3.0)
   - SwiftHEXColors (1.1.2)
   - SwiftLint (0.27.0)
+=======
+  - AEXML (4.6.0)
+  - BartyCrouch (4.3.1)
+  - Crashlytics (3.14.0):
+    - Fabric (~> 1.10.2)
+  - Fabric (1.10.2)
+  - KeyHolder (4.0.0):
+    - Magnet (~> 3.2)
+  - LetsMove (1.25)
+  - LoginServiceKit (2.2.0)
+  - Magnet (3.2.0):
+    - Sauce (~> 2.1)
+  - Nimble (9.0.0)
+  - PINCache (3.0.2):
+    - PINCache/Arc-exception-safe (= 3.0.2)
+    - PINCache/Core (= 3.0.2)
+  - PINCache/Arc-exception-safe (3.0.2):
+    - PINCache/Core
+  - PINCache/Core (3.0.2):
+    - PINOperation (~> 1.2.0)
+  - PINOperation (1.2)
+  - Quick (3.0.0)
+  - Realm (10.0.0):
+    - Realm/Headers (= 10.0.0)
+  - Realm/Headers (10.0.0)
+  - RealmSwift (10.0.0):
+    - Realm (= 10.0.0)
+  - RxCocoa (5.1.1):
+    - RxRelay (~> 5)
+    - RxSwift (~> 5)
+  - RxOptional (4.1.0):
+    - RxCocoa (~> 5)
+    - RxSwift (~> 5)
+  - RxRelay (5.1.1):
+    - RxSwift (~> 5)
+  - RxScreeen (2.0.0):
+    - RxCocoa (~> 5.0)
+    - RxSwift (~> 5.0)
+    - Screeen (~> 2.0.1)
+  - RxSwift (5.1.1)
+  - Sauce (2.1.0)
+  - Screeen (2.0.1)
+  - Sparkle (1.23.0)
+  - SwiftGen (6.4.0)
+  - SwiftHEXColors (1.4.1)
+  - SwiftLint (0.40.3)
+>>>>>>> 98e3067 (update pod)
 
 DEPENDENCIES:
   - AEXML
@@ -59,7 +107,11 @@ DEPENDENCIES:
   - SwiftLint
 
 SPEC REPOS:
+<<<<<<< HEAD
   trunk:
+=======
+  https://github.com/CocoaPods/Specs.git:
+>>>>>>> 98e3067 (update pod)
     - AEXML
     - BartyCrouch
     - Crashlytics
@@ -69,11 +121,13 @@ SPEC REPOS:
     - Magnet
     - Nimble
     - PINCache
+    - PINOperation
     - Quick
     - Realm
     - RealmSwift
     - RxCocoa
     - RxOptional
+    - RxRelay
     - RxScreeen
     - RxSwift
     - Sauce
@@ -89,10 +143,11 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   LoginServiceKit:
-    :commit: 79c9d6d2cc25dc238e6044245bebdc8253a786f2
+    :commit: cf58b91b0ac247bd8bf5dccb5434ca60a930c1e1
     :git: https://github.com/Clipy/LoginServiceKit.git
 
 SPEC CHECKSUMS:
+<<<<<<< HEAD
   AEXML: bae92c01e0da64132fd72f748721cda07466032b
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
   Crashlytics: f836e1d564b4492da572b056ce7ea0476c53ec4b
@@ -116,7 +171,38 @@ SPEC CHECKSUMS:
   SwiftGen: 4379bd3640b0a212a0f6ea3c494adba385513d10
   SwiftHEXColors: 7f9f7e6bdce888d821e11749279733e5ddff5f51
   SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
+=======
+  AEXML: 2fbb73d8724797ed2cde888731e176fa4d44dd83
+  BartyCrouch: 8153d127b1dbaac6850f82bbd68b26be095d7941
+  Crashlytics: 9220f5bc89e7a618df411b4f639389dbfb0e03d2
+  Fabric: ea977e3cd9c20425516d3dafd3bf8c941c51223f
+  KeyHolder: 457d8dde330a17452672756ae0e3b9c2e180a7e2
+  LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
+  LoginServiceKit: 3c86ce2f2bcd1e373326839d6d863d8a6a5915b4
+  Magnet: 8316a30fe91fdc6f2816ec0f04e20c72e341ca2e
+  Nimble: 3b4ec3fd40f1dc178058e0981107721c615643d8
+  PINCache: bea7c404c360f6fe0f6ee783c5cd14e778fa2aab
+  PINOperation: 3a967a927e7867e61976c6cc23e5770416449fbc
+  Quick: 6d9559f40647bc4d510103842ef2fdd882d753e2
+  Realm: 5654b8e5e45034d07b219e089034be2ef7d1e7bf
+  RealmSwift: 5b4c8c85be4c14ff52054a4d80a8d338167dd79c
+  RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
+  RxOptional: b1fcd60856807a564c0215c2184b8d33e7826dc2
+  RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
+  RxScreeen: e0806b8a4b747cde7100be4e09b6e133a6017cfd
+  RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
+  Sauce: a4075a04b6041e7a0c992a952cc79f7a0ebdb8e3
+  Screeen: e5c570d3df139b8d5d0e1ffd41094204787d9f1a
+  Sparkle: 55b1a87ba69d56913375a281546b7c82dec95bb0
+  SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
+  SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
+  SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
+>>>>>>> 98e3067 (update pod)
 
 PODFILE CHECKSUM: 837cee12dd4486551e08a428879a1f3a4121c7b5
 
+<<<<<<< HEAD
 COCOAPODS: 1.10.0
+=======
+COCOAPODS: 1.9.3
+>>>>>>> 98e3067 (update pod)

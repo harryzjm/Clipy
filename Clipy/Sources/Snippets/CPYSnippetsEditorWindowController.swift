@@ -477,6 +477,7 @@ extension CPYSnippetsEditorWindowController: RecordViewDelegate {
             AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: selectedFolder.identifier)
             return
         }
+
         AppEnvironment.current.hotKeyService.registerSnippetHotKey(with: selectedFolder.identifier, keyCombo: keyCombo)
     }
 
