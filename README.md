@@ -20,9 +20,9 @@ __Distribution Site__ : <https://clipy-app.com>
 <img src="http://clipy-app.com/img/screenshot1.png" width="400">
 
 ### Development Environment
-* macOS 10.15 Catalina
-* Xcode 11.5
-* Swift 4.1
+* macOS 10.13 High Sierra
+* Xcode 12.1
+* Swift 5
 
 ### How to Build
 0. Move to the project root directory

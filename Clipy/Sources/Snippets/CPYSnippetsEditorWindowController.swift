@@ -19,7 +19,7 @@ import AEXML
 final class CPYSnippetsEditorWindowController: NSWindowController {
 
     // MARK: - Properties
-    static let sharedController = CPYSnippetsEditorWindowController(windowNibName: "CPYSnippetsEditorWindowController")
+    static let sharedController = CPYSnippetsEditorWindowController(windowNibName: NSNib.Name("CPYSnippetsEditorWindowController"))
     @IBOutlet private weak var splitView: CPYSplitView!
     @IBOutlet private weak var folderSettingView: NSView!
     @IBOutlet private weak var folderTitleTextField: NSTextField!

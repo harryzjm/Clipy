@@ -15,7 +15,8 @@ import Cocoa
 final class CPYPreferencesWindowController: NSWindowController {
 
     // MARK: - Properties
-    static let sharedController = CPYPreferencesWindowController(windowNibName: "CPYPreferencesWindowController")
+    static let sharedController = CPYPreferencesWindowController(windowNibName: NSNib.Name("CPYPreferencesWindowController"))
+
     @IBOutlet private weak var toolBar: NSView!
     // ImageViews
     @IBOutlet private weak var generalImageView: NSImageView!
@@ -42,13 +43,13 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet private weak var updatesButton: NSButton!
     @IBOutlet private weak var betaButton: NSButton!
     // ViewController
-    private let viewController = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil),
-                                  NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil),
-                                  CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil),
-                                  CPYExcludeAppPreferenceViewController(nibName: "CPYExcludeAppPreferenceViewController", bundle: nil),
-                                  CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil),
-                                  CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil),
-                                  CPYBetaPreferenceViewController(nibName: "CPYBetaPreferenceViewController", bundle: nil)]
+    private let viewController = [NSViewController(nibName: NSNib.Name("CPYGeneralPreferenceViewController"), bundle: nil),
+                                      NSViewController(nibName: NSNib.Name("CPYMenuPreferenceViewController"), bundle: nil),
+                                      CPYTypePreferenceViewController(nibName: NSNib.Name("CPYTypePreferenceViewController"), bundle: nil),
+                                      CPYExcludeAppPreferenceViewController(nibName: NSNib.Name("CPYExcludeAppPreferenceViewController"), bundle: nil),
+                                  CPYShortcutsPreferenceViewController(nibName: NSNib.Name("CPYShortcutsPreferenceViewController"), bundle: nil),
+                                  CPYUpdatesPreferenceViewController(nibName: NSNib.Name("CPYUpdatesPreferenceViewController"), bundle: nil),
+                                  CPYBetaPreferenceViewController(nibName: NSNib.Name("CPYBetaPreferenceViewController"), bundle: nil)]
 
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
