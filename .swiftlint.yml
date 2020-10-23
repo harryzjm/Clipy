@@ -34,6 +34,7 @@ disabled_rules:
   - todo
   - cyclomatic_complexity
   - force_try
+  - identifier_name
 identifier_name:
   excluded:
     - i

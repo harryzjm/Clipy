@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		242EC2327861D35B7C3AE84E /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00A4B450122D7FCE6BD57E77 /* Pods_ClipyTests.framework */; };
+		603AD8FF25427ABA00A6C6F6 /* FilterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */; };
+		608D9CAA2541934D00C9434B /* TextFieldMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608D9CA92541934D00C9434B /* TextFieldMenuItem.swift */; };
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
 		CAFD12B01F207DBC00DF1CEB /* Observable+Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */; };
@@ -134,6 +136,8 @@
 		54ADE1012008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYUpdatesPreferenceViewController.strings"; sourceTree = "<group>"; };
 		54ADE1022008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
 		54ADE1032008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterMenu.swift; sourceTree = "<group>"; };
+		608D9CA92541934D00C9434B /* TextFieldMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldMenuItem.swift; sourceTree = "<group>"; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		846004961FD5511800BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYPreferencesWindowController.strings; sourceTree = "<group>"; };
 		846004971FD5511900BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
@@ -153,7 +157,6 @@
 		FA0D5CE71DDCC61600AC9052 /* ClipService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipService.swift; sourceTree = "<group>"; };
 		FA10897B20EC22E200A3FEFC /* AssetsImages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetsImages.swift; sourceTree = "<group>"; };
 		FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedStrings.swift; sourceTree = "<group>"; };
-		FA10898020EC297000A3FEFC /* colors.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = colors.txt; sourceTree = "<group>"; };
 		FA10898220EC2AFB00A3FEFC /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExcludeAppService.swift; sourceTree = "<group>"; };
 		FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -293,7 +296,6 @@
 			children = (
 				FA1DB4961DDCB2CB007F95C8 /* Localizable.strings */,
 				FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */,
-				FA10898020EC297000A3FEFC /* colors.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -390,6 +392,8 @@
 			isa = PBXGroup;
 			children = (
 				FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */,
+				608D9CA92541934D00C9434B /* TextFieldMenuItem.swift */,
+				603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -573,7 +577,7 @@
 				FA4A5CDC1C7CAEDD0031BCEF /* Fabric */,
 				FAAD02201CA98E20007C6EEE /* SwiftLint */,
 				07B47785AE0AC2185B570C28 /* [CP] Embed Pods Frameworks */,
-				FAAA88991E686CED0088FB34 /* BartyCrouch */,
+				60B8180D2542ABF10064C3B2 /* Bartycrouch */,
 				FA10897F20EC24F700A3FEFC /* SwiftGen */,
 			);
 			buildRules = (
@@ -613,7 +617,7 @@
 			attributes = {
 				CLASSPREFIX = CPY;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1210;
 				ORGANIZATIONNAME = "Clipy Project";
 				TargetAttributes = {
 					FAC43DC51B35D8B100C06102 = {
@@ -635,7 +639,6 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 				ja,
@@ -759,6 +762,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		60B8180D2542ABF10064C3B2 /* Bartycrouch */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Bartycrouch;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which bartycrouch > /dev/null; then\n    #bartycrouch update -x\n    #bartycrouch lint -x\n    break\nelse\n    echo \"warning: BartyCrouch not installed, download it from https://github.com/Flinesoft/BartyCrouch\"\nfi\n";
+		};
 		7BFBD366B210014B03083E71 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -807,7 +828,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftGen/bin/swiftgen\"";
+			shellScript = "if [[ -f \"${PODS_ROOT}/SwiftGen/bin/swiftgen\" ]]; then\n  \"${PODS_ROOT}/SwiftGen/bin/swiftgen\"\nelse\n  echo \"warning: SwiftGen is not installed. Run 'pod install --repo-update' to install it.\"\nfi\n";
 		};
 		FA4A5CDC1C7CAEDD0031BCEF /* Fabric */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -823,20 +844,6 @@
 			shellPath = /bin/sh;
 			shellScript = "releaseConfig=\"Release\"\nif [ \"$releaseConfig\" = \"${CONFIGURATION}\" ]; then\n    \"${PODS_ROOT}/Fabric/run\" 4998ae84bce284505281a865e1d5c008c4cf005a 997285f167af87d3ebdb81f2082b53bb03c11f92fca9fc7e62c4052f1d288ab6\nfi";
 		};
-		FAAA88991E686CED0088FB34 /* BartyCrouch */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = BartyCrouch;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#\"${PODS_ROOT}/BartyCrouch/bartycrouch\" interfaces -p \"$PROJECT_DIR\"\n";
-		};
 		FAAD02201CA98E20007C6EEE /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -849,7 +856,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"";
+			shellScript = "# \"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -874,6 +881,7 @@
 				FA1DB4D61DDCB479007F95C8 /* CPYFolder.swift in Sources */,
 				CAFD12B01F207DBC00DF1CEB /* Observable+Void.swift in Sources */,
 				FA1DB4B41DDCB452007F95C8 /* NSBundle+Version.swift in Sources */,
+				603AD8FF25427ABA00A6C6F6 /* FilterMenu.swift in Sources */,
 				FA1DB5171DDCB4C0007F95C8 /* CPYTypePreferenceViewController.swift in Sources */,
 				FA1DB4A21DDCB433007F95C8 /* AppDelegate.swift in Sources */,
 				FA1DB5141DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.swift in Sources */,
@@ -900,6 +908,7 @@
 				FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */,
 				FA1DB4D71DDCB479007F95C8 /* CPYSnippet.swift in Sources */,
 				FA1DB5201DDCB4C0007F95C8 /* CPYSnippetsEditorWindowController.swift in Sources */,
+				608D9CAA2541934D00C9434B /* TextFieldMenuItem.swift in Sources */,
 				FA10897E20EC22E200A3FEFC /* LocalizedStrings.swift in Sources */,
 				FA1DB4EB1DDCB49C007F95C8 /* CPYPlaceHolderTextView.swift in Sources */,
 				FA1DB4BB1DDCB452007F95C8 /* Realm+Migration.swift in Sources */,
@@ -1077,6 +1086,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1102,7 +1112,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
@@ -1135,6 +1145,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1153,7 +1164,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-D RELEASE";
 				SDKROOT = macosx;
@@ -1170,15 +1181,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "Clipy/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy.debug";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1196,7 +1206,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1205,7 +1214,6 @@
 				);
 				INFOPLIST_FILE = "Clipy/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

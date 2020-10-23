@@ -31,7 +31,8 @@ final class ClipService {
     func startMonitoring() {
         disposeBag = DisposeBag()
         // Pasteboard observe timer
-        Observable<Int>.interval(0.75, scheduler: scheduler)
+        Observable<Int>
+            .interval(.milliseconds(750), scheduler: scheduler)
             .map { _ in NSPasteboard.general.changeCount }
             .withLatestFrom(cachedChangeCount.asObservable()) { ($0, $1) }
             .filter { $0 != $1 }

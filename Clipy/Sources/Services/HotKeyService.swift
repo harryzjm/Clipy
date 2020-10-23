@@ -19,11 +19,11 @@ final class HotKeyService: NSObject {
 
     // MARK: - Properties
     static var defaultKeyCombos: [String: Any] = {
-        // MainMenu:    ⌘ + Shift + V
-        // HistoryMenu: ⌘ + Control + V
+        // HistoryMenu:    ⌘ + Shift + V
+        // MainMenu: ⌘ + Control + V
         // SnipeetMenu: ⌘ + Shift B
-        return [Constants.Menu.clip: ["keyCode": 9, "modifiers": 768],
-                Constants.Menu.history: ["keyCode": 9, "modifiers": 4352],
+        return [Constants.Menu.history: ["keyCode": 9, "modifiers": 768],
+                Constants.Menu.clip:    ["keyCode": 9, "modifiers": 4352],
                 Constants.Menu.snippet: ["keyCode": 11, "modifiers": 768]]
     }()
 

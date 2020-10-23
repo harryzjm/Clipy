@@ -1,5 +1,6 @@
-platform :osx, '10.10'
+platform :osx, '10.13'
 use_frameworks!
+inhibit_all_warnings!
 
 target 'Clipy' do
 

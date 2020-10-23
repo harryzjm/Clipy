@@ -22,8 +22,18 @@ final class MenuManager: NSObject {
     // MARK: - Properties
     // Menus
     fileprivate var clipMenu: NSMenu?
-    fileprivate var historyMenu: NSMenu?
+    fileprivate var historyMenu: FilterMenu?
     fileprivate var snippetMenu: NSMenu?
+    fileprivate lazy var configMenu: NSMenu = {
+        let v = NSMenu(title: Constants.Menu.config)
+        v.addItem(.init(title: L10n.clearHistory, action: #selector(AppDelegate.clearAllHistory)))
+        v.addItem(.init(title: L10n.editSnippets, action: #selector(AppDelegate.showSnippetEditorWindow)))
+        v.addItem(.init(title: L10n.preferences, action: #selector(AppDelegate.showPreferenceWindow)))
+        v.addItem(.separator())
+        v.addItem(.init(title: L10n.quitClipy, action: #selector(AppDelegate.terminate)))
+        return v
+    }()
+    
     // StatusMenu
     fileprivate var statusItem: NSStatusItem?
     // Icon Cache
@@ -41,7 +51,7 @@ final class MenuManager: NSObject {
 
     // MARK: - Enum Values
     enum StatusType: Int {
-        case none, black, white
+        case black, white
     }
 
     // MARK: - Initialize
@@ -67,6 +77,7 @@ extension MenuManager {
         case .main:
             menu = clipMenu
         case .history:
+            historyMenu?.cleanFilter()
             menu = historyMenu
         case .snippet:
             menu = snippetMenu
@@ -150,7 +161,7 @@ private extension MenuManager {
                          defaults.rx.observe(Int.self, Constants.UserDefaults.maxLengthOfToolTip, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
                          defaults.rx.observe(Bool.self, Constants.UserDefaults.showColorPreviewInTheMenu, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged())
             .skip(1)
-            .throttle(1, scheduler: MainScheduler.instance)
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .asDriver(onErrorDriveWith: .empty())
             .drive(onNext: { [weak self] in
                 self?.createClipMenu()
@@ -162,28 +173,17 @@ private extension MenuManager {
 // MARK: - Menus
 private extension MenuManager {
      func createClipMenu() {
-        clipMenu = NSMenu(title: Constants.Application.name)
-        historyMenu = NSMenu(title: Constants.Menu.history)
+        historyMenu = FilterMenu(title: L10n.history)
+        clipMenu = NSMenu(title: Constants.Menu.clip)
         snippetMenu = NSMenu(title: Constants.Menu.snippet)
 
+//        addHistoryItems(historyMenu!)
+        
         addHistoryItems(clipMenu!)
-        addHistoryItems(historyMenu!)
 
         addSnippetItems(clipMenu!, separateMenu: true)
         addSnippetItems(snippetMenu!, separateMenu: false)
 
-        clipMenu?.addItem(NSMenuItem.separator())
-
-        if AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.addClearHistoryMenuItem) {
-            clipMenu?.addItem(NSMenuItem(title: L10n.clearHistory, action: #selector(AppDelegate.clearAllHistory)))
-        }
-
-        clipMenu?.addItem(NSMenuItem(title: L10n.editSnippets, action: #selector(AppDelegate.showSnippetEditorWindow)))
-        clipMenu?.addItem(NSMenuItem(title: L10n.preferences, action: #selector(AppDelegate.showPreferenceWindow)))
-        clipMenu?.addItem(NSMenuItem.separator())
-        clipMenu?.addItem(NSMenuItem(title: L10n.quitClipy, action: #selector(AppDelegate.terminate)))
-
-        statusItem?.menu = clipMenu
     }
 
     func menuItemTitle(_ title: String, listNumber: NSInteger, isMarkWithNumber: Bool) -> String {
@@ -243,16 +243,11 @@ private extension MenuManager {
 }
 
 // MARK: - Clips
-private extension MenuManager {
-    func addHistoryItems(_ menu: NSMenu) {
+extension MenuManager {
+    fileprivate func addHistoryItems(_ menu: NSMenu) {
         let placeInLine = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.numberOfItemsPlaceInline)
         let placeInsideFolder = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.numberOfItemsPlaceInsideFolder)
         let maxHistory = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
-
-        // History title
-        let labelItem = NSMenuItem(title: L10n.history, action: nil)
-        labelItem.isEnabled = false
-        menu.addItem(labelItem)
 
         // History
         let firstIndex = firstIndexOfMenuItems()
@@ -274,7 +269,7 @@ private extension MenuManager {
                 }
 
                 // Clip
-                if let subMenu = menu.item(at: subMenuIndex)?.submenu {
+                if menu.numberOfItems > subMenuIndex, let subMenu = menu.item(at: subMenuIndex)?.submenu {
                     let menuItem = makeClipMenuItem(clip, index: i, listNumber: listNumber)
                     subMenu.addItem(menuItem)
                     listNumber = incrementListNumber(listNumber, max: placeInsideFolder, start: firstIndex)
@@ -338,18 +333,18 @@ private extension MenuManager {
         }
 
         if !clip.thumbnailPath.isEmpty && !clip.isColorCode && isShowImage {
-            PINCache.shared.object(forKey: clip.thumbnailPath, block: { [weak menuItem] _, _, object in
+            PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
                 DispatchQueue.main.async {
                     menuItem?.image = object as? NSImage
                 }
-            })
+            }
         }
         if !clip.thumbnailPath.isEmpty && clip.isColorCode && isShowColorCode {
-            PINCache.shared.object(forKey: clip.thumbnailPath, block: { [weak menuItem] _, _, object in
+            PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
                 DispatchQueue.main.async {
                     menuItem?.image = object as? NSImage
                 }
-            })
+            }
         }
 
         return menuItem
@@ -423,15 +418,14 @@ private extension MenuManager {
             image = Asset.StatusIcon.statusbarMenuBlack.image
         case .white:
             image = Asset.StatusIcon.statusbarMenuWhite.image
-        case .none: return
         }
         image?.isTemplate = true
 
         statusItem = NSStatusBar.system.statusItem(withLength: -1)
         statusItem?.image = image
         statusItem?.highlightMode = true
-        statusItem?.toolTip = "\(Constants.Application.name)\(Bundle.main.appVersion ?? "")"
-        statusItem?.menu = clipMenu
+        statusItem?.toolTip = "\(Constants.Application.name) \(Bundle.main.appVersion ?? "")"
+        statusItem?.menu = configMenu
     }
 
     func removeStatusItem() {

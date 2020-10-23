@@ -199,7 +199,11 @@ SPEC CHECKSUMS:
   SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
 >>>>>>> 98e3067 (update pod)
 
+<<<<<<< HEAD
 PODFILE CHECKSUM: 837cee12dd4486551e08a428879a1f3a4121c7b5
+=======
+PODFILE CHECKSUM: 1ad04dd4cecf93b62e763477366dfd3ff1cdae06
+>>>>>>> 8d2c300 (add filter)
 
 <<<<<<< HEAD
 COCOAPODS: 1.10.0

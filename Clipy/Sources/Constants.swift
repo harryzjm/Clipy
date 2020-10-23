@@ -27,6 +27,7 @@ struct Constants {
         static let clip = "ClipMenu"
         static let history = "HistoryMenu"
         static let snippet = "SnippetsMenu"
+        static let config = "ConfigMenu"
     }
 
     struct Common {
