@@ -21,7 +21,6 @@ final class MenuManager: NSObject {
 
     // MARK: - Properties
     // Menus
-    fileprivate var clipMenu: NSMenu?
     fileprivate var historyMenu: FilterMenu?
     fileprivate var snippetMenu: NSMenu?
     fileprivate lazy var configMenu: NSMenu = {
@@ -74,10 +73,7 @@ extension MenuManager {
     func popUpMenu(_ type: MenuType) {
         let menu: NSMenu?
         switch type {
-        case .main:
-            menu = clipMenu
         case .history:
-            historyMenu?.cleanFilter()
             menu = historyMenu
         case .snippet:
             menu = snippetMenu
@@ -174,16 +170,9 @@ private extension MenuManager {
 private extension MenuManager {
      func createClipMenu() {
         historyMenu = FilterMenu(title: L10n.history)
-        clipMenu = NSMenu(title: Constants.Menu.clip)
         snippetMenu = NSMenu(title: Constants.Menu.snippet)
 
-//        addHistoryItems(historyMenu!)
-        
-        addHistoryItems(clipMenu!)
-
-        addSnippetItems(clipMenu!, separateMenu: true)
         addSnippetItems(snippetMenu!, separateMenu: false)
-
     }
 
     func menuItemTitle(_ title: String, listNumber: NSInteger, isMarkWithNumber: Bool) -> String {

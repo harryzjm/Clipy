@@ -16,7 +16,7 @@ struct Constants {
 
     struct Application {
         #if DEBUG
-            static let name = "ClipyDEBUG"
+            static let name = "Clipy_Debug"
         #else
             static let name = "Clipy"
         #endif
@@ -24,7 +24,6 @@ struct Constants {
     }
 
     struct Menu {
-        static let clip = "ClipMenu"
         static let history = "HistoryMenu"
         static let snippet = "SnippetsMenu"
         static let config = "ConfigMenu"
@@ -102,7 +101,6 @@ struct Constants {
     }
 
     struct HotKey {
-        static let mainKeyCombo = "kCPYHotKeyMainKeyCombo"
         static let historyKeyCombo = "kCPYHotKeyHistoryKeyCombo"
         static let snippetKeyCombo = "kCPYHotKeySnippetKeyCombo"
         static let migrateNewKeyCombo = "kCPYMigrateNewKeyCombo"

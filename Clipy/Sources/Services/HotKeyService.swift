@@ -16,41 +16,26 @@ import Magnet
 import RealmSwift
 
 final class HotKeyService: NSObject {
-
     // MARK: - Properties
     static var defaultKeyCombos: [String: Any] = {
-        // HistoryMenu:    ⌘ + Shift + V
-        // MainMenu: ⌘ + Control + V
-        // SnipeetMenu: ⌘ + Shift B
+        // HistoryMenu:  ⌘ + Shift + V
+        // SnipeetMenu:  ⌘ + Shift + B
         return [Constants.Menu.history: ["keyCode": 9, "modifiers": 768],
-                Constants.Menu.clip:    ["keyCode": 9, "modifiers": 4352],
                 Constants.Menu.snippet: ["keyCode": 11, "modifiers": 768]]
     }()
 
-    fileprivate(set) var mainKeyCombo: KeyCombo?
     fileprivate(set) var historyKeyCombo: KeyCombo?
     fileprivate(set) var snippetKeyCombo: KeyCombo?
-    fileprivate(set) var clearHistoryKeyCombo: KeyCombo?
-
 }
 
 // MARK: - Actions
 extension HotKeyService {
-    @objc func popupMainMenu() {
-        AppEnvironment.current.menuManager.popUpMenu(.main)
-    }
-
     @objc func popupHistoryMenu() {
         AppEnvironment.current.menuManager.popUpMenu(.history)
     }
 
     @objc func popUpSnippetMenu() {
         AppEnvironment.current.menuManager.popUpMenu(.snippet)
-    }
-
-    @objc func popUpClearHistoryAlert() {
-        guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
-        appDelegate.clearAllHistory()
     }
 }
 
@@ -66,38 +51,20 @@ extension HotKeyService {
         // Snippet hotkey
         setupSnippetHotKeys()
 
-        // Main menu
-        change(with: .main, keyCombo: savedKeyCombo(forKey: Constants.HotKey.mainKeyCombo))
         // History menu
         change(with: .history, keyCombo: savedKeyCombo(forKey: Constants.HotKey.historyKeyCombo))
         // Snippet menu
         change(with: .snippet, keyCombo: savedKeyCombo(forKey: Constants.HotKey.snippetKeyCombo))
-        // Clear History
-        changeClearHistoryKeyCombo(savedKeyCombo(forKey: Constants.HotKey.clearHistoryKeyCombo))
     }
 
     func change(with type: MenuType, keyCombo: KeyCombo?) {
         switch type {
-        case .main:
-            mainKeyCombo = keyCombo
         case .history:
             historyKeyCombo = keyCombo
         case .snippet:
             snippetKeyCombo = keyCombo
         }
         register(with: type, keyCombo: keyCombo)
-    }
-
-    func changeClearHistoryKeyCombo(_ keyCombo: KeyCombo?) {
-        clearHistoryKeyCombo = keyCombo
-        AppEnvironment.current.defaults.set(keyCombo?.archive(), forKey: Constants.HotKey.clearHistoryKeyCombo)
-        AppEnvironment.current.defaults.synchronize()
-        // Reset hotkey
-        HotKeyCenter.shared.unregisterHotKey(with: "ClearHistory")
-        // Register new hotkey
-        guard let keyCombo = keyCombo else { return }
-        let hotkey = HotKey(identifier: "ClearHistory", keyCombo: keyCombo, target: self, action: #selector(HotKeyService.popUpClearHistoryAlert))
-        hotkey.register()
     }
 
     private func savedKeyCombo(forKey key: String) -> KeyCombo? {
@@ -134,12 +101,6 @@ private extension HotKeyService {
     func migrationKeyCombos() {
         guard let keyCombos = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.hotKeys) as? [String: Any] else { return }
 
-        // Main menu
-        if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.clip) {
-            if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
-                AppEnvironment.current.defaults.set(keyCombo.archive(), forKey: Constants.HotKey.mainKeyCombo)
-            }
-        }
         // History menu
         if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.history) {
             if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {

@@ -10,6 +10,7 @@
 		242EC2327861D35B7C3AE84E /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00A4B450122D7FCE6BD57E77 /* Pods_ClipyTests.framework */; };
 		603AD8FF25427ABA00A6C6F6 /* FilterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */; };
 		608D9CAA2541934D00C9434B /* TextFieldMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608D9CA92541934D00C9434B /* TextFieldMenuItem.swift */; };
+		60ECF5FA2544633500E34067 /* NSFont+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ECF5F92544633500E34067 /* NSFont+Ext.swift */; };
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
 		CAFD12B01F207DBC00DF1CEB /* Observable+Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */; };
@@ -43,7 +44,6 @@
 		FA1DB4D61DDCB479007F95C8 /* CPYFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4D01DDCB479007F95C8 /* CPYFolder.swift */; };
 		FA1DB4D71DDCB479007F95C8 /* CPYSnippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4D11DDCB479007F95C8 /* CPYSnippet.swift */; };
 		FA1DB4E51DDCB49C007F95C8 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4D91DDCB49C007F95C8 /* CPYUtilities.swift */; };
-		FA1DB4E71DDCB49C007F95C8 /* CPYDesignableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4DD1DDCB49C007F95C8 /* CPYDesignableButton.swift */; };
 		FA1DB4E81DDCB49C007F95C8 /* CPYDesignableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4DE1DDCB49C007F95C8 /* CPYDesignableView.swift */; };
 		FA1DB4E91DDCB49C007F95C8 /* CPYSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4E01DDCB49C007F95C8 /* CPYSplitView.swift */; };
 		FA1DB4EA1DDCB49C007F95C8 /* CPYSnippetsEditorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4E21DDCB49C007F95C8 /* CPYSnippetsEditorCell.swift */; };
@@ -138,6 +138,7 @@
 		54ADE1032008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterMenu.swift; sourceTree = "<group>"; };
 		608D9CA92541934D00C9434B /* TextFieldMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldMenuItem.swift; sourceTree = "<group>"; };
+		60ECF5F92544633500E34067 /* NSFont+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSFont+Ext.swift"; sourceTree = "<group>"; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		846004961FD5511800BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYPreferencesWindowController.strings; sourceTree = "<group>"; };
 		846004971FD5511900BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
@@ -185,7 +186,6 @@
 		FA1DB4D01DDCB479007F95C8 /* CPYFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYFolder.swift; sourceTree = "<group>"; };
 		FA1DB4D11DDCB479007F95C8 /* CPYSnippet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippet.swift; sourceTree = "<group>"; };
 		FA1DB4D91DDCB49C007F95C8 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
-		FA1DB4DD1DDCB49C007F95C8 /* CPYDesignableButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableButton.swift; sourceTree = "<group>"; };
 		FA1DB4DE1DDCB49C007F95C8 /* CPYDesignableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableView.swift; sourceTree = "<group>"; };
 		FA1DB4E01DDCB49C007F95C8 /* CPYSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSplitView.swift; sourceTree = "<group>"; };
 		FA1DB4E21DDCB49C007F95C8 /* CPYSnippetsEditorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetsEditorCell.swift; sourceTree = "<group>"; };
@@ -372,6 +372,7 @@
 			children = (
 				CAFD12AE1F207D9F00DF1CEB /* Rx */,
 				FAE911BA1DE054F1008A4BEC /* NSCoding+Archive.swift */,
+				60ECF5F92544633500E34067 /* NSFont+Ext.swift */,
 				FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */,
 				FA1DB4A81DDCB452007F95C8 /* Array+Remove.swift */,
 				FA1DB4A91DDCB452007F95C8 /* NSBundle+Version.swift */,
@@ -433,7 +434,6 @@
 		FA1DB4DC1DDCB49C007F95C8 /* DesignableView */ = {
 			isa = PBXGroup;
 			children = (
-				FA1DB4DD1DDCB49C007F95C8 /* CPYDesignableButton.swift */,
 				FA1DB4DE1DDCB49C007F95C8 /* CPYDesignableView.swift */,
 			);
 			path = DesignableView;
@@ -896,13 +896,13 @@
 				FA1DB5181DDCB4C0007F95C8 /* CPYUpdatesPreferenceViewController.swift in Sources */,
 				FA1DB4D41DDCB479007F95C8 /* CPYClipData.swift in Sources */,
 				FA1DB4B71DDCB452007F95C8 /* NSImage+Resize.swift in Sources */,
+				60ECF5FA2544633500E34067 /* NSFont+Ext.swift in Sources */,
 				FA1DB4D51DDCB479007F95C8 /* CPYDraggedData.swift in Sources */,
 				FA1DB5151DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.swift in Sources */,
 				FA1DB4EA1DDCB49C007F95C8 /* CPYSnippetsEditorCell.swift in Sources */,
 				FA1DB5161DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.swift in Sources */,
 				FA431F021E6718CE00ACFF56 /* Collection+Safe.swift in Sources */,
 				FA10897D20EC22E200A3FEFC /* AssetsImages.swift in Sources */,
-				FA1DB4E71DDCB49C007F95C8 /* CPYDesignableButton.swift in Sources */,
 				FA10898320EC2AFB00A3FEFC /* Colors.swift in Sources */,
 				FA1DB4D21DDCB479007F95C8 /* CPYAppInfo.swift in Sources */,
 				FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */,
@@ -1182,6 +1182,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1.3.0;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1189,6 +1190,7 @@
 				);
 				INFOPLIST_FILE = "Clipy/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy.debug";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1207,6 +1209,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1.3.0;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1214,6 +1217,7 @@
 				);
 				INFOPLIST_FILE = "Clipy/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
