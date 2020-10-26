@@ -13,7 +13,7 @@
 import Cocoa
 import SwiftHEXColors
 
-final class CPYClipData: NSObject {
+final class CPYClipData: NSObject, NSCoding {
 
     // MARK: - Properties
     fileprivate let kTypesKey       = "types"
@@ -68,10 +68,8 @@ final class CPYClipData: NSObject {
             // Image only data
             return image.resizeImage(CGFloat(width), CGFloat(height))
         } else if let fileName = fileNames.first, let path = fileName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), let url = URL(string: path) {
-            /**
-             *  In the case of the local file correct data is not included in the image variable
-             *  Judge the image from the path and create a thumbnail
-             */
+             //  In the case of the local file correct data is not included in the image variable
+             //  Judge the image from the path and create a thumbnail
             switch url.pathExtension.lowercased() {
             case "jpg", "jpeg", "png", "bmp", "tiff":
                 return NSImage(contentsOfFile: fileName)?.resizeImage(CGFloat(width), CGFloat(height))
@@ -149,24 +147,24 @@ final class CPYClipData: NSObject {
     }
 
     // MARK: - NSCoding
-    @objc func encodeWithCoder(_ aCoder: NSCoder) {
-        aCoder.encode(types.map { $0.rawValue }, forKey: kTypesKey)
-        aCoder.encode(stringValue, forKey: kStringValueKey)
-        aCoder.encode(RTFData, forKey: kRTFDataKey)
-        aCoder.encode(PDF, forKey: kPDFKey)
-        aCoder.encode(fileNames, forKey: kFileNamesKey)
-        aCoder.encode(URLs, forKey: kURLsKey)
-        aCoder.encode(image, forKey: kImageKey)
+    @objc func encode(with coder: NSCoder) {
+        coder.encode(types.map { $0.rawValue }, forKey: kTypesKey)
+        coder.encode(stringValue, forKey: kStringValueKey)
+        coder.encode(RTFData, forKey: kRTFDataKey)
+        coder.encode(PDF, forKey: kPDFKey)
+        coder.encode(fileNames, forKey: kFileNamesKey)
+        coder.encode(URLs, forKey: kURLsKey)
+        coder.encode(image, forKey: kImageKey)
     }
 
-    @objc required init(coder aDecoder: NSCoder) {
-        types = (aDecoder.decodeObject(forKey: kTypesKey) as? [String])?.compactMap { NSPasteboard.PasteboardType(rawValue: $0) } ?? []
-        fileNames = aDecoder.decodeObject(forKey: kFileNamesKey) as? [String] ?? [String]()
-        URLs = aDecoder.decodeObject(forKey: kURLsKey) as? [String] ?? [String]()
-        stringValue = aDecoder.decodeObject(forKey: kStringValueKey) as? String ?? ""
-        RTFData = aDecoder.decodeObject(forKey: kRTFDataKey) as? Data
-        PDF = aDecoder.decodeObject(forKey: kPDFKey) as? Data
-        image = aDecoder.decodeObject(forKey: kImageKey) as? NSImage
+    @objc required init?(coder: NSCoder) {
+        types = (coder.decodeObject(forKey: kTypesKey) as? [String])?.compactMap { NSPasteboard.PasteboardType(rawValue: $0) } ?? []
+        fileNames = coder.decodeObject(forKey: kFileNamesKey) as? [String] ?? [String]()
+        URLs = coder.decodeObject(forKey: kURLsKey) as? [String] ?? [String]()
+        stringValue = coder.decodeObject(forKey: kStringValueKey) as? String ?? ""
+        RTFData = coder.decodeObject(forKey: kRTFDataKey) as? Data
+        PDF = coder.decodeObject(forKey: kPDFKey) as? Data
+        image = coder.decodeObject(forKey: kImageKey) as? NSImage
         super.init()
     }
 }

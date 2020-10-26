@@ -28,9 +28,9 @@ final class CPYAppInfo: NSObject, NSCoding {
     }
 
     // MARK: - NSCoding
-    init?(coder aDecoder: NSCoder) {
-        guard let identifier = aDecoder.decodeObject(forKey: "identifier") as? String else { return nil }
-        guard let name = aDecoder.decodeObject(forKey: "name") as? String else { return nil }
+    init?(coder: NSCoder) {
+        guard let identifier = coder.decodeObject(forKey: "identifier") as? String else { return nil }
+        guard let name = coder.decodeObject(forKey: "name") as? String else { return nil }
 
         self.identifier = identifier
         self.name = name

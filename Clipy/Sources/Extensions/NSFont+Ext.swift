@@ -5,7 +5,7 @@
 //  GitHub: https://github.com/clipy
 //  HP: https://clipy-app.com
 // 
-//  Created by 叶落沉香 on 2020/10/24.
+//  Created by Hares on 2020/10/24.
 // 
 //  Copyright © 2015-2020 Clipy Project.
 //

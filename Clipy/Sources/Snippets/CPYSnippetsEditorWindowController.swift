@@ -63,10 +63,8 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
         self.window?.collectionBehavior = NSWindow.CollectionBehavior.canJoinAllSpaces
-//        self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
-        if #available(OSX 10.10, *) {
-            self.window?.titlebarAppearsTransparent = true
-        }
+        self.window?.titlebarAppearsTransparent = true
+
         // HACK: Copy as an object that does not put under Realm management.
         // https://github.com/realm/realm-cocoa/issues/1734
         let realm = try! Realm()
@@ -332,13 +330,19 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
         let pasteboardItem = NSPasteboardItem()
         if let folder = item as? CPYFolder, let index = folders.firstIndex(of: folder) {
             let draggedData = CPYDraggedData(type: .folder, folderIdentifier: folder.identifier, snippetIdentifier: nil, index: index)
-            let data = NSKeyedArchiver.archivedData(withRootObject: draggedData)
-            pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
+            do {
+                let data = try NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: false)
+                pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
+            } catch {
+                lError(error)
+            }
         } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: snippet) as? CPYFolder {
             guard let index = folder.snippets.index(of: snippet) else { return nil }
             let draggedData = CPYDraggedData(type: .snippet, folderIdentifier: folder.identifier, snippetIdentifier: snippet.identifier, index: Int(index))
-            let data = NSKeyedArchiver.archivedData(withRootObject: draggedData)
-            pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
+            do {
+                let data = try NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: false)
+                pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
+            } catch { lError(error) }
         } else {
             return nil
         }
@@ -348,7 +352,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
         let pasteboard = info.draggingPasteboard
         guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return NSDragOperation() }
-        guard let draggedData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData else { return NSDragOperation() }
+        guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CPYDraggedData.self, from: data) else { return NSDragOperation() }
 
         switch draggedData.type {
         case .folder where item == nil:
@@ -363,7 +367,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
         let pasteboard = info.draggingPasteboard
         guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return false }
-        guard let draggedData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData else { return false }
+        guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CPYDraggedData.self, from: data) else { return false }
 
         switch draggedData.type {
         case .folder where index != draggedData.index:

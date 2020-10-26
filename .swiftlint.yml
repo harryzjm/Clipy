@@ -35,6 +35,7 @@ disabled_rules:
   - cyclomatic_complexity
   - force_try
   - identifier_name
+  - function_parameter_count
 identifier_name:
   excluded:
     - i

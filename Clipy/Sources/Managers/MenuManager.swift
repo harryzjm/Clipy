@@ -32,7 +32,7 @@ final class MenuManager: NSObject {
         v.addItem(.init(title: L10n.quitClipy, action: #selector(AppDelegate.terminate)))
         return v
     }()
-    
+
     // StatusMenu
     fileprivate var statusItem: NSStatusItem?
     // Icon Cache
@@ -411,9 +411,10 @@ private extension MenuManager {
         image?.isTemplate = true
 
         statusItem = NSStatusBar.system.statusItem(withLength: -1)
-        statusItem?.image = image
-        statusItem?.highlightMode = true
-        statusItem?.toolTip = "\(Constants.Application.name) \(Bundle.main.appVersion ?? "")"
+        statusItem?.button?.image = image
+        let cell = statusItem?.button?.cell as? NSButtonCell
+        cell?.highlightsBy = [.contentsCellMask, .changeBackgroundCellMask]
+        statusItem?.button?.toolTip = "\(Constants.Application.name) \(Bundle.main.appVersion ?? "")"
         statusItem?.menu = configMenu
     }
 

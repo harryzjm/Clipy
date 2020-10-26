@@ -143,22 +143,24 @@ extension ClipService {
         DispatchQueue.main.async {
             // Save thumbnail image
             if let thumbnailImage = data.thumbnailImage {
-                PINCache.shared.setObject(thumbnailImage, forKey: "\(unixTime)")
+                PINCache.shared.setObjectAsync(thumbnailImage, forKey: "\(unixTime)", completion: nil)
                 clip.thumbnailPath = "\(unixTime)"
             }
             if let colorCodeImage = data.colorCodeImage {
-                PINCache.shared.setObject(colorCodeImage, forKey: "\(unixTime)")
+                PINCache.shared.setObjectAsync(colorCodeImage, forKey: "\(unixTime)", completion: nil)
                 clip.thumbnailPath = "\(unixTime)"
                 clip.isColorCode = true
             }
             // Save Realm and .data file
             let dispatchRealm = try! Realm()
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
-                if NSKeyedArchiver.archiveRootObject(data, toFile: savedPath) {
+                do {
+                    let fileData = try NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
+                    try fileData.write(to: .init(fileURLWithPath: savedPath))
                     dispatchRealm.transaction {
                         dispatchRealm.add(clip, update: .all)
                     }
-                }
+                } catch { lError(error) }
             }
         }
     }

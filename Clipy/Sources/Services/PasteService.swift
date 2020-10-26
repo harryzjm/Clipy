@@ -57,7 +57,11 @@ final class PasteService {
 extension PasteService {
     func paste(with clip: CPYClip) {
         guard !clip.isInvalidated else { return }
-        guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData else { return }
+
+        guard
+            let data = try? Data(contentsOf: .init(fileURLWithPath: clip.dataPath)),
+            let clipData = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CPYClipData.self, from: data)
+        else { return }
 
         // Handling modifier actions
         let isPastePlainText = self.isPastePlainText
@@ -75,7 +79,7 @@ extension PasteService {
         }
         // Paste history
         if isPastePlainText {
-            copyToPasteboard(with: data.stringValue)
+            copyToPasteboard(with: clipData.stringValue)
             paste()
         } else if isPasteAndDeleteHistory {
             copyToPasteboard(with: clip)
@@ -98,38 +102,41 @@ extension PasteService {
     func copyToPasteboard(with clip: CPYClip) {
         lock.lock(); defer { lock.unlock() }
 
-        guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData else { return }
+        guard
+            let data = try? Data(contentsOf: .init(fileURLWithPath: clip.dataPath)),
+            let clipData = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CPYClipData.self, from: data)
+        else { return }
 
         if isPastePlainText {
-            copyToPasteboard(with: data.stringValue)
+            copyToPasteboard(with: clipData.stringValue)
             return
         }
 
         let pasteboard = NSPasteboard.general
-        let types = data.types
+        let types = clipData.types
         pasteboard.declareTypes(types, owner: nil)
         types.forEach { type in
             switch type {
             case .deprecatedString:
-                let pbString = data.stringValue
+                let pbString = clipData.stringValue
                 pasteboard.setString(pbString, forType: .deprecatedString)
             case .deprecatedRTFD:
-                guard let rtfData = data.RTFData else { return }
+                guard let rtfData = clipData.RTFData else { return }
                 pasteboard.setData(rtfData, forType: .deprecatedRTFD)
             case .deprecatedRTF:
-                guard let rtfData = data.RTFData else { return }
+                guard let rtfData = clipData.RTFData else { return }
                 pasteboard.setData(rtfData, forType: .deprecatedRTF)
             case .deprecatedPDF:
-                guard let pdfData = data.PDF, let pdfRep = NSPDFImageRep(data: pdfData) else { return }
+                guard let pdfData = clipData.PDF, let pdfRep = NSPDFImageRep(data: pdfData) else { return }
                 pasteboard.setData(pdfRep.pdfRepresentation, forType: .deprecatedPDF)
             case .deprecatedFilenames:
-                let fileNames = data.fileNames
+                let fileNames = clipData.fileNames
                 pasteboard.setPropertyList(fileNames, forType: .deprecatedFilenames)
             case .deprecatedURL:
-                let url = data.URLs
+                let url = clipData.URLs
                 pasteboard.setPropertyList(url, forType: .deprecatedURL)
             case .deprecatedTIFF:
-                guard let image = data.image, let imageData = image.tiffRepresentation else { return }
+                guard let image = clipData.image, let imageData = image.tiffRepresentation else { return }
                 pasteboard.setData(imageData, forType: .deprecatedTIFF)
             default: break
             }

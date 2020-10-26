@@ -19,17 +19,34 @@ extension String {
 
         return String(self[startIndex..<endIndex])
     }
-    
+
     func replace(pattern: String, options: NSRegularExpression.Options = [], withTemplate templ: String) -> String {
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: options)
             return regex.stringByReplacingMatches(in: self, range: NSRange(location: 0, length: count), withTemplate: templ)
         } catch {
-            print(error)
+            lError(error)
             return self
         }
     }
-    
+
+    func firstSubstring(pattern: String,
+                        options: NSRegularExpression.Options = [],
+                        matchingOptions: NSRegularExpression.MatchingOptions = []) -> String? {
+        do {
+            let regex = try NSRegularExpression(pattern: pattern, options: options)
+            let range = regex.firstMatch(in: self,
+                                         options: matchingOptions,
+                                         range: .init(location: 0, length: count))?.range
+            return range.flatMap { rg in
+                return (self as NSString).substring(with: rg)
+            }
+        } catch {
+            lError(error)
+            return nil
+        }
+    }
+
     func truncateToSize(size: CGSize, ellipses: String, trailingText: String, attributes: [NSAttributedString.Key: Any], trailingAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
         if !willFit(to: size, attributes: attributes) {
             let indexOfLastCharacterThatFits = indexThatFits(size: size, ellipses: ellipses, trailingText: trailingText, attributes: attributes, min: 0, max: self.count)
@@ -43,7 +60,7 @@ extension String {
             return NSAttributedString(string: self, attributes: attributes)
         }
     }
-    
+
     func willFit(to size: CGSize, ellipses: String = "", trailingText: String = "", attributes: [NSAttributedString.Key: Any]) -> Bool {
         let text = (self + ellipses + trailingText) as NSString
         let boundedSize = CGSize(width: size.width, height: .greatestFiniteMagnitude)
@@ -51,7 +68,7 @@ extension String {
         let boundedRect = text.boundingRect(with: boundedSize, options: options, attributes: attributes, context: nil)
         return boundedRect.height <= size.height
     }
-    
+
     private func indexThatFits(size: CGSize, ellipses: String, trailingText: String, attributes: [NSAttributedString.Key: Any], min: Int, max: Int) -> Int {
         guard max - min != 1 else { return min }
         let midIndex = (min + max) / 2

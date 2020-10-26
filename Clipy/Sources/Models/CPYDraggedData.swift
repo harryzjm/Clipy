@@ -35,18 +35,18 @@ final class CPYDraggedData: NSObject, NSCoding {
     }
 
     // MARK: - NSCoding
-    required init?(coder aDecoder: NSCoder) {
-        self.type = DragType(rawValue: aDecoder.decodeInteger(forKey: "type")) ?? .folder
-        self.folderIdentifier = aDecoder.decodeObject(forKey: "folderIdentifier") as? String
-        self.snippetIdentifier = aDecoder.decodeObject(forKey: "snippetIdentifier") as? String
-        self.index = aDecoder.decodeInteger(forKey: "index")
+    required init?(coder: NSCoder) {
+        self.type = DragType(rawValue: coder.decodeInteger(forKey: "type")) ?? .folder
+        self.folderIdentifier = coder.decodeObject(forKey: "folderIdentifier") as? String
+        self.snippetIdentifier = coder.decodeObject(forKey: "snippetIdentifier") as? String
+        self.index = coder.decodeInteger(forKey: "index")
         super.init()
     }
 
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(type.rawValue, forKey: "type")
-        aCoder.encode(folderIdentifier, forKey: "folderIdentifier")
-        aCoder.encode(snippetIdentifier, forKey: "snippetIdentifier")
-        aCoder.encode(index, forKey: "index")
+    func encode(with coder: NSCoder) {
+        coder.encode(type.rawValue, forKey: "type")
+        coder.encode(folderIdentifier, forKey: "folderIdentifier")
+        coder.encode(snippetIdentifier, forKey: "snippetIdentifier")
+        coder.encode(index, forKey: "index")
     }
 }

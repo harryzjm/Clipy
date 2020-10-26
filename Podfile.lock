@@ -38,9 +38,6 @@ PODS:
 =======
   - AEXML (4.6.0)
   - BartyCrouch (4.3.1)
-  - Crashlytics (3.14.0):
-    - Fabric (~> 1.10.2)
-  - Fabric (1.10.2)
   - KeyHolder (4.0.0):
     - Magnet (~> 3.2)
   - LetsMove (1.25)
@@ -86,8 +83,6 @@ PODS:
 DEPENDENCIES:
   - AEXML
   - BartyCrouch
-  - Crashlytics
-  - Fabric
   - KeyHolder
   - LetsMove
   - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
@@ -114,8 +109,6 @@ SPEC REPOS:
 >>>>>>> 98e3067 (update pod)
     - AEXML
     - BartyCrouch
-    - Crashlytics
-    - Fabric
     - KeyHolder
     - LetsMove
     - Magnet
@@ -174,8 +167,6 @@ SPEC CHECKSUMS:
 =======
   AEXML: 2fbb73d8724797ed2cde888731e176fa4d44dd83
   BartyCrouch: 8153d127b1dbaac6850f82bbd68b26be095d7941
-  Crashlytics: 9220f5bc89e7a618df411b4f639389dbfb0e03d2
-  Fabric: ea977e3cd9c20425516d3dafd3bf8c941c51223f
   KeyHolder: 457d8dde330a17452672756ae0e3b9c2e180a7e2
   LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
   LoginServiceKit: 3c86ce2f2bcd1e373326839d6d863d8a6a5915b4
@@ -200,10 +191,14 @@ SPEC CHECKSUMS:
 >>>>>>> 98e3067 (update pod)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 PODFILE CHECKSUM: 837cee12dd4486551e08a428879a1f3a4121c7b5
 =======
 PODFILE CHECKSUM: 1ad04dd4cecf93b62e763477366dfd3ff1cdae06
 >>>>>>> 8d2c300 (add filter)
+=======
+PODFILE CHECKSUM: fa661cac8ac9b587886de663655b4568e2481bd2
+>>>>>>> 8808079 (Fix warning)
 
 <<<<<<< HEAD
 COCOAPODS: 1.10.0

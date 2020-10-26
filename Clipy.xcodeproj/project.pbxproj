@@ -10,6 +10,7 @@
 		242EC2327861D35B7C3AE84E /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00A4B450122D7FCE6BD57E77 /* Pods_ClipyTests.framework */; };
 		603AD8FF25427ABA00A6C6F6 /* FilterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */; };
 		608D9CAA2541934D00C9434B /* TextFieldMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608D9CA92541934D00C9434B /* TextFieldMenuItem.swift */; };
+		60BBF172254670CD0051EA70 /* SMLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BBF171254670CD0051EA70 /* SMLog.swift */; };
 		60ECF5FA2544633500E34067 /* NSFont+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ECF5F92544633500E34067 /* NSFont+Ext.swift */; };
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
@@ -138,6 +139,7 @@
 		54ADE1032008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterMenu.swift; sourceTree = "<group>"; };
 		608D9CA92541934D00C9434B /* TextFieldMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldMenuItem.swift; sourceTree = "<group>"; };
+		60BBF171254670CD0051EA70 /* SMLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMLog.swift; sourceTree = "<group>"; };
 		60ECF5F92544633500E34067 /* NSFont+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSFont+Ext.swift"; sourceTree = "<group>"; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		846004961FD5511800BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYPreferencesWindowController.strings; sourceTree = "<group>"; };
@@ -416,6 +418,7 @@
 			isa = PBXGroup;
 			children = (
 				FA1DB4D91DDCB49C007F95C8 /* CPYUtilities.swift */,
+				60BBF171254670CD0051EA70 /* SMLog.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -570,15 +573,14 @@
 			buildConfigurationList = FAC43DE21B35D8B100C06102 /* Build configuration list for PBXNativeTarget "Clipy" */;
 			buildPhases = (
 				8E8162F076D1C3115EAAB644 /* [CP] Check Pods Manifest.lock */,
+				60B8180D2542ABF10064C3B2 /* Bartycrouch */,
+				FA10897F20EC24F700A3FEFC /* SwiftGen */,
+				FAAD02201CA98E20007C6EEE /* SwiftLint */,
 				FAC43DC21B35D8B100C06102 /* Sources */,
 				FAC43DC31B35D8B100C06102 /* Frameworks */,
 				FAC43DC41B35D8B100C06102 /* Resources */,
 				FAC43E1D1B35DF4A00C06102 /* Embed Frameworks */,
-				FA4A5CDC1C7CAEDD0031BCEF /* Fabric */,
-				FAAD02201CA98E20007C6EEE /* SwiftLint */,
 				07B47785AE0AC2185B570C28 /* [CP] Embed Pods Frameworks */,
-				60B8180D2542ABF10064C3B2 /* Bartycrouch */,
-				FA10897F20EC24F700A3FEFC /* SwiftGen */,
 			);
 			buildRules = (
 			);
@@ -778,7 +780,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which bartycrouch > /dev/null; then\n    #bartycrouch update -x\n    #bartycrouch lint -x\n    break\nelse\n    echo \"warning: BartyCrouch not installed, download it from https://github.com/Flinesoft/BartyCrouch\"\nfi\n";
+			shellScript = "if which bartycrouch > /dev/null; then\n    bartycrouch update -x\n    bartycrouch lint -x\n    break\nelse\n    echo \"warning: BartyCrouch not installed, download it from https://github.com/Flinesoft/BartyCrouch\"\nfi\n";
 		};
 		7BFBD366B210014B03083E71 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -830,20 +832,6 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ -f \"${PODS_ROOT}/SwiftGen/bin/swiftgen\" ]]; then\n  \"${PODS_ROOT}/SwiftGen/bin/swiftgen\"\nelse\n  echo \"warning: SwiftGen is not installed. Run 'pod install --repo-update' to install it.\"\nfi\n";
 		};
-		FA4A5CDC1C7CAEDD0031BCEF /* Fabric */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = Fabric;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "releaseConfig=\"Release\"\nif [ \"$releaseConfig\" = \"${CONFIGURATION}\" ]; then\n    \"${PODS_ROOT}/Fabric/run\" 4998ae84bce284505281a865e1d5c008c4cf005a 997285f167af87d3ebdb81f2082b53bb03c11f92fca9fc7e62c4052f1d288ab6\nfi";
-		};
 		FAAD02201CA98E20007C6EEE /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -856,7 +844,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# \"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\n  #swiftlint autocorrect\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -896,6 +884,7 @@
 				FA1DB5181DDCB4C0007F95C8 /* CPYUpdatesPreferenceViewController.swift in Sources */,
 				FA1DB4D41DDCB479007F95C8 /* CPYClipData.swift in Sources */,
 				FA1DB4B71DDCB452007F95C8 /* NSImage+Resize.swift in Sources */,
+				60BBF172254670CD0051EA70 /* SMLog.swift in Sources */,
 				60ECF5FA2544633500E34067 /* NSFont+Ext.swift in Sources */,
 				FA1DB4D51DDCB479007F95C8 /* CPYDraggedData.swift in Sources */,
 				FA1DB5151DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.swift in Sources */,
@@ -1066,6 +1055,7 @@
 		FAC43DE01B35D8B100C06102 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1125,6 +1115,7 @@
 		FAC43DE11B35D8B100C06102 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1177,7 +1168,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 31064F137CFB046737D1709D /* Pods-Clipy.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -1204,7 +1194,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -1231,7 +1220,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 994536AAB91CE22186C3CFB1 /* Pods-ClipyTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1256,7 +1244,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C2D23FF23B07B76585DC610 /* Pods-ClipyTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (

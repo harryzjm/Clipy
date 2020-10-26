@@ -92,15 +92,14 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func selectClipMenuItem(_ sender: NSMenuItem) {
-        CPYUtilities.sendCustomLog(with: "selectClipMenuItem")
         guard let primaryKey = sender.representedObject as? String else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch clip primary key")
+            lError("Cannot fetch clip primary key")
             NSSound.beep()
             return
         }
         let realm = try! Realm()
         guard let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: primaryKey) else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch clip data")
+            lError("Cannot fetch clip data")
             NSSound.beep()
             return
         }
@@ -109,15 +108,14 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func selectSnippetMenuItem(_ sender: AnyObject) {
-        CPYUtilities.sendCustomLog(with: "selectSnippetMenuItem")
         guard let primaryKey = sender.representedObject as? String else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch snippet primary key")
+            lError("Cannot fetch snippet primary key")
             NSSound.beep()
             return
         }
         let realm = try! Realm()
         guard let snippet = realm.object(ofType: CPYSnippet.self, forPrimaryKey: primaryKey) else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch snippet data")
+            lError("Cannot fetch snippet data")
             NSSound.beep()
             return
         }
@@ -173,8 +171,6 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.replaceCurrent(environment: AppEnvironment.fromStorage())
         // UserDefaults
         CPYUtilities.registerUserDefaultKeys()
-        // SDKs
-        CPYUtilities.initSDKs()
         // Check Accessibility Permission
         AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: true)
 
