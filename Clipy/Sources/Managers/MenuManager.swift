@@ -150,7 +150,6 @@ private extension MenuManager {
             defaults.rx.observe(Int.self, Preferences.Menu.numberOfItemsPlaceInline, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Int.self, Preferences.Menu.numberOfItemsPlaceInsideFolder, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Int.self, Preferences.Menu.maxWidthOfMenuItem, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Bool.self, Preferences.Menu.menuItemsTitleStartWithZero, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Bool.self, Preferences.Menu.menuItemsAreMarkedWithNumbers, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Bool.self, Preferences.Menu.showToolTipOnMenuItem, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Bool.self, Preferences.Menu.showImageInTheMenu, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
@@ -291,9 +290,7 @@ extension MenuManager {
         var keyEquivalent = ""
 
         if addNumbericKeyEquivalents && (index <= kMaxKeyEquivalents) {
-            let isStartFromZero = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.menuItemsTitleStartWithZero)
-
-            var shortCutNumber = (isStartFromZero) ? index : index + 1
+            var shortCutNumber = index + 1
             if shortCutNumber == kMaxKeyEquivalents {
                 shortCutNumber = 0
             }
@@ -430,6 +427,6 @@ private extension MenuManager {
 // MARK: - Settings
 private extension MenuManager {
     func firstIndexOfMenuItems() -> NSInteger {
-        return AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.menuItemsTitleStartWithZero) ? 0 : 1
+        return  1
     }
 }

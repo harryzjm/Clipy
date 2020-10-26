@@ -32,7 +32,6 @@ struct Preferences {
         static let overwriteSameHistory = "kCPYPrefOverwriteSameHistroy"
 
         static let menuItemsAreMarkedWithNumbers = "menuItemsAreMarkedWithNumbers"
-        static let menuItemsTitleStartWithZero = "kCPYPrefMenuItemsTitleStartWithZeroKey"
 
         static let showIconInTheMenu = "kCPYPrefShowIconInTheMenuKey"
 

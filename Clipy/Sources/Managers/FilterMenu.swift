@@ -25,6 +25,14 @@ class FilterMenu: NSMenu {
     fileprivate let filterRelay = BehaviorRelay<String>(value: "")
     fileprivate let clipResultsRelay = BehaviorRelay<Results<CPYClip>?>(value: nil)
 
+    let isMarkWithNumber = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.menuItemsAreMarkedWithNumbers)
+    let addNumbericKeyEquivalents = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.addNumericKeyEquivalents)
+
+    let isShowToolTip = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showToolTipOnMenuItem)
+    let isShowImage = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showImageInTheMenu)
+    let isShowColorCode = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showColorPreviewInTheMenu)
+    let maxWidthOfMenuItem = CGFloat(AppEnvironment.current.defaults.float(forKey: Preferences.Menu.maxWidthOfMenuItem))
+
     let item: TextFieldMenuItem
 
     override init(title: String) {
@@ -37,7 +45,7 @@ class FilterMenu: NSMenu {
         addItem(item)
 
         clipResultsRelay
-            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .default))
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .flatMap { [weak self]res -> Observable<String> in
                 guard let self = self, res != nil else { return .empty() }
                 return self.filterRelay.asObservable()
@@ -48,13 +56,13 @@ class FilterMenu: NSMenu {
                 let predicate = NSPredicate(format: "title LIKE[c] %@", "*" + filter + "*")
                 return Observable.just(predicate)
             }
-            .withLatestFrom(clipResultsRelay) { predicate, clipResults -> [NSMenuItem]? in
+            .withLatestFrom(clipResultsRelay) { [weak self]predicate, clipResults -> [NSMenuItem]? in
                 var res = clipResults
                 if let predicate = predicate {
                     res = res?.filter(predicate)
                 }
-                return res?.enumerated().map { obj in
-                    return NSMenuItem.item(with: obj.element)
+                return res?.enumerated().compactMap { obj in
+                    return self?.item(with: obj.element, index: obj.offset + 1)
                 }
             }
             .filterNil()
@@ -90,16 +98,8 @@ class FilterMenu: NSMenu {
     }
 
     func reload(with items: [NSMenuItem]) {
-        Array(items[..<min(items.count, 20)])
-            .difference(from: Array(self.items)) { $0.title == $1.title }
-            .forEach { change in
-                switch change {
-                case let .insert(offset, element, _):
-                    self.insertItem(element, at: offset)
-                case let .remove(_, element, _):
-                    self.removeItem(element)
-                }
-            }
+        self.removeAllItems()
+        items.forEach(self.addItem(_:))
 
         if let item = self.items.first(where: { !($0 is TextFieldMenuItem) }) {
             self.higlight(menuItem: item)
@@ -122,53 +122,42 @@ extension FilterMenu: NSMenuDelegate {
     }
 }
 
-fileprivate extension NSMenuItem {
-    static func item(with clip: CPYClip) -> NSMenuItem {
-        let isShowToolTip = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showToolTipOnMenuItem)
-        let isShowImage = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showImageInTheMenu)
-        let isShowColorCode = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showColorPreviewInTheMenu)
-        let maxWidthOfMenuItem = CGFloat(AppEnvironment.current.defaults.float(forKey: Preferences.Menu.maxWidthOfMenuItem))
+private let kMaxKeyEquivalent = 10
+fileprivate extension FilterMenu {
+    func item(with clip: CPYClip, index: Int) -> NSMenuItem {
+        let keyEquivalent: String = {
+            switch index {
+            case 1 ..< kMaxKeyEquivalent: return "\(index)"
+            case kMaxKeyEquivalent: return "0"
+            default: return ""
+            }
+        }()
 
         let primaryPboardType = NSPasteboard.PasteboardType(rawValue: clip.primaryType)
-        let clipString = clip.title
+        let originTitle = clip.title
+        let prefix = isMarkWithNumber && keyEquivalent.isNotEmpty  ? keyEquivalent:""
 
-        let font = NSFont.systemFont(ofSize: 14)
-        let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: NSColor.labelColor,
-            .font: font
-        ]
-
-        let title = clip.title
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .replace(pattern: " *\n *", withTemplate: " ")
-            .truncateToSize(size: .init(width: maxWidthOfMenuItem, height: font.lineHeight * 1.2), ellipses: "...", trailingText: "", attributes: attributes, trailingAttributes: attributes)
-
-        let menuItem = NSMenuItem(title: title.string, action: #selector(AppDelegate.selectClipMenuItem(_:)))
-        menuItem.attributedTitle = title
+        let title = prefix + {
+            switch primaryPboardType {
+            case .deprecatedTIFF: return "(Image)"
+            case .deprecatedPDF: return "(PDF)"
+            case .deprecatedFilenames: return "(Filenames)"
+            default: return clip.title
+            }
+        }()
+        let attributedTitle = title.trim(with: maxWidthOfMenuItem)
+        let menuItem = NSMenuItem(title: attributedTitle.string, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
+        menuItem.attributedTitle = attributedTitle
         menuItem.representedObject = clip.dataHash
 
         if isShowToolTip {
             let maxLengthOfToolTip = AppEnvironment.current.defaults.integer(forKey: Preferences.Menu.maxLengthOfToolTip)
-            let toIndex = (clipString.count < maxLengthOfToolTip) ? clipString.count : maxLengthOfToolTip
-            menuItem.toolTip = (clipString as NSString).substring(to: toIndex)
+            menuItem.toolTip = (originTitle as NSString).substring(to: min(originTitle.count, maxLengthOfToolTip))
         }
 
-        if primaryPboardType == .deprecatedTIFF {
-            menuItem.title = "(Image)"
-        } else if primaryPboardType == .deprecatedPDF {
-            menuItem.title = "(PDF)"
-        } else if primaryPboardType == .deprecatedFilenames && title.string.isEmpty {
-            menuItem.title = "(Filenames)"
-        }
-
-        if !clip.thumbnailPath.isEmpty && !clip.isColorCode && isShowImage {
-            PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
-                DispatchQueue.main.async {
-                    menuItem?.image = object as? NSImage
-                }
-            }
-        }
-        if !clip.thumbnailPath.isEmpty && clip.isColorCode && isShowColorCode {
+        let isImage = !clip.isColorCode && isShowImage
+        let isColor = clip.isColorCode && isShowColorCode
+        if clip.thumbnailPath.isNotEmpty && (isImage || isColor) {
             PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
                 DispatchQueue.main.async {
                     menuItem?.image = object as? NSImage
@@ -177,5 +166,19 @@ fileprivate extension NSMenuItem {
         }
 
         return menuItem
+    }
+}
+
+fileprivate extension String {
+    func trim(with maxWidth: CGFloat) -> NSAttributedString {
+        let font = NSFont.systemFont(ofSize: 14)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: NSColor.labelColor,
+            .font: font
+        ]
+
+        return trimmingCharacters(in: .whitespacesAndNewlines)
+            .replace(pattern: " *\n *", withTemplate: " ")
+            .truncateToSize(size: .init(width: maxWidth, height: font.lineHeight * 1.2), ellipses: "...", trailingText: "", attributes: attributes, trailingAttributes: attributes)
     }
 }

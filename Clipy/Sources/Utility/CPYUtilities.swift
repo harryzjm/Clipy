@@ -37,7 +37,6 @@ final class CPYUtilities {
 
         defaultValues.updateValue(NSNumber(value: 16), forKey: Constants.UserDefaults.menuIconSize)
 
-        defaultValues.updateValue(NSNumber(value: false), forKey: Preferences.Menu.menuItemsTitleStartWithZero)
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showAlertBeforeClearHistory)
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.addClearHistoryMenuItem)
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showIconInTheMenu)
