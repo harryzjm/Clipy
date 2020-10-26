@@ -30,6 +30,8 @@ __Distribution Site__ : <https://clipy-app.com>
 2. Support dark mode
 3. Update third-party libraries
 
+If you have some bug, maybe you should remove `~/Library/Application Support/com.clipy-app.Clipy.debug`, or open an issue.
+
 ### How to Build
 0. Move to the project root directory
 1. Open `Clipy.xcworkspace` on Xcode.
