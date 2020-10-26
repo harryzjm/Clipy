@@ -47,7 +47,7 @@ final class DataCleanService {
 
     private func overflowingClips(with realm: Realm) -> Results<CPYClip> {
         let clips = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: false)
-        let maxHistorySize = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
+        let maxHistorySize = AppEnvironment.current.defaults.integer(forKey: Preferences.General.maxHistorySize)
 
         if clips.count <= maxHistorySize { return realm.objects(CPYClip.self).filter("FALSEPREDICATE") }
         // Delete first clip

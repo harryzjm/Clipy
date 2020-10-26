@@ -68,7 +68,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func clearAllHistory() {
-        let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+        let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
             alert.messageText = L10n.clearHistory
@@ -83,7 +83,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             if result != NSApplication.ModalResponse.alertFirstButtonReturn { return }
 
             if alert.suppressionButton?.state == NSControl.StateValue.on {
-                AppEnvironment.current.defaults.set(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+                AppEnvironment.current.defaults.set(false, forKey: Preferences.Menu.showAlertBeforeClearHistory)
             }
             AppEnvironment.current.defaults.synchronize()
         }
@@ -139,7 +139,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
         //  Launch on system startup
         if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
-            AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.loginItem)
+            AppEnvironment.current.defaults.set(true, forKey: Preferences.General.loginItem)
             AppEnvironment.current.defaults.synchronize()
             reflectLoginItemState()
         }
@@ -158,7 +158,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     private func reflectLoginItemState() {
-        let isInLoginItems = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem)
+        let isInLoginItems = AppEnvironment.current.defaults.bool(forKey: Preferences.General.loginItem)
         toggleAddingToLoginItems(isInLoginItems)
     }
 }
@@ -175,15 +175,15 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: true)
 
         // Show Login Item
-        if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem) && !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
+        if !AppEnvironment.current.defaults.bool(forKey: Preferences.General.loginItem) && !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
             promptToAddLoginItems()
         }
 
         // Sparkle
         let updater = SUUpdater.shared()
         updater?.feedURL = Constants.Application.appcastURL
-        updater?.automaticallyChecksForUpdates = AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
-        updater?.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
+        updater?.automaticallyChecksForUpdates = AppEnvironment.current.defaults.bool(forKey: Preferences.Update.enableAutomaticCheck)
+        updater?.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Preferences.Update.checkInterval))
 
         // Binding Events
         bind()
@@ -210,14 +210,14 @@ extension AppDelegate: NSApplicationDelegate {
 private extension AppDelegate {
     func bind() {
         // Login Item
-        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, retainSelf: false)
+        AppEnvironment.current.defaults.rx.observe(Bool.self, Preferences.General.loginItem, retainSelf: false)
             .filterNil()
             .subscribe(onNext: { [weak self] _ in
                 self?.reflectLoginItemState()
             })
             .disposed(by: disposeBag)
         // Observe Screenshot
-        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot, retainSelf: false)
+        AppEnvironment.current.defaults.rx.observe(Bool.self, Preferences.Beta.observerScreenshot, retainSelf: false)
             .filterNil()
             .subscribe(onNext: { [weak self] enabled in
                 self?.screenshotObserver.isEnabled = enabled

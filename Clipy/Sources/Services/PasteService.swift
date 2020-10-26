@@ -19,21 +19,21 @@ final class PasteService {
     // MARK: - Properties
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
     fileprivate var isPastePlainText: Bool {
-        guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pastePlainText) else { return false }
+        guard AppEnvironment.current.defaults.bool(forKey: Preferences.Beta.pastePlainText) else { return false }
 
-        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pastePlainTextModifier)
+        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Preferences.Beta.pastePlainTextModifier)
         return isPressedModifier(modifierSetting)
     }
     fileprivate var isDeleteHistory: Bool {
-        guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.deleteHistory) else { return false }
+        guard AppEnvironment.current.defaults.bool(forKey: Preferences.Beta.deleteHistory) else { return false }
 
-        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.deleteHistoryModifier)
+        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Preferences.Beta.deleteHistoryModifier)
         return isPressedModifier(modifierSetting)
     }
     fileprivate var isPasteAndDeleteHistory: Bool {
-        guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pasteAndDeleteHistory) else { return false }
+        guard AppEnvironment.current.defaults.bool(forKey: Preferences.Beta.pasteAndDeleteHistory) else { return false }
 
-        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pasteAndDeleteHistoryModifier)
+        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Preferences.Beta.pasteAndDeleteHistoryModifier)
         return isPressedModifier(modifierSetting)
     }
 
@@ -60,7 +60,7 @@ extension PasteService {
 
         guard
             let data = try? Data(contentsOf: .init(fileURLWithPath: clip.dataPath)),
-            let clipData = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CPYClipData.self, from: data)
+            let clipData = data.unarchive() as? CPYClipData
         else { return }
 
         // Handling modifier actions
@@ -104,7 +104,7 @@ extension PasteService {
 
         guard
             let data = try? Data(contentsOf: .init(fileURLWithPath: clip.dataPath)),
-            let clipData = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CPYClipData.self, from: data)
+            let clipData = data.unarchive() as? CPYClipData
         else { return }
 
         if isPastePlainText {
@@ -147,7 +147,7 @@ extension PasteService {
 // MARK: - Paste
 extension PasteService {
     func paste() {
-        guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) else { return }
+        guard AppEnvironment.current.defaults.bool(forKey: Preferences.General.inputPasteCommand) else { return }
         // Check Accessibility Permission
         guard AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: false) else {
             AppEnvironment.current.accessibilityService.showAccessibilityAuthenticationAlert()

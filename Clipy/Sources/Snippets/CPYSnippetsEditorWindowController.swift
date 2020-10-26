@@ -330,19 +330,15 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
         let pasteboardItem = NSPasteboardItem()
         if let folder = item as? CPYFolder, let index = folders.firstIndex(of: folder) {
             let draggedData = CPYDraggedData(type: .folder, folderIdentifier: folder.identifier, snippetIdentifier: nil, index: index)
-            do {
-                let data = try NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: false)
+            if let data = draggedData.archive() {
                 pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
-            } catch {
-                lError(error)
             }
         } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: snippet) as? CPYFolder {
             guard let index = folder.snippets.index(of: snippet) else { return nil }
             let draggedData = CPYDraggedData(type: .snippet, folderIdentifier: folder.identifier, snippetIdentifier: snippet.identifier, index: Int(index))
-            do {
-                let data = try NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: false)
+            if let data = draggedData.archive() {
                 pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
-            } catch { lError(error) }
+            }
         } else {
             return nil
         }
@@ -352,7 +348,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
         let pasteboard = info.draggingPasteboard
         guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return NSDragOperation() }
-        guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CPYDraggedData.self, from: data) else { return NSDragOperation() }
+        guard let draggedData = data.unarchive() as? CPYDraggedData else { return NSDragOperation() }
 
         switch draggedData.type {
         case .folder where item == nil:
@@ -367,7 +363,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
         let pasteboard = info.draggingPasteboard
         guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return false }
-        guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CPYDraggedData.self, from: data) else { return false }
+        guard let draggedData = data.unarchive() as? CPYDraggedData else { return false }
 
         switch draggedData.type {
         case .folder where index != draggedData.index:

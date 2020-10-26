@@ -50,7 +50,6 @@ extension HotKeyService {
         }
         // Snippet hotkey
         setupSnippetHotKeys()
-
         // History menu
         change(with: .history, keyCombo: savedKeyCombo(forKey: Constants.HotKey.historyKeyCombo))
         // Snippet menu
@@ -69,7 +68,7 @@ extension HotKeyService {
 
     private func savedKeyCombo(forKey key: String) -> KeyCombo? {
         guard let data = AppEnvironment.current.defaults.object(forKey: key) as? Data else { return nil }
-        guard let keyCombo = try? NSKeyedUnarchiver.unarchivedObject(ofClass: KeyCombo.self, from: data) else { return nil }
+        guard let keyCombo = data.unarchive() as? KeyCombo else { return nil }
         return keyCombo
     }
 }
@@ -128,11 +127,11 @@ extension HotKeyService {
         get {
             guard let data = AppEnvironment.current.defaults.object(forKey: Constants.HotKey.folderKeyCombos) as? Data else { return nil }
 
-            return try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSDictionary.self, from: data) as? [String: KeyCombo]
+            return data.unarchive() as? [String: KeyCombo]
         }
         set {
             if let value = newValue as NSDictionary? {
-                if let data = try? NSKeyedArchiver.archivedData(withRootObject: value, requiringSecureCoding: false) {
+                if let data = value.archive() {
                     AppEnvironment.current.defaults.set(data, forKey: Constants.HotKey.folderKeyCombos)
                 }
             } else {

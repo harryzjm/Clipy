@@ -98,8 +98,8 @@ class HotKeyServiceSpec: QuickSpec {
                 expect(service.snippetKeyCombo).to(beNil())
 
                 let defaults = UserDefaults.standard
-                expect(defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo)).to(beNil())
-                expect(defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo)).to(beNil())
+                expect(defaults.archiveObject(forKey: Constants.HotKey.historyKeyCombo, with: KeyCombo.self)).to(beNil())
+                expect(defaults.archiveObject(forKey: Constants.HotKey.snippetKeyCombo, with: KeyCombo.self)).to(beNil())
 
                 service.setupDefaultHotKeys()
                 expect(service.historyKeyCombo).to(beNil())
@@ -111,8 +111,8 @@ class HotKeyServiceSpec: QuickSpec {
                 service.change(with: .history, keyCombo: historyKeyCombo)
                 service.change(with: .snippet, keyCombo: snippetKeyCombo)
 
-                let savedHistoryKeyCombo = defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo)
-                let savedSnippetKeyCombo = defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo)
+                let savedHistoryKeyCombo = defaults.archiveObject(forKey: Constants.HotKey.historyKeyCombo, with: KeyCombo.self)
+                let savedSnippetKeyCombo = defaults.archiveObject(forKey: Constants.HotKey.snippetKeyCombo, with: KeyCombo.self)
 
                 expect(savedHistoryKeyCombo).toNot(beNil())
                 expect(savedHistoryKeyCombo?.QWERTYKeyCode) == 9
@@ -128,7 +128,7 @@ class HotKeyServiceSpec: QuickSpec {
 
                 service.change(with: .history, keyCombo: nil)
                 expect(service.historyKeyCombo).to(beNil())
-                expect(defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo)).to(beNil())
+                expect(defaults.archiveObject(forKey: Constants.HotKey.historyKeyCombo, with: KeyCombo.self)).to(beNil())
             }
 
             it("Unarchive saved key combos") {
@@ -136,8 +136,8 @@ class HotKeyServiceSpec: QuickSpec {
                 let snippetKeyCombo = KeyCombo(QWERTYKeyCode: 0, cocoaModifiers: .shift)
 
                 let defaults = UserDefaults.standard
-                defaults.setArchiveData(historyKeyCombo!, forKey: Constants.HotKey.historyKeyCombo)
-                defaults.setArchiveData(snippetKeyCombo!, forKey: Constants.HotKey.snippetKeyCombo)
+                defaults.setArchiveObject(historyKeyCombo!, forKey: Constants.HotKey.historyKeyCombo)
+                defaults.setArchiveObject(snippetKeyCombo!, forKey: Constants.HotKey.snippetKeyCombo)
 
                 let service = HotKeyService()
                 expect(service.historyKeyCombo).to(beNil())

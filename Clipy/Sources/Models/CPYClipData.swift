@@ -61,8 +61,8 @@ final class CPYClipData: NSObject, NSCoding {
     }
     var thumbnailImage: NSImage? {
         let defaults = UserDefaults.standard
-        let width = defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
-        let height = defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
+        let width = defaults.integer(forKey: Preferences.Menu.thumbnailWidth)
+        let height = defaults.integer(forKey: Preferences.Menu.thumbnailHeight)
 
         if let image = image, fileNames.isEmpty {
             // Image only data

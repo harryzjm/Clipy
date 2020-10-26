@@ -117,7 +117,7 @@ extension ClipService {
     fileprivate func save(with data: CPYClipData) {
         let realm = try! Realm()
         // Copy already copied history
-        let isCopySameHistory = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.copySameHistory)
+        let isCopySameHistory = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.copySameHistory)
         if realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)") != nil, !isCopySameHistory { return }
         // Don't save invalidated clip
         if let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)"), clip.isInvalidated { return }
@@ -126,7 +126,7 @@ extension ClipService {
         if data.isOnlyStringType && data.stringValue.isEmpty { return }
 
         // Overwrite same history
-        let isOverwriteHistory = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.overwriteSameHistory)
+        let isOverwriteHistory = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.overwriteSameHistory)
         let savedHash = (isOverwriteHistory) ? data.hash : Int(arc4random() % 1000000)
 
         // Saved time and path
@@ -154,13 +154,10 @@ extension ClipService {
             // Save Realm and .data file
             let dispatchRealm = try! Realm()
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
-                do {
-                    let fileData = try NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: false)
-                    try fileData.write(to: .init(fileURLWithPath: savedPath))
-                    dispatchRealm.transaction {
-                        dispatchRealm.add(clip, update: .all)
-                    }
-                } catch { lError(error) }
+                data.archive(toFilePath: savedPath)
+                dispatchRealm.transaction {
+                    dispatchRealm.add(clip, update: .all)
+                }
             }
         }
     }

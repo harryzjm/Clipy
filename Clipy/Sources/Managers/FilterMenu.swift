@@ -109,7 +109,7 @@ class FilterMenu: NSMenu {
 
 extension FilterMenu: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
-        let ascending = !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
+        let ascending = !AppEnvironment.current.defaults.bool(forKey: Preferences.General.reorderClipsAfterPasting)
         let res = realm
             .objects(CPYClip.self)
             .sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
@@ -124,9 +124,10 @@ extension FilterMenu: NSMenuDelegate {
 
 fileprivate extension NSMenuItem {
     static func item(with clip: CPYClip) -> NSMenuItem {
-        let isShowToolTip = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showToolTipOnMenuItem)
-        let isShowImage = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
-        let isShowColorCode = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
+        let isShowToolTip = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showToolTipOnMenuItem)
+        let isShowImage = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showImageInTheMenu)
+        let isShowColorCode = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showColorPreviewInTheMenu)
+        let maxWidthOfMenuItem = CGFloat(AppEnvironment.current.defaults.float(forKey: Preferences.Menu.maxWidthOfMenuItem))
 
         let primaryPboardType = NSPasteboard.PasteboardType(rawValue: clip.primaryType)
         let clipString = clip.title
@@ -140,14 +141,14 @@ fileprivate extension NSMenuItem {
         let title = clip.title
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .replace(pattern: " *\n *", withTemplate: " ")
-            .truncateToSize(size: .init(width: 300, height: font.lineHeight * 1.2), ellipses: "...", trailingText: "", attributes: attributes, trailingAttributes: attributes)
+            .truncateToSize(size: .init(width: maxWidthOfMenuItem, height: font.lineHeight * 1.2), ellipses: "...", trailingText: "", attributes: attributes, trailingAttributes: attributes)
 
         let menuItem = NSMenuItem(title: title.string, action: #selector(AppDelegate.selectClipMenuItem(_:)))
         menuItem.attributedTitle = title
         menuItem.representedObject = clip.dataHash
 
         if isShowToolTip {
-            let maxLengthOfToolTip = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip)
+            let maxLengthOfToolTip = AppEnvironment.current.defaults.integer(forKey: Preferences.Menu.maxLengthOfToolTip)
             let toIndex = (clipString.count < maxLengthOfToolTip) ? clipString.count : maxLengthOfToolTip
             menuItem.toolTip = (clipString as NSString).substring(to: toIndex)
         }
