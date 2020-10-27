@@ -51,7 +51,7 @@ class FilterMenu: NSMenu {
                     let predicate = NSPredicate(format: "title LIKE[c] %@", "*" + filter + "*")
                     clipResults = clipResults.filter(predicate)
                 }
-                return self.manageItems(clipResults)
+                return self.manageItems(clipResults, with: filter)
             }
             .filterNil()
             .catchErrorJustReturn([])
@@ -113,33 +113,33 @@ extension FilterMenu: NSMenuDelegate {
 
 // MARK: - NSMenuItem
 fileprivate extension FilterMenu {
-    func manageItems(_ clipResults: Results<CPYClip>) -> [NSMenuItem] {
+    func manageItems(_ clipResults: Results<CPYClip>, with filter: String) -> [NSMenuItem] {
         var items: [NSMenuItem] = []
         let totalCount = min(clipResults.count, config.maxHistory)
         let remain = max(totalCount - config.placeInLine, 0)
         items += clipResults[0..<totalCount - remain]
             .enumerated()
             .map { obj in
-            return self.item(with: obj.element, index: obj.offset + 1)
+                return self.item(with: obj.element, index: obj.offset + 1, filter: filter)
             }
 
         let res = remain.quotientAndRemainder(dividingBy: config.placeInsideFolder)
         items += (0 ..< res.quotient).map { i -> NSMenuItem in
             let begin = config.placeInLine + config.placeInsideFolder * i
             let end = begin + self.config.placeInsideFolder
-            return item(begin: begin, end: end) { clipResults[$0] }
+            return item(begin: begin, end: end, filter: filter) { clipResults[$0] }
         }
 
         if res.remainder > 0 {
             let begin = config.placeInLine + config.placeInsideFolder * res.quotient
             let end = begin + res.remainder
 
-            items.append(item(begin: begin, end: end) { clipResults[$0] })
+            items.append(item(begin: begin, end: end, filter: filter) { clipResults[$0] })
         }
         return items
     }
 
-    func item(begin: Int, end: Int, clipHandle: (Int) -> CPYClip?) -> NSMenuItem {
+    func item(begin: Int, end: Int, filter: String, clipHandle: (Int) -> CPYClip?) -> NSMenuItem {
         let font = NSFont.boldSystemFont(ofSize: config.menuFontSize)
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: NSColor.labelColor,
@@ -154,12 +154,12 @@ fileprivate extension FilterMenu {
 
         (begin ..< end).forEach { i in
             guard let clip = clipHandle(i) else { return }
-            subMenu.addItem(item(with: clip, index: i))
+            subMenu.addItem(item(with: clip, index: i, filter: filter))
         }
         return menuItem
     }
 
-    func item(with clip: CPYClip, index: Int) -> NSMenuItem {
+    func item(with clip: CPYClip, index: Int, filter: String) -> NSMenuItem {
         let maxKeyEquivalent = 10
 
         let keyEquivalent: String = {
@@ -183,7 +183,7 @@ fileprivate extension FilterMenu {
             default: return clip.title
             }
         }()
-        let attributedTitle = title.trim(with: prefix, maxWidth: config.maxWidthOfMenuItem, fontSize: config.menuFontSize)
+        let attributedTitle = title.trim(with: prefix, keyWord: filter, maxWidth: config.maxWidthOfMenuItem, fontSize: config.menuFontSize)
         let menuItem = NSMenuItem(title: attributedTitle.string, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
         menuItem.attributedTitle = attributedTitle
         menuItem.representedObject = clip.dataHash
@@ -209,22 +209,25 @@ fileprivate extension FilterMenu {
 
 // MARK: - Extension
 fileprivate extension String {
-    func trim(with prefix: String, maxWidth: CGFloat, fontSize: CGFloat) -> NSAttributedString {
+    func trim(with prefix: String, keyWord: String, maxWidth: CGFloat, fontSize: CGFloat) -> NSAttributedString {
         let font = NSFont.systemFont(ofSize: fontSize)
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: NSColor.labelColor,
             .font: font
         ]
 
-        var trim = trimmingCharacters(in: .whitespacesAndNewlines)
+        let keyAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: NSColor.red,
+            .font: font
+        ]
+
+        let trim = trimmingCharacters(in: .whitespacesAndNewlines)
             .replace(pattern: " *\n *", withTemplate: " ")
 
-        trim = prefix + trim
-
-        return trim.truncateToSize(size: .init(width: maxWidth, height: font.lineHeight * 1.2),
-                                   ellipses: "...",
-                                   trailingText: "",
-                                   attributes: attributes,
-                                   trailingAttributes: attributes)
+        let prefixWidth = prefix.sizeOf(attributes: attributes).width
+        let att = NSMutableAttributedString(string: prefix, attributes: attributes)
+        let content = trim.truncateToSize(size: .init(width: maxWidth - prefixWidth, height: ceil(font.lineHeight * 1.2)), ellipsis: "...", keyWord: keyWord, attributes: attributes, keyWordAttributes: keyAttributes)
+        att.append(content)
+        return att
     }
 }

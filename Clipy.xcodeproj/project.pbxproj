@@ -11,6 +11,7 @@
 		603AD8FF25427ABA00A6C6F6 /* FilterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */; };
 		605F360C2546C9EE00AE9701 /* NSCoding+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605F360B2546C9ED00AE9701 /* NSCoding+Ext.swift */; };
 		605F367A2547BEAA00AE9701 /* FilterMenuConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605F36792547BEAA00AE9701 /* FilterMenuConfig.swift */; };
+		605F3899254828B500AE9701 /* String+Truncate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605F3898254828B500AE9701 /* String+Truncate.swift */; };
 		608D9CAA2541934D00C9434B /* TextFieldMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608D9CA92541934D00C9434B /* TextFieldMenuItem.swift */; };
 		60BBF172254670CD0051EA70 /* SMLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BBF171254670CD0051EA70 /* SMLog.swift */; };
 		60BBF2042546A9280051EA70 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BBF2032546A9280051EA70 /* Preferences.swift */; };
@@ -141,6 +142,7 @@
 		603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterMenu.swift; sourceTree = "<group>"; };
 		605F360B2546C9ED00AE9701 /* NSCoding+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSCoding+Ext.swift"; sourceTree = "<group>"; };
 		605F36792547BEAA00AE9701 /* FilterMenuConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterMenuConfig.swift; sourceTree = "<group>"; };
+		605F3898254828B500AE9701 /* String+Truncate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Truncate.swift"; sourceTree = "<group>"; };
 		608D9CA92541934D00C9434B /* TextFieldMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldMenuItem.swift; sourceTree = "<group>"; };
 		60BBF171254670CD0051EA70 /* SMLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMLog.swift; sourceTree = "<group>"; };
 		60BBF2032546A9280051EA70 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
@@ -415,6 +417,7 @@
 				FA1DB4A91DDCB452007F95C8 /* NSBundle+Version.swift */,
 				FA1DB4AD1DDCB452007F95C8 /* NSLock+Clipy.swift */,
 				FA1DB4B21DDCB452007F95C8 /* String+Substring.swift */,
+				605F3898254828B500AE9701 /* String+Truncate.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -907,6 +910,7 @@
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
 				FA1DB4BD1DDCB452007F95C8 /* String+Substring.swift in Sources */,
 				FA1189331E4CD58C00244F12 /* ExcludeAppService.swift in Sources */,
+				605F3899254828B500AE9701 /* String+Truncate.swift in Sources */,
 				FA1DB4E91DDCB49C007F95C8 /* CPYSplitView.swift in Sources */,
 				FA1DB4E81DDCB49C007F95C8 /* CPYDesignableView.swift in Sources */,
 				FA1DB5181DDCB4C0007F95C8 /* CPYUpdatesPreferenceViewController.swift in Sources */,
