@@ -117,6 +117,7 @@ extension FilterMenu: NSMenuDelegate {
 }
 
 private let kMaxKeyEquivalent = 10
+
 fileprivate extension FilterMenu {
     func item(with clip: CPYClip, index: Int) -> NSMenuItem {
         let keyEquivalent: String = {
