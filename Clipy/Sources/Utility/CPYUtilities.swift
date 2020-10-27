@@ -21,24 +21,23 @@ final class CPYUtilities {
         /* General */
         defaultValues.updateValue(NSNumber(value: false), forKey: Preferences.General.loginItem)
         defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.suppressAlertForLoginItem)
-        defaultValues.updateValue(NSNumber(value: 30), forKey: Preferences.General.maxHistorySize)
-        defaultValues.updateValue(NSNumber(value: 1), forKey: Preferences.General.showStatusItem)
-        defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: Constants.UserDefaults.storeTypes)
+        defaultValues.updateValue(NSNumber(value: 40), forKey: Preferences.General.maxHistorySize)
+        defaultValues.updateValue(NSNumber(value: 0), forKey: Preferences.General.statusTypeItem)
+        defaultValues.updateValue(AppDelegate.storeTypesDictionary(), forKey: Constants.UserDefaults.storeTypes)
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.General.inputPasteCommand)
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.General.reorderClipsAfterPasting)
+        defaultValues.updateValue(NSNumber(value: 260), forKey: Preferences.General.maxWidthOfMenuItem)
+        defaultValues.updateValue(NSNumber(value: 14), forKey: Preferences.General.menuFontSize)
 
         /* Menu */
         defaultValues.updateValue(NSNumber(value: 10), forKey: Preferences.Menu.numberOfItemsPlaceInline)
-        defaultValues.updateValue(NSNumber(value: 10), forKey: Preferences.Menu.numberOfItemsPlaceInsideFolder)
-        defaultValues.updateValue(NSNumber(value: 260), forKey: Preferences.Menu.maxWidthOfMenuItem)
+        defaultValues.updateValue(NSNumber(value: 15), forKey: Preferences.Menu.numberOfItemsPlaceInsideFolder)
 
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.copySameHistory)
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.menuItemsAreMarkedWithNumbers)
 
-        defaultValues.updateValue(NSNumber(value: 16), forKey: Constants.UserDefaults.menuIconSize)
-
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showAlertBeforeClearHistory)
-        defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.addClearHistoryMenuItem)
+
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showIconInTheMenu)
 
         defaultValues.updateValue(NSNumber(value: false), forKey: Preferences.Menu.addNumericKeyEquivalents)

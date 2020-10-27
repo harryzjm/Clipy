@@ -46,7 +46,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     // MARK: - Class Methods
-    static func storeTypesDictinary() -> [String: NSNumber] {
+    static func storeTypesDictionary() -> [String: NSNumber] {
         var storeTypes = [String: NSNumber]()
         CPYClipData.availableTypesString.forEach { storeTypes[$0] = NSNumber(value: true) }
         return storeTypes

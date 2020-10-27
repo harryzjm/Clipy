@@ -51,30 +51,7 @@ class FilterMenu: NSMenu {
                     let predicate = NSPredicate(format: "title LIKE[c] %@", "*" + filter + "*")
                     clipResults = clipResults.filter(predicate)
                 }
-
-                var items: [NSMenuItem] = []
-                let totalCount = min(clipResults.count, self.config.maxHistory)
-                let remain = max(totalCount - self.config.placeInLine, 0)
-                items += clipResults[0..<totalCount - remain]
-                    .enumerated()
-                    .map { obj in
-                    return self.item(with: obj.element, index: obj.offset + 1)
-                    }
-
-                let res = remain.quotientAndRemainder(dividingBy: self.config.placeInsideFolder)
-                items += (0 ..< res.quotient).map { i -> NSMenuItem in
-                    let begin = self.config.placeInLine + self.config.placeInsideFolder * i
-                    let end = begin + self.config.placeInsideFolder
-                    return self.item(begin: begin, end: end) { clipResults[$0] }
-                }
-
-                if res.remainder > 0 {
-                    let begin = self.config.placeInLine + self.config.placeInsideFolder * res.quotient
-                    let end = begin + res.remainder
-
-                    items.append(self.item(begin: begin, end: end) { clipResults[$0] })
-                }
-                return items
+                return self.manageItems(clipResults)
             }
             .filterNil()
             .catchErrorJustReturn([])
@@ -118,6 +95,7 @@ class FilterMenu: NSMenu {
     }
 }
 
+// MARK: - NSMenuDelegate
 extension FilterMenu: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
         let ascending = !AppEnvironment.current.defaults.bool(forKey: Preferences.General.reorderClipsAfterPasting)
@@ -133,29 +111,62 @@ extension FilterMenu: NSMenuDelegate {
     }
 }
 
-private let kMaxKeyEquivalent = 10
-
+// MARK: - NSMenuItem
 fileprivate extension FilterMenu {
+    func manageItems(_ clipResults: Results<CPYClip>) -> [NSMenuItem] {
+        var items: [NSMenuItem] = []
+        let totalCount = min(clipResults.count, config.maxHistory)
+        let remain = max(totalCount - config.placeInLine, 0)
+        items += clipResults[0..<totalCount - remain]
+            .enumerated()
+            .map { obj in
+            return self.item(with: obj.element, index: obj.offset + 1)
+            }
+
+        let res = remain.quotientAndRemainder(dividingBy: config.placeInsideFolder)
+        items += (0 ..< res.quotient).map { i -> NSMenuItem in
+            let begin = config.placeInLine + config.placeInsideFolder * i
+            let end = begin + self.config.placeInsideFolder
+            return item(begin: begin, end: end) { clipResults[$0] }
+        }
+
+        if res.remainder > 0 {
+            let begin = config.placeInLine + config.placeInsideFolder * res.quotient
+            let end = begin + res.remainder
+
+            items.append(item(begin: begin, end: end) { clipResults[$0] })
+        }
+        return items
+    }
 
     func item(begin: Int, end: Int, clipHandle: (Int) -> CPYClip?) -> NSMenuItem {
+        let font = NSFont.boldSystemFont(ofSize: config.menuFontSize)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: NSColor.labelColor,
+            .font: font
+        ]
+
         let subMenu = NSMenu(title: "")
-        let menuItem = NSMenuItem(title: "\(begin)-\(end)", action: nil)
+        let menuItem = NSMenuItem(title: "\(begin) - \(end)", action: nil)
+        menuItem.attributedTitle = .init(string: menuItem.title, attributes: attributes)
         menuItem.submenu = subMenu
         menuItem.image = self.config.showIconInTheMenu ? Asset.Common.iconFolder.image : nil
 
         (begin ..< end).forEach { i in
             guard let clip = clipHandle(i) else { return }
-            subMenu.addItem(self.item(with: clip, index: i))
+            subMenu.addItem(item(with: clip, index: i))
         }
         return menuItem
     }
 
     func item(with clip: CPYClip, index: Int) -> NSMenuItem {
+        let maxKeyEquivalent = 10
+
         let keyEquivalent: String = {
             guard config.addNumericKeyEquivalents else { return "" }
             switch index {
-            case 1 ..< kMaxKeyEquivalent: return "\(index). "
-            case kMaxKeyEquivalent: return "0. "
+            case 1 ..< maxKeyEquivalent: return "\(index). "
+            case maxKeyEquivalent: return "0. "
             default: return ""
             }
         }()
@@ -172,7 +183,7 @@ fileprivate extension FilterMenu {
             default: return clip.title
             }
         }()
-        let attributedTitle = title.trim(with: prefix, maxWidth: config.maxWidthOfMenuItem)
+        let attributedTitle = title.trim(with: prefix, maxWidth: config.maxWidthOfMenuItem, fontSize: config.menuFontSize)
         let menuItem = NSMenuItem(title: attributedTitle.string, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
         menuItem.attributedTitle = attributedTitle
         menuItem.representedObject = clip.dataHash
@@ -196,9 +207,10 @@ fileprivate extension FilterMenu {
     }
 }
 
+// MARK: - Extension
 fileprivate extension String {
-    func trim(with prefix: String, maxWidth: CGFloat) -> NSAttributedString {
-        let font = NSFont.systemFont(ofSize: 14)
+    func trim(with prefix: String, maxWidth: CGFloat, fontSize: CGFloat) -> NSAttributedString {
+        let font = NSFont.systemFont(ofSize: fontSize)
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: NSColor.labelColor,
             .font: font

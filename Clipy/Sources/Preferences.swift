@@ -20,13 +20,14 @@ struct Preferences {
         static let maxHistorySize = "kCPYPrefMaxHistorySizeKey"
         static let reorderClipsAfterPasting = "kCPYPrefReorderClipsAfterPasting"
 
-        static let showStatusItem = "kCPYPrefShowStatusItemKey"
+        static let statusTypeItem = "kCPYPrefStatusTypeItemKey"
+        static let maxWidthOfMenuItem = "kCPYPrefMaxWidthOfMenuItemKey"
+        static let menuFontSize = "kCPYPrefMenuFontSizeKey"
     }
 
     struct Menu {
         static let numberOfItemsPlaceInline = "kCPYPrefNumberOfItemsPlaceInlineKey"
         static let numberOfItemsPlaceInsideFolder = "kCPYPrefNumberOfItemsPlaceInsideFolderKey"
-        static let maxWidthOfMenuItem = "kCPYPrefMaxWidthOfMenuItemKey"
 
         static let copySameHistory = "kCPYPrefCopySameHistroy"
         static let overwriteSameHistory = "kCPYPrefOverwriteSameHistroy"
@@ -37,7 +38,6 @@ struct Preferences {
 
         static let addNumericKeyEquivalents = "addNumericKeyEquivalents"
 
-        static let addClearHistoryMenuItem = "kCPYPrefAddClearHistoryMenuItemKey"
         static let showAlertBeforeClearHistory = "kCPYPrefShowAlertBeforeClearHistoryKey"
 
         static let showToolTipOnMenuItem = "showToolTipOnMenuItem"

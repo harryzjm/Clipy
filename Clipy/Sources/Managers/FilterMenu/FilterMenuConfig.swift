@@ -29,10 +29,10 @@ struct FilterMenuConfig {
 
     let showIconInTheMenu: Bool
 
+    let menuFontSize: CGFloat
+
     static func current() -> FilterMenuConfig {
         let defaults = AppEnvironment.current.defaults
-
-        AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showIconInTheMenu)
 
         return FilterMenuConfig(
             isMarkWithNumber: defaults.bool(forKey: Preferences.Menu.menuItemsAreMarkedWithNumbers),
@@ -40,10 +40,11 @@ struct FilterMenuConfig {
             isShowToolTip: defaults.bool(forKey: Preferences.Menu.showToolTipOnMenuItem),
             isShowImage: defaults.bool(forKey: Preferences.Menu.showImageInTheMenu),
             isShowColorCode: defaults.bool(forKey: Preferences.Menu.showColorPreviewInTheMenu),
-            maxWidthOfMenuItem: CGFloat(defaults.float(forKey: Preferences.Menu.maxWidthOfMenuItem)),
+            maxWidthOfMenuItem: CGFloat(defaults.float(forKey: Preferences.General.maxWidthOfMenuItem)),
             placeInLine: defaults.integer(forKey: Preferences.Menu.numberOfItemsPlaceInline),
             placeInsideFolder: defaults.integer(forKey: Preferences.Menu.numberOfItemsPlaceInsideFolder),
             maxHistory: defaults.integer(forKey: Preferences.General.maxHistorySize),
-            showIconInTheMenu: defaults.bool(forKey: Preferences.Menu.showIconInTheMenu))
+            showIconInTheMenu: defaults.bool(forKey: Preferences.Menu.showIconInTheMenu),
+            menuFontSize: CGFloat(defaults.float(forKey: Preferences.General.menuFontSize)))
     }
 }

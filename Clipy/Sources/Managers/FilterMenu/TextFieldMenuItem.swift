@@ -87,12 +87,18 @@ class TextFieldContentView: NSView, NSTextFieldDelegate {
             let ev = NSEvent(eventRef: .init(event)),
             ev.type == .keyDown,
             !shouldPassthru(keyCode: ev.keyCode),
-            !ev.modifierFlags.contains(.command),
             !ev.modifierFlags.contains(.control),
             !ev.modifierFlags.contains(.option)
         else { return false }
 
         var query = queryTF.stringValue
+
+        if ev.modifierFlags.contains(.command) {
+            guard ev.keyCode == 51 else { return false }
+            set(query: "")
+            return true
+        }
+
         if ev.keyCode == 51 {
             if !query.isEmpty {
                 query.removeLast()

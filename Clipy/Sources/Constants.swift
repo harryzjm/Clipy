@@ -39,7 +39,6 @@ struct Constants {
 
     struct UserDefaults {
         static let hotKeys = "kCPYPrefHotKeysKey"
-        static let menuIconSize = "kCPYPrefMenuIconSizeKey"
         static let storeTypes = "kCPYPrefStoreTypesKey"
         static let suppressAlertForLoginItem = "suppressAlertForLoginItem"
         static let suppressAlertForDeleteSnippet = "kCPYSuppressAlertForDeleteSnippet"
