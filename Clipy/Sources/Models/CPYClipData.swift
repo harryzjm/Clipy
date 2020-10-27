@@ -101,7 +101,7 @@ final class CPYClipData: NSObject, NSCoding {
                 "URL",
                 "TIFF"]
     }
-    static var availableTypesDictinary: [NSPasteboard.PasteboardType: String] {
+    static var availableTypesDictionary: [NSPasteboard.PasteboardType: String] {
         var availableTypes = [NSPasteboard.PasteboardType: String]()
         zip(CPYClipData.availableTypes, CPYClipData.availableTypesString).forEach { availableTypes[$0] = $1 }
         return availableTypes

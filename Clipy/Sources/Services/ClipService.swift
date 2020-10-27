@@ -168,7 +168,7 @@ extension ClipService {
     }
 
     private func canSave(with type: NSPasteboard.PasteboardType) -> Bool {
-        let dictionary = CPYClipData.availableTypesDictinary
+        let dictionary = CPYClipData.availableTypesDictionary
         guard let value = dictionary[type] else { return false }
         guard let number = storeTypes[value] else { return false }
         return number.boolValue
