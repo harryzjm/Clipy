@@ -20,7 +20,7 @@ __Distribution Site__ : <https://clipy-app.com>
 <img src="http://clipy-app.com/img/screenshot1.png" width="400">
 
 ### Development Environment
-* macOS 10.13 High Sierra
+* macOS 10.15 Catalina
 * Xcode 12.1
 * Swift 5
 
@@ -33,7 +33,8 @@ __Distribution Site__ : <https://clipy-app.com>
 If you have some bug, maybe you should remove `~/Library/Application Support/com.clipy-app.Clipy.debug`, or open an issue.
 
 ### How to Build
-0. Move to the project root directory
+0. Move to the project root directory.
+1. Run `pod install --repo-update` in Terminal.
 1. Open `Clipy.xcworkspace` on Xcode.
 2. build.
 

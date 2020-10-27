@@ -11,6 +11,7 @@
 //
 
 import Foundation
+import Cocoa
 
 struct FilterMenuConfig {
     let isMarkWithNumber: Bool
@@ -26,8 +27,13 @@ struct FilterMenuConfig {
     let placeInsideFolder: Int
     let maxHistory: Int
 
+    let showIconInTheMenu: Bool
+
     static func current() -> FilterMenuConfig {
         let defaults = AppEnvironment.current.defaults
+
+        AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showIconInTheMenu)
+
         return FilterMenuConfig(
             isMarkWithNumber: defaults.bool(forKey: Preferences.Menu.menuItemsAreMarkedWithNumbers),
             addNumericKeyEquivalents: defaults.bool(forKey: Preferences.Menu.addNumericKeyEquivalents),
@@ -37,6 +43,7 @@ struct FilterMenuConfig {
             maxWidthOfMenuItem: CGFloat(defaults.float(forKey: Preferences.Menu.maxWidthOfMenuItem)),
             placeInLine: defaults.integer(forKey: Preferences.Menu.numberOfItemsPlaceInline),
             placeInsideFolder: defaults.integer(forKey: Preferences.Menu.numberOfItemsPlaceInsideFolder),
-            maxHistory: defaults.integer(forKey: Preferences.General.maxHistorySize))
+            maxHistory: defaults.integer(forKey: Preferences.General.maxHistorySize),
+            showIconInTheMenu: defaults.bool(forKey: Preferences.Menu.showIconInTheMenu))
     }
 }

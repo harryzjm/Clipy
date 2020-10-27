@@ -45,19 +45,36 @@ class FilterMenu: NSMenu {
                 return self.filterRelay.asObservable()
             }
             .distinctUntilChanged()
-            .flatMapLatest { filter -> Observable<NSPredicate?> in
-                guard !filter.isEmpty else { return Observable.just(nil) }
-                let predicate = NSPredicate(format: "title LIKE[c] %@", "*" + filter + "*")
-                return Observable.just(predicate)
-            }
-            .withLatestFrom(clipResultsRelay) { [weak self]predicate, clipResults -> [NSMenuItem]? in
-                var res = clipResults
-                if let predicate = predicate {
-                    res = res?.filter(predicate)
+            .withLatestFrom(clipResultsRelay) { [weak self]filter, clipResults -> [NSMenuItem]? in
+                guard var clipResults = clipResults, let self = self else { return nil }
+                if filter.isNotEmpty {
+                    let predicate = NSPredicate(format: "title LIKE[c] %@", "*" + filter + "*")
+                    clipResults = clipResults.filter(predicate)
                 }
-                return res?.enumerated().compactMap { obj in
-                    return self?.item(with: obj.element, index: obj.offset + 1)
+
+                var items: [NSMenuItem] = []
+                let totalCount = min(clipResults.count, self.config.maxHistory)
+                let remain = max(totalCount - self.config.placeInLine, 0)
+                items += clipResults[0..<totalCount - remain]
+                    .enumerated()
+                    .map { obj in
+                    return self.item(with: obj.element, index: obj.offset + 1)
+                    }
+
+                let res = remain.quotientAndRemainder(dividingBy: self.config.placeInsideFolder)
+                items += (0 ..< res.quotient).map { i -> NSMenuItem in
+                    let begin = self.config.placeInLine + self.config.placeInsideFolder * i
+                    let end = begin + self.config.placeInsideFolder
+                    return self.item(begin: begin, end: end) { clipResults[$0] }
                 }
+
+                if res.remainder > 0 {
+                    let begin = self.config.placeInLine + self.config.placeInsideFolder * res.quotient
+                    let end = begin + res.remainder
+
+                    items.append(self.item(begin: begin, end: end) { clipResults[$0] })
+                }
+                return items
             }
             .filterNil()
             .catchErrorJustReturn([])
@@ -107,7 +124,7 @@ extension FilterMenu: NSMenuDelegate {
         let res = realm
             .objects(CPYClip.self)
             .sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
-            .lazy
+
         clipResultsRelay.accept(res)
     }
 
@@ -119,6 +136,20 @@ extension FilterMenu: NSMenuDelegate {
 private let kMaxKeyEquivalent = 10
 
 fileprivate extension FilterMenu {
+
+    func item(begin: Int, end: Int, clipHandle: (Int) -> CPYClip?) -> NSMenuItem {
+        let subMenu = NSMenu(title: "")
+        let menuItem = NSMenuItem(title: "\(begin)-\(end)", action: nil)
+        menuItem.submenu = subMenu
+        menuItem.image = self.config.showIconInTheMenu ? Asset.Common.iconFolder.image : nil
+
+        (begin ..< end).forEach { i in
+            guard let clip = clipHandle(i) else { return }
+            subMenu.addItem(self.item(with: clip, index: i))
+        }
+        return menuItem
+    }
+
     func item(with clip: CPYClip, index: Int) -> NSMenuItem {
         let keyEquivalent: String = {
             guard config.addNumericKeyEquivalents else { return "" }
