@@ -26,6 +26,7 @@ final class HotKeyService: NSObject {
 
     fileprivate(set) var historyKeyCombo: KeyCombo?
     fileprivate(set) var snippetKeyCombo: KeyCombo?
+    fileprivate(set) var restartKeyCombo: KeyCombo?
 }
 
 // MARK: - Actions
@@ -36,6 +37,11 @@ extension HotKeyService {
 
     @objc func popUpSnippetMenu() {
         AppEnvironment.current.menuManager.popUpMenu(.snippet)
+    }
+
+    @objc func popUpClearHistoryAlert() {
+        guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
+        appDelegate.restart()
     }
 }
 
@@ -54,6 +60,8 @@ extension HotKeyService {
         change(with: .history, keyCombo: savedKeyCombo(forKey: Constants.HotKey.historyKeyCombo))
         // Snippet menu
         change(with: .snippet, keyCombo: savedKeyCombo(forKey: Constants.HotKey.snippetKeyCombo))
+        // Restart Clipy
+        changeRestartKeyCombo(savedKeyCombo(forKey: Constants.HotKey.restartKeyCombo))
     }
 
     func change(with type: MenuType, keyCombo: KeyCombo?) {
@@ -64,6 +72,18 @@ extension HotKeyService {
             snippetKeyCombo = keyCombo
         }
         register(with: type, keyCombo: keyCombo)
+    }
+
+    func changeRestartKeyCombo(_ keyCombo: KeyCombo?) {
+        restartKeyCombo = keyCombo
+        AppEnvironment.current.defaults.set(keyCombo?.archive(), forKey: Constants.HotKey.restartKeyCombo)
+        AppEnvironment.current.defaults.synchronize()
+        // Reset hotkey
+        HotKeyCenter.shared.unregisterHotKey(with: "RestartClipy")
+        // Register new hotkey
+        guard let keyCombo = keyCombo else { return }
+        let hotkey = HotKey(identifier: "RestartClipy", keyCombo: keyCombo, target: self, action: #selector(HotKeyService.popUpClearHistoryAlert))
+        hotkey.register()
     }
 
     private func savedKeyCombo(forKey key: String) -> KeyCombo? {

@@ -20,7 +20,6 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
 
     // MARK: - Properties
     static let sharedController = CPYSnippetsEditorWindowController(windowNibName: NSNib.Name("CPYSnippetsEditorWindowController"))
-    @IBOutlet private weak var splitView: CPYSplitView!
     @IBOutlet private weak var folderSettingView: NSView!
     @IBOutlet private weak var folderTitleTextField: NSTextField!
     @IBOutlet private weak var folderShortcutRecordView: RecordView! {
@@ -262,18 +261,22 @@ private extension CPYSnippetsEditorWindowController {
             folderTitleTextField.stringValue = ""
             return
         }
+
         if let folder = item as? CPYFolder {
             textView.string = ""
+            textView.isHidden = true
+
             folderTitleTextField.stringValue = folder.title
             folderShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.snippetKeyCombo(forIdentifier: folder.identifier)
             folderSettingView.isHidden = false
-            textView.isHidden = true
         } else if let snippet = item as? CPYSnippet {
             textView.string = snippet.content
+            textView.isHidden = false
+            textView.needsDisplay = true
+
             folderTitleTextField.stringValue = ""
             folderShortcutRecordView.keyCombo = nil
             folderSettingView.isHidden = true
-            textView.isHidden = false
         }
     }
 }

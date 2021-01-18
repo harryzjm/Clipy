@@ -64,7 +64,13 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func terminate() {
-        terminateApplication()
+        NSApp.terminate(nil)
+    }
+
+    @objc func restart() {
+        guard let path = Bundle.main.resourceURL?.deletingLastPathComponent().deletingLastPathComponent().absoluteString else { return }
+        _ = Process.launchedProcess(launchPath: "/usr/bin/open", arguments: [path])
+        NSApp.terminate(self)
     }
 
     @objc func clearAllHistory() {
@@ -121,10 +127,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         }
         AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content)
         AppEnvironment.current.pasteService.paste()
-    }
-
-    func terminateApplication() {
-        NSApplication.shared.terminate(nil)
     }
 
     // MARK: - Login Item Methods

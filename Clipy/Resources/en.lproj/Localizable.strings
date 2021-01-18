@@ -1,59 +1,49 @@
-//
-//  Localizable.strings
-//
-//  Clipy
-//  GitHub: https://github.com/clipy
-//  HP: https://clipy-app.com
-//
-//  Created by Econa77 on 2015/06/21.
-//
-//  Copyright © 2015-2018 Clipy Project.
-//
+"Add" = "Add";
 
-"Launch Clipy on system startup?" = "Launch Clipy on system startup?";
-
-"You can change this setting in the Preferences if you want" = "You can change this setting in the Preferences if you want.";
-
-"Launch on system startup" = "Launch on system startup";
-
-"Don't Launch" = "Don't Launch";
-
-"Clear History" = "Clear History";
+"Are you sure want to delete this item?" = "Are you sure want to delete this item?";
 
 "Are you sure you want to clear your clipboard history?" = "Are you sure you want to clear your clipboard history?";
 
 "Cancel" = "Cancel";
 
-"Edit Snippets" = "Edit Snippets...";
-
-"Preferences" = "Preferences...";
-
-"Quit Clipy" = "Quit Clipy";
-
-"History" = "History";
-
-"Snippet" = "Snippet";
-
-"General" = "General";
-
-"Menu" = "Menu";
-
-"Type" = "Type";
-
-"Shortcuts" = "Shortcuts";
-
-"Updates" = "Updates";
+"Clear History" = "Clear History";
 
 "Delete Item" = "Delete Item";
 
-"Are you sure want to delete this item?" = "Are you sure want to delete this item?";
+"Don't Launch" = "Don't Launch";
 
-"Add" = "Add";
+"Edit Snippets" = "Edit Snippets...";
 
-"Please fill in the contents of the snippet" = "Please fill in the contents of the snippet";
+"General" = "General";
+
+"History" = "History";
+
+"Launch Clipy on system startup?" = "Launch Clipy on system startup?";
+
+"Launch on system startup" = "Launch on system startup";
+
+"Menu" = "Menu";
+
+"Open System Preferences" = "Open System Preferences";
 
 "Please allow Accessibility" = "Please allow Accessibility.";
 
+"Please fill in the contents of the snippet" = "Please fill in the contents of the snippet";
+
+"Preferences" = "Preferences...";
+
+"Restart Clipy" = "Restart Clipy";
+
+"Quit Clipy" = "Quit Clipy";
+
+"Shortcuts" = "Shortcuts";
+
+"Snippet" = "Snippet";
+
 "To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
 
-"Open System Preferences" = "Open System Preferences";
+"Type" = "Type";
+
+"Updates" = "Updates";
+
+"You can change this setting in the Preferences if you want" = "You can change this setting in the Preferences if you want.";

@@ -24,12 +24,8 @@ extension String {
     }
 
     func truncateToSize(size: CGSize, ellipsis: String, keyWord: String, attributes: [NSAttributedString.Key: Any], keyWordAttributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString {
-        guard keyWord.isNotEmpty, let keyWordRange = range(of: keyWord) else {
+        guard keyWord.isNotEmpty, let keyWordRange = searchRange(of: keyWord) else {
             return truncateToSize(size: size, ellipsis: ellipsis, attributes: attributes)
-        }
-
-        if willFit(to: size, attributes: attributes) {
-            return NSAttributedString(string: self, attributes: attributes)
         }
 
         let test = ellipsis + String(self[keyWordRange]) + ellipsis
@@ -51,7 +47,7 @@ extension String {
         if range.upperBound != self.endIndex {
             mAtt.append(.init(string: ellipsis, attributes: attributes))
         }
-        if let keyWordAttributes = keyWordAttributes, let range = mAtt.string.range(of: keyWord) {
+        if let keyWordAttributes = keyWordAttributes, let range = mAtt.string.searchRange(of: keyWord) {
             mAtt.addAttributes(keyWordAttributes, range: .init(range, in: mAtt.string))
         }
         return mAtt
@@ -85,10 +81,10 @@ extension String {
         let text: String = {
             guard let range = range else { return self }
             switch (range.lowerBound, range.upperBound) {
-                case (startIndex, endIndex): return self
-                case (startIndex, _): return self + ellipsis
-                case (_, endIndex): return ellipsis + self
-                default: return ellipsis + self + ellipsis
+            case (startIndex, endIndex): return self
+            case (startIndex, _): return self + ellipsis
+            case (_, endIndex): return ellipsis + self
+            default: return ellipsis + self + ellipsis
             }
         }()
         let boundedSize = CGSize(width: size.width, height: .greatestFiniteMagnitude)

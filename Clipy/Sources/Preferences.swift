@@ -32,11 +32,10 @@ struct Preferences {
         static let copySameHistory = "kCPYPrefCopySameHistroy"
         static let overwriteSameHistory = "kCPYPrefOverwriteSameHistroy"
 
-        static let menuItemsAreMarkedWithNumbers = "menuItemsAreMarkedWithNumbers"
-
         static let showIconInTheMenu = "kCPYPrefShowIconInTheMenuKey"
 
         static let addNumericKeyEquivalents = "addNumericKeyEquivalents"
+        static let menuItemsAreMarkedWithNumbers = "menuItemsAreMarkedWithNumbers"
 
         static let showAlertBeforeClearHistory = "kCPYPrefShowAlertBeforeClearHistoryKey"
 

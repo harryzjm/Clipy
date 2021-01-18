@@ -13,24 +13,35 @@ Clipy is a Clipboard extension app for macOS.
 
 ---
 
-__Requirement__: macOS 10.13 High Sierra or higher
+__Requirement__: macOS 10.15 Catalina or higher
 
 __Distribution Site__ : <https://clipy-app.com>
 
-<img src="http://clipy-app.com/img/screenshot1.png" width="400">
+<div style="display:flex;flex-direction:row;justify-content:space-between;align-items:center;">
+    <img src="http://clipy-app.com/img/screenshot1.png" width="400">
+    <img src="https://raw.githubusercontent.com/harryzjm/Clipy/develop/Resources/clipy_introduce.jpg" width="400">
+</div>
+
 
 ### Development Environment
 * macOS 10.15 Catalina
-* Xcode 12.1
+* Xcode 12.3
 * Swift 5
 
 ### Why have this fork
 1. May be [github.com/Clipy/Clipy](https://github.com/Clipy/Clipy) is abandoned?
-1. Add search function
-2. Support dark mode
-3. Update third-party libraries
+2. Add search function
+3. Support dark mode
+4. Support '*' and '?' search
+5. Update third-party libraries
 
-If you have some bug, maybe you should remove `~/Library/Application Support/com.clipy-app.Clipy.debug`, or open an issue.
+| Char | Count | 
+| :----- | :---- | 
+| * | 0 or More |
+| ? | 1 | 
+
+> At first time, you launch this app, may be had some UI bug. You should relaunch and the bug fix, it may be a bug, but I don`t know why. If you know, please tell me.  
+> Now, this app has a bug, may be cause  arrow keys in the menu is useless. But I don't found how to solve this problem, so I add restart app item(maybe you can add shortcut), and everything is ok, I will fix this bug in next time.
 
 ### How to Build
 0. Move to the project root directory.
@@ -138,3 +149,5 @@ Icons are copyrighted by their respective authors.
 
 ### Special Thanks
 __Thank you for [@naotaka](https://github.com/naotaka) who have published [ClipMenu](https://github.com/naotaka/ClipMenu) as OSS.__
+
+

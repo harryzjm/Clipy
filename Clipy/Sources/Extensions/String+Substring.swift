@@ -20,6 +20,36 @@ extension String {
         return String(self[startIndex..<endIndex])
     }
 
+    func searchRange(of filter: String) -> Range<String.Index>? {
+        var pattern: String?
+        if filter.contains("?") {
+            pattern = filter
+                .components(separatedBy: "?")
+                .joined(separator: ".")
+        }
+
+        if filter.contains("*") {
+            pattern = (pattern ?? filter)
+                .components(separatedBy: "*")
+                .joined(separator: ".*?")
+        }
+
+        guard let reg = pattern else {
+            return range(of: filter, options: [.caseInsensitive, .widthInsensitive, .diacriticInsensitive])
+        }
+
+        do {
+            let regex = try NSRegularExpression(pattern: reg, options: [.caseInsensitive])
+            let range = regex.firstMatch(in: self,
+                                         options: [],
+                                         range: .init(location: 0, length: count))?.range
+            return range.flatMap { Range($0, in: self) }
+        } catch {
+            lError(error)
+            return nil
+        }
+    }
+
     func replace(pattern: String, options: NSRegularExpression.Options = [], withTemplate templ: String) -> String {
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: options)

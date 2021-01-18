@@ -46,6 +46,8 @@ internal enum L10n {
   internal static let preferences = L10n.tr("Localizable", "Preferences")
   /// Quit Clipy
   internal static let quitClipy = L10n.tr("Localizable", "Quit Clipy")
+  /// Restart Clipy
+  internal static let restartClipy = L10n.tr("Localizable", "Restart Clipy")
   /// Shortcuts
   internal static let shortcuts = L10n.tr("Localizable", "Shortcuts")
   /// Snippet

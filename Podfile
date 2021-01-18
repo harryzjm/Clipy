@@ -1,8 +1,6 @@
-platform :osx, '10.13'
+platform :osx, '10.15'
 use_frameworks!
 inhibit_all_warnings!
-
-source 'https://github.com/CocoaPods/Specs.git'
 
 target 'Clipy' do
   
@@ -34,5 +32,15 @@ target 'Clipy' do
     pod 'Quick'
     pod 'Nimble'
   end
+end
 
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      version=config.build_settings['MACOSX_DEPLOYMENT_TARGET'].split(".")
+      if version.first.to_f == 10 and version.last.to_f < 15
+        config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.15'
+      end
+    end
+  end
 end

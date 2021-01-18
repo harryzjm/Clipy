@@ -18,9 +18,6 @@ import RxSwift
 import RxOptional
 
 final class MenuManager: NSObject {
-
-    // MARK: - Properties
-    fileprivate var historyMenu: FilterMenu?
     fileprivate var snippetMenu: NSMenu?
     fileprivate lazy var configMenu: NSMenu = {
         let v = NSMenu(title: Constants.Menu.config)
@@ -28,6 +25,7 @@ final class MenuManager: NSObject {
         v.addItem(.init(title: L10n.editSnippets, action: #selector(AppDelegate.showSnippetEditorWindow)))
         v.addItem(.init(title: L10n.preferences, action: #selector(AppDelegate.showPreferenceWindow)))
         v.addItem(.separator())
+        v.addItem(.init(title: L10n.restartClipy, action: #selector(AppDelegate.restart)))
         v.addItem(.init(title: L10n.quitClipy, action: #selector(AppDelegate.terminate)))
         return v
     }()
@@ -70,14 +68,17 @@ final class MenuManager: NSObject {
 // MARK: - Popup Menu
 extension MenuManager {
     func popUpMenu(_ type: MenuType) {
-        let menu: NSMenu?
         switch type {
         case .history:
-            menu = historyMenu
+            let current = statusItem?.button?.window?.frame.origin
+            let pt = current.flatMap { pt -> CGPoint in
+                let mouse = NSEvent.mouseLocation
+                return NSPoint(x: mouse.x - pt.x, y: pt.y - mouse.y)
+            }
+            FilterMenu(title: L10n.history).popUp(positioning: nil, at: pt ?? .zero, in: statusItem?.button)
         case .snippet:
-            menu = snippetMenu
+            snippetMenu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
         }
-        menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
     func popUpSnippetFolder(_ folder: CPYFolder) {
@@ -160,7 +161,6 @@ private extension MenuManager {
 // MARK: - Menus
 private extension MenuManager {
      func createClipMenu() {
-        historyMenu = FilterMenu(title: L10n.history)
         snippetMenu = NSMenu(title: Constants.Menu.snippet)
 
         addSnippetItems(snippetMenu!, separateMenu: false)
@@ -211,67 +211,6 @@ private extension MenuManager {
         }
 
         return titleString as String
-    }
-}
-
-// MARK: - Clips
-extension MenuManager {
-
-    func makeClipMenuItem(_ clip: CPYClip, index: Int, listNumber: Int) -> NSMenuItem {
-        let isMarkWithNumber = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.menuItemsAreMarkedWithNumbers)
-        let isShowToolTip = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showToolTipOnMenuItem)
-        let isShowImage = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showImageInTheMenu)
-        let isShowColorCode = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showColorPreviewInTheMenu)
-        let addNumbericKeyEquivalents = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.addNumericKeyEquivalents)
-
-        var keyEquivalent = ""
-
-        if addNumbericKeyEquivalents && (index <= kMaxKeyEquivalents) {
-            var shortCutNumber = index + 1
-            if shortCutNumber == kMaxKeyEquivalents {
-                shortCutNumber = 0
-            }
-            keyEquivalent = "\(shortCutNumber)"
-        }
-
-        let primaryPboardType = NSPasteboard.PasteboardType(rawValue: clip.primaryType)
-        let clipString = clip.title
-        let title = trimTitle(clipString)
-        let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-
-        let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
-        menuItem.representedObject = clip.dataHash
-
-        if isShowToolTip {
-            let maxLengthOfToolTip = AppEnvironment.current.defaults.integer(forKey: Preferences.Menu.maxLengthOfToolTip)
-            let toIndex = (clipString.count < maxLengthOfToolTip) ? clipString.count : maxLengthOfToolTip
-            menuItem.toolTip = (clipString as NSString).substring(to: toIndex)
-        }
-
-        if primaryPboardType == .deprecatedTIFF {
-            menuItem.title = menuItemTitle("(Image)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        } else if primaryPboardType == .deprecatedPDF {
-            menuItem.title = menuItemTitle("(PDF)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        } else if primaryPboardType == .deprecatedFilenames && title.isEmpty {
-            menuItem.title = menuItemTitle("(Filenames)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        }
-
-        if !clip.thumbnailPath.isEmpty && !clip.isColorCode && isShowImage {
-            PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
-                DispatchQueue.main.async {
-                    menuItem?.image = object as? NSImage
-                }
-            }
-        }
-        if !clip.thumbnailPath.isEmpty && clip.isColorCode && isShowColorCode {
-            PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
-                DispatchQueue.main.async {
-                    menuItem?.image = object as? NSImage
-                }
-            }
-        }
-
-        return menuItem
     }
 }
 

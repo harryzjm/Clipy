@@ -1,12 +1,8 @@
-
 /* Class = "NSTextFieldCell"; title = "pixel"; ObjectID = "2Ra-jY-ADW"; */
 "2Ra-jY-ADW.title" = "pixel";
 
 /* Class = "NSTextFieldCell"; title = "items"; ObjectID = "4dH-7h-Ssv"; */
 "4dH-7h-Ssv.title" = "elementi";
-
-/* Class = "NSTextFieldCell"; title = "chars"; ObjectID = "67F-2m-Txz"; */
-"67F-2m-Txz.title" = "caratteri";
 
 /* Class = "NSTextFieldCell"; title = "pixel"; ObjectID = "90g-HQ-9Ua"; */
 "90g-HQ-9Ua.title" = "pixel";
@@ -35,9 +31,6 @@
 /* Class = "NSButtonCell"; title = "Show tool tip on a menu item"; ObjectID = "h4n-Nv-zj1"; */
 "h4n-Nv-zj1.title" = "Mostra i tooltip sugli elementi della Cronologia";
 
-/* Class = "NSTextFieldCell"; title = "Number of characters in the menu:"; ObjectID = "hBb-sd-DcP"; */
-"hBb-sd-DcP.title" = "Lunghezza massima delle voci di menu:";
-
 /* Class = "NSButtonCell"; title = "Add key equivalents to numeric keys"; ObjectID = "hE2-DL-MKl"; */
 "hE2-DL-MKl.title" = "Aggiungi riferimenti equivalenti ai tasti numerici";
 
@@ -53,14 +46,8 @@
 /* Class = "NSTextFieldCell"; title = "chars"; ObjectID = "nzx-q5-ifH"; */
 "nzx-q5-ifH.title" = "caratteri";
 
-/* Class = "NSButtonCell"; title = "Add a menu item to clear clipboard history"; ObjectID = "p80-3o-bgA"; */
-"p80-3o-bgA.title" = "Aggiungi una voce di menu per svuotare la Cronologia";
-
 /* Class = "NSTextFieldCell"; title = "Width:"; ObjectID = "saf-vP-Qwl"; */
 "saf-vP-Qwl.title" = "Larghezza:";
-
-/* Class = "NSButtonCell"; title = "Menu items' title starts with 0"; ObjectID = "seq-HO-d27"; */
-"seq-HO-d27.title" = "Inizia da 0";
 
 /* Class = "NSTextFieldCell"; title = "Number of items place inline:"; ObjectID = "wef-NB-6p6"; */
 "wef-NB-6p6.title" = "Menu principale della Cronologia:";

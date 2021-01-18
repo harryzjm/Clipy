@@ -46,7 +46,6 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
         var newFrame: NSRect
         switch iconType {
         case .folder:
-
             var imageFrame = NSRect.zero
             var cellFrame = cellFrame
             NSDivideRect(cellFrame, &imageFrame, &cellFrame, 15, .minX)
@@ -62,13 +61,13 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             newFrame.origin.x += 8
             newFrame.origin.y += 2
             newFrame.size.height -= 2
+            textColor = isHighlighted ? .labelColor:Asset.Color.clipy.color
         case .none:
             newFrame = cellFrame
             newFrame.origin.y += 2
             newFrame.size.height -= 2
+            textColor = .labelColor
         }
-
-        textColor = (!isItemEnabled) ? .lightGray : (isHighlighted) ? .white : Asset.Color.title.color
 
         super.draw(withFrame: newFrame, in: controlView)
     }
@@ -76,7 +75,6 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
     // MARK: - Frame
     override func select(withFrame aRect: NSRect, in controlView: NSView, editor textObj: NSText, delegate anObject: Any?, start selStart: Int, length selLength: Int) {
         let textFrame = titleRect(forBounds: aRect)
-        textColor = Asset.Color.title.color
         super.select(withFrame: textFrame, in: controlView, editor: textObj, delegate: anObject, start: selStart, length: selLength)
     }
 

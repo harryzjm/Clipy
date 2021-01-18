@@ -1,59 +1,49 @@
-//
-//  Localizable.strings
-//
-//  Clipy
-//  GitHub: https://github.com/clipy
-//  HP: https://clipy-app.com
-//
-//  Created by Econa77 on 2015/06/21.
-//
-//  Copyright © 2015-2018 Clipy Project.
-//
+"Add" = "Aggiungi";
 
-"Launch Clipy on system startup?" = "Vuoi avviare Clipy al login?";
-
-"You can change this setting in the Preferences if you want" = "Puoi modificare questa impostazione nelle Preferenze.";
-
-"Launch on system startup" = "Avvia Clipy al login";
-
-"Don't Launch" = "Non avviare";
-
-"Clear History" = "Svuota la Cronologia";
+"Are you sure want to delete this item?" = "Vuoi davvero eliminare questo elemento?";
 
 "Are you sure you want to clear your clipboard history?" = "Vuoi davvero cancellare tutte le voci della Cronologia?";
 
 "Cancel" = "Annulla";
 
-"Edit Snippets" = "Modifica snippet...";
-
-"Preferences" = "Preferenze...";
-
-"Quit Clipy" = "Esci da Clipy";
-
-"History" = "Cronologia";
-
-"Snippet" = "Snippet";
-
-"General" = "Generali";
-
-"Menu" = "Menu";
-
-"Type" = "Appunti";
-
-"Shortcuts" = "Scorciatoie";
-
-"Updates" = "Aggiornamenti";
+"Clear History" = "Svuota la Cronologia";
 
 "Delete Item" = "Elimina";
 
-"Are you sure want to delete this item?" = "Vuoi davvero eliminare questo elemento?";
+"Don't Launch" = "Non avviare";
 
-"Add" = "Aggiungi";
+"Edit Snippets" = "Modifica snippet...";
 
-"Please fill in the contents of the snippet" = "Si prega di compilare il contenuto dello snippet";
+"General" = "Generali";
+
+"History" = "Cronologia";
+
+"Launch Clipy on system startup?" = "Vuoi avviare Clipy al login?";
+
+"Launch on system startup" = "Avvia Clipy al login";
+
+"Menu" = "Menu";
+
+"Open System Preferences" = "Open System Preferences";
 
 "Please allow Accessibility" = "Please allow Accessibility.";
 
+"Please fill in the contents of the snippet" = "Si prega di compilare il contenuto dello snippet";
+
+"Preferences" = "Preferenze...";
+
+"Restart Clipy" = "Riavvia Clipy";
+
+"Quit Clipy" = "Esci da Clipy";
+
+"Shortcuts" = "Scorciatoie";
+
+"Snippet" = "Snippet";
+
 "To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
 
-"Open System Preferences" = "Open System Preferences";
+"Type" = "Appunti";
+
+"Updates" = "Aggiornamenti";
+
+"You can change this setting in the Preferences if you want" = "Puoi modificare questa impostazione nelle Preferenze.";

@@ -13,6 +13,7 @@
                 <outlet property="folderShortcutRecordView" destination="zjO-0c-pwM" id="x7o-Yz-Zpe"/>
                 <outlet property="folderTitleTextField" destination="xGQ-1B-r34" id="mgO-58-c6u"/>
                 <outlet property="outlineView" destination="F5g-cX-Wqm" id="k1K-Pb-XxG"/>
+                <outlet property="splitView" destination="BiM-Ll-CfO" id="gFF-54-Nwa"/>
                 <outlet property="textView" destination="Sg6-q3-8Kx" id="UKr-6H-tfo"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="euv-Gb-Dbb"/>
             </connections>
@@ -303,8 +304,8 @@
                                                             </tableHeaderCell>
                                                             <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Text" id="J4q-sY-gcS" customClass="CPYSnippetsEditorCell" customModule="Clipy" customModuleProvider="target">
                                                                 <font key="font" metaFont="system"/>
-                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         </tableColumn>
@@ -346,8 +347,8 @@
                                                 <textView hidden="YES" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="Sg6-q3-8Kx" customClass="CPYPlaceHolderTextView" customModule="Clipy" customModuleProvider="target">
                                                     <rect key="frame" x="0.0" y="0.0" width="549" height="544"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="backgroundColor" red="0.9882352941176471" green="0.9882352941176471" blue="0.9882352941176471" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <size key="minSize" width="549" height="544"/>
                                                     <size key="maxSize" width="549" height="10000000"/>
                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -384,7 +385,7 @@
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="SnippetEditor/snippets_icon_folder_blue" id="FTh-Dz-rHH"/>
                                                     </imageView>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xGQ-1B-r34">
-                                                        <rect key="frame" x="29" y="177" width="223" height="17"/>
+                                                        <rect key="frame" x="29" y="174" width="223" height="20"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="folder title" id="rI9-rT-YTs">
                                                             <font key="font" size="18" name="HelveticaNeue"/>
@@ -500,11 +501,6 @@
                             <real value="250"/>
                             <real value="250"/>
                         </holdingPriorities>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="color" keyPath="separatorColor">
-                                <color key="value" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="delegate" destination="-2" id="dm5-eZ-bg7"/>
                         </connections>

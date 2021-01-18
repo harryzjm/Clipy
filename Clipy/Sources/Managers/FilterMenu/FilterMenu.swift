@@ -48,6 +48,7 @@ class FilterMenu: NSMenu {
             .withLatestFrom(clipResultsRelay) { [weak self]filter, clipResults -> [NSMenuItem]? in
                 guard var clipResults = clipResults, let self = self else { return nil }
                 if filter.isNotEmpty {
+                    lError(filter)
                     let predicate = NSPredicate(format: "title LIKE[c] %@", "*" + filter + "*")
                     clipResults = clipResults.filter(predicate)
                 }
@@ -60,7 +61,10 @@ class FilterMenu: NSMenu {
                 guard let self = self, case .next(var new) = event else { return }
                 self.highlight(menuItem: nil)
                 new.insert(self.item, at: 0)
-                self.reload(with: new)
+                self.items = new
+                if new.count > 1 {
+                    self.highlight(menuItem: new[1])
+                }
             }.disposed(by: bag)
     }
 
@@ -82,15 +86,6 @@ class FilterMenu: NSMenu {
         let highlightItem = NSSelectorFromString("highlightItem:")
         if responds(to: highlightItem) {
             perform(highlightItem, with: menuItem)
-        }
-    }
-
-    func reload(with items: [NSMenuItem]) {
-        self.removeAllItems()
-        items.forEach(self.addItem(_:))
-
-        if let item = self.items.first(where: { !($0 is TextFieldMenuItem) }) {
-            self.highlight(menuItem: item)
         }
     }
 }
@@ -120,7 +115,7 @@ fileprivate extension FilterMenu {
         items += clipResults[0..<totalCount - remain]
             .enumerated()
             .map { obj in
-                return self.item(with: obj.element, index: obj.offset + 1, filter: filter)
+                return self.item(with: obj.element, index: obj.offset + 1, filter: filter, inline: true)
             }
 
         let res = remain.quotientAndRemainder(dividingBy: config.placeInsideFolder)
@@ -147,23 +142,23 @@ fileprivate extension FilterMenu {
         ]
 
         let subMenu = NSMenu(title: "")
-        let menuItem = NSMenuItem(title: "\(begin) - \(end)", action: nil)
+        let menuItem = NSMenuItem(title: "\(begin + 1) - \(end)", action: nil)
         menuItem.attributedTitle = .init(string: menuItem.title, attributes: attributes)
         menuItem.submenu = subMenu
         menuItem.image = self.config.showIconInTheMenu ? Asset.Common.iconFolder.image : nil
 
         (begin ..< end).forEach { i in
             guard let clip = clipHandle(i) else { return }
-            subMenu.addItem(item(with: clip, index: i, filter: filter))
+            subMenu.addItem(item(with: clip, index: i + 1, filter: filter, inline: false))
         }
         return menuItem
     }
 
-    func item(with clip: CPYClip, index: Int, filter: String) -> NSMenuItem {
+    func item(with clip: CPYClip, index: Int, filter: String, inline: Bool) -> NSMenuItem {
         let maxKeyEquivalent = 10
 
         let keyEquivalent: String = {
-            guard config.addNumericKeyEquivalents else { return "" }
+            guard inline && config.addNumericKeyEquivalents else { return "" }
             switch index {
             case 1 ..< maxKeyEquivalent: return "\(index). "
             case maxKeyEquivalent: return "0. "
@@ -173,7 +168,7 @@ fileprivate extension FilterMenu {
 
         let primaryPboardType = NSPasteboard.PasteboardType(rawValue: clip.primaryType)
         let originTitle = clip.title
-        let prefix = config.isMarkWithNumber && keyEquivalent.isNotEmpty  ? keyEquivalent:""
+        let prefix = inline && config.isMarkWithNumber && keyEquivalent.isNotEmpty ? keyEquivalent:""
 
         let title = { () -> String in
             switch primaryPboardType {
@@ -221,8 +216,8 @@ fileprivate extension String {
             .font: font
         ]
 
-        let trim = trimmingCharacters(in: .whitespacesAndNewlines)
-            .replace(pattern: " *\n *", withTemplate: " ")
+        let trim = replace(pattern: " *\n *", withTemplate: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
 
         let prefixWidth = prefix.sizeOf(attributes: attributes).width
         let att = NSMutableAttributedString(string: prefix, attributes: attributes)

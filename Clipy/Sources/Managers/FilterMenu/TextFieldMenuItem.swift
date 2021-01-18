@@ -55,18 +55,18 @@ class TextFieldContentView: NSView, NSTextFieldDelegate {
             RemoveEventHandler(eventHandler)
             eventHandler = nil
         }
+
         guard
-            window?.className == "NSCarbonMenuWindow",
+            window?.className == "NSMenuWindowManagerWindow",
             let dispatcher = GetEventDispatcherTarget()
         else { return }
 
-        var evts = [EventTypeSpec(eventClass: OSType(kEventClassKeyboard),
+        let evts = [EventTypeSpec(eventClass: OSType(kEventClassKeyboard),
                                   eventKind: UInt32(kEventRawKeyDown)),
                     EventTypeSpec(eventClass: OSType(kEventClassKeyboard),
                                   eventKind: UInt32(kEventRawKeyRepeat))]
 
-        // Install handler.
-        InstallEventHandler(dispatcher, {handler, event, userData -> OSStatus in
+        let carbonCallback: EventHandlerUPP = { handler, event, userData in
             guard let event = event, let userData = userData else { return noErr }
             let content = Unmanaged<TextFieldContentView>.fromOpaque(userData).takeUnretainedValue()
             let processed = content.processInterceptedEvent(event: event)
@@ -75,7 +75,10 @@ class TextFieldContentView: NSView, NSTextFieldDelegate {
             } else {
                 return CallNextEventHandler(handler, event)
             }
-        }, 2, &evts[0], Unmanaged.passUnretained(self).toOpaque(), &eventHandler)
+        }
+
+        // Install handler.
+        InstallEventHandler(dispatcher, carbonCallback, 2, evts, Unmanaged.passUnretained(self).toOpaque(), &eventHandler)
     }
 
     func processInterceptedEvent(event: EventRef) -> Bool {
@@ -87,13 +90,12 @@ class TextFieldContentView: NSView, NSTextFieldDelegate {
             let ev = NSEvent(eventRef: .init(event)),
             ev.type == .keyDown,
             !shouldPassthru(keyCode: ev.keyCode),
-            !ev.modifierFlags.contains(.control),
-            !ev.modifierFlags.contains(.option)
+            !ev.modifierFlags.contains(.control)
         else { return false }
 
         var query = queryTF.stringValue
 
-        if ev.modifierFlags.contains(.command) {
+        if ev.modifierFlags.contains(.option) || ev.modifierFlags.contains(.command) {
             guard ev.keyCode == 51 else { return false }
             set(query: "")
             return true

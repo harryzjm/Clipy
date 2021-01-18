@@ -1,4 +1,3 @@
-
 /* Class = "NSButtonCell"; title = "Input \"⌘ + V\" after menu item selection"; ObjectID = "0yt-u0-ROt"; */
 "0yt-u0-ROt.title" = "选中菜单项后输入”⌘ + V“";
 
@@ -10,9 +9,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Sort history order by:"; ObjectID = "Lps-06-dPB"; */
 "Lps-06-dPB.title" = "历史排序按照：";
-
-/* Class = "NSButtonCell"; title = "Send crash report and error log (reflected at the next launch)"; ObjectID = "LsC-YB-qAw"; */
-"LsC-YB-qAw.title" = "发送崩溃报告和错误日志（下次启动时生效）";
 
 /* Class = "NSTextFieldCell"; title = "Max clipboard history size:"; ObjectID = "Nab-CO-ytH"; */
 "Nab-CO-ytH.title" = "最大剪贴板历史：";
@@ -37,3 +33,15 @@
 
 /* Class = "NSTextFieldCell"; title = "Behavior"; ObjectID = "nDk-8y-89n"; */
 "nDk-8y-89n.title" = "行为";
+
+/* Class = "NSTextFieldCell"; title = "px"; ObjectID = "47y-Cq-W3e"; */
+"47y-Cq-W3e.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "px"; ObjectID = "GZc-Gn-kVR"; */
+"GZc-Gn-kVR.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "The menu icon size"; ObjectID = "WJP-X8-vjR"; */
+"WJP-X8-vjR.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "Max width of menu item:"; ObjectID = "mHH-Jt-Y3D"; */
+"mHH-Jt-Y3D.title" = "";

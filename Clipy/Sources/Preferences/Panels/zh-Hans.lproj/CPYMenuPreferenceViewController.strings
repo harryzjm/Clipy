@@ -1,12 +1,8 @@
-
 /* Class = "NSTextFieldCell"; title = "pixel"; ObjectID = "2Ra-jY-ADW"; */
 "2Ra-jY-ADW.title" = "像素";
 
 /* Class = "NSTextFieldCell"; title = "items"; ObjectID = "4dH-7h-Ssv"; */
 "4dH-7h-Ssv.title" = "项";
-
-/* Class = "NSTextFieldCell"; title = "chars"; ObjectID = "67F-2m-Txz"; */
-"67F-2m-Txz.title" = "字符";
 
 /* Class = "NSTextFieldCell"; title = "pixel"; ObjectID = "90g-HQ-9Ua"; */
 "90g-HQ-9Ua.title" = "像素";
@@ -35,9 +31,6 @@
 /* Class = "NSButtonCell"; title = "Show tool tip on a menu item"; ObjectID = "h4n-Nv-zj1"; */
 "h4n-Nv-zj1.title" = "为菜单项显示工具提示";
 
-/* Class = "NSTextFieldCell"; title = "Number of characters in the menu:"; ObjectID = "hBb-sd-DcP"; */
-"hBb-sd-DcP.title" = "菜单中字符的个数：";
-
 /* Class = "NSButtonCell"; title = "Add key equivalents to numeric keys"; ObjectID = "hE2-DL-MKl"; */
 "hE2-DL-MKl.title" = "添加等效于数字键的按键";
 
@@ -53,14 +46,8 @@
 /* Class = "NSTextFieldCell"; title = "chars"; ObjectID = "nzx-q5-ifH"; */
 "nzx-q5-ifH.title" = "字符";
 
-/* Class = "NSButtonCell"; title = "Add a menu item to clear clipboard history"; ObjectID = "p80-3o-bgA"; */
-"p80-3o-bgA.title" = "在菜单项中添加清空历史";
-
 /* Class = "NSTextFieldCell"; title = "Width:"; ObjectID = "saf-vP-Qwl"; */
 "saf-vP-Qwl.title" = "宽度：";
-
-/* Class = "NSButtonCell"; title = "Menu items' title starts with 0"; ObjectID = "seq-HO-d27"; */
-"seq-HO-d27.title" = "菜单项标题从0开始";
 
 /* Class = "NSTextFieldCell"; title = "Number of items place inline:"; ObjectID = "wef-NB-6p6"; */
 "wef-NB-6p6.title" = "不放进文件夹的菜单项个数：";
