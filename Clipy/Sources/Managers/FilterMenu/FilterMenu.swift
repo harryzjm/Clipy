@@ -34,25 +34,24 @@ class FilterMenu: NSMenu {
 
         super.init(title: title)
 
-        delegate = self
-
         addItem(item)
 
-        clipResultsRelay
-            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .flatMapLatest { [weak self]res -> Observable<String> in
-                guard let self = self, res != nil else { return .empty() }
-                return self.filterRelay.asObservable()
-            }
+        let ascending = !AppEnvironment.current.defaults.bool(forKey: Preferences.General.reorderClipsAfterPasting)
+        let clipResults = realm
+            .objects(CPYClip.self)
+            .sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
+
+        filterRelay
             .distinctUntilChanged()
-            .withLatestFrom(clipResultsRelay) { [weak self]filter, clipResults -> [NSMenuItem]? in
-                guard var clipResults = clipResults, let self = self else { return nil }
+            .map { [weak self]filter -> [NSMenuItem]? in
+                guard let self = self else { return nil }
+                var filterRes = clipResults
                 if filter.isNotEmpty {
                     lError(filter)
                     let predicate = NSPredicate(format: "title LIKE[c] %@", "*" + filter + "*")
-                    clipResults = clipResults.filter(predicate)
+                    filterRes = filterRes.filter(predicate)
                 }
-                return self.manageItems(clipResults, with: filter)
+                return self.manageItems(filterRes, with: filter)
             }
             .filterNil()
             .catchErrorJustReturn([])
@@ -87,22 +86,6 @@ class FilterMenu: NSMenu {
         if responds(to: highlightItem) {
             perform(highlightItem, with: menuItem)
         }
-    }
-}
-
-// MARK: - NSMenuDelegate
-extension FilterMenu: NSMenuDelegate {
-    func menuWillOpen(_ menu: NSMenu) {
-        let ascending = !AppEnvironment.current.defaults.bool(forKey: Preferences.General.reorderClipsAfterPasting)
-        let res = realm
-            .objects(CPYClip.self)
-            .sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
-
-        clipResultsRelay.accept(res)
-    }
-
-    func menuDidClose(_ menu: NSMenu) {
-        cleanFilter()
     }
 }
 
