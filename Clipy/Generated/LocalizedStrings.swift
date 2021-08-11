@@ -24,8 +24,6 @@ internal enum L10n {
   internal static let deleteItem = L10n.tr("Localizable", "Delete Item")
   /// Don't Launch
   internal static let donTLaunch = L10n.tr("Localizable", "Don't Launch")
-  /// Edit Snippets...
-  internal static let editSnippets = L10n.tr("Localizable", "Edit Snippets")
   /// General
   internal static let general = L10n.tr("Localizable", "General")
   /// History

@@ -22,7 +22,6 @@ final class MenuManager: NSObject {
     fileprivate lazy var configMenu: NSMenu = {
         let v = NSMenu(title: Constants.Menu.config)
         v.addItem(.init(title: L10n.clearHistory, action: #selector(AppDelegate.clearAllHistory)))
-        v.addItem(.init(title: L10n.editSnippets, action: #selector(AppDelegate.showSnippetEditorWindow)))
         v.addItem(.init(title: L10n.preferences, action: #selector(AppDelegate.showPreferenceWindow)))
         v.addItem(.separator())
         v.addItem(.init(title: L10n.restartClipy, action: #selector(AppDelegate.restart)))

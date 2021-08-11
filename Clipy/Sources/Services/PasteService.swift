@@ -154,7 +154,7 @@ extension PasteService {
             return
         }
 
-        let vKeyCode = Sauce.shared.keyCode(by: .v)
+        let vKeyCode = Sauce.shared.keyCode(for: .v)
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)
             // Disable local keyboard events while pasting

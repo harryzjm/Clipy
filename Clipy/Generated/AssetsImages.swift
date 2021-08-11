@@ -46,22 +46,6 @@ internal enum Asset {
     internal static let prefUpdate = ImageAsset(name: "Preference/pref_update")
     internal static let prefUpdateOn = ImageAsset(name: "Preference/pref_update_on")
   }
-  internal enum SnippetEditor {
-    internal static let snippetsAddFolder = ImageAsset(name: "SnippetEditor/snippets_add_folder")
-    internal static let snippetsAddFolderOn = ImageAsset(name: "SnippetEditor/snippets_add_folder_on")
-    internal static let snippetsAddSnippet = ImageAsset(name: "SnippetEditor/snippets_add_snippet")
-    internal static let snippetsAddSnippetOn = ImageAsset(name: "SnippetEditor/snippets_add_snippet_on")
-    internal static let snippetsDeleteSnippet = ImageAsset(name: "SnippetEditor/snippets_delete_snippet")
-    internal static let snippetsDeleteSnippetOn = ImageAsset(name: "SnippetEditor/snippets_delete_snippet_on")
-    internal static let snippetsEnableSnippet = ImageAsset(name: "SnippetEditor/snippets_enable_snippet")
-    internal static let snippetsEnableSnippetOn = ImageAsset(name: "SnippetEditor/snippets_enable_snippet_on")
-    internal static let snippetsExport = ImageAsset(name: "SnippetEditor/snippets_export")
-    internal static let snippetsExportOn = ImageAsset(name: "SnippetEditor/snippets_export_on")
-    internal static let snippetsIconFolderBlue = ImageAsset(name: "SnippetEditor/snippets_icon_folder_blue")
-    internal static let snippetsIconFolderWhite = ImageAsset(name: "SnippetEditor/snippets_icon_folder_white")
-    internal static let snippetsImport = ImageAsset(name: "SnippetEditor/snippets_import")
-    internal static let snippetsImportOn = ImageAsset(name: "SnippetEditor/snippets_import_on")
-  }
   internal enum StatusIcon {
     internal static let statusbarMenuBlack = ImageAsset(name: "StatusIcon/statusbar_menu_black")
     internal static let statusbarMenuWhite = ImageAsset(name: "StatusIcon/statusbar_menu_white")

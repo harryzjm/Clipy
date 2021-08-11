@@ -11,16 +11,13 @@
 //
 
 import Cocoa
-import Sparkle
 import RxCocoa
 import RxSwift
 import RxOptional
-import LoginServiceKit
 import Magnet
 import Screeen
 import RxScreeen
 import RealmSwift
-import LetsMove
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {
@@ -56,11 +53,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     @objc func showPreferenceWindow() {
         NSApp.activate(ignoringOtherApps: true)
         CPYPreferencesWindowController.sharedController.showWindow(self)
-    }
-
-    @objc func showSnippetEditorWindow() {
-        NSApp.activate(ignoringOtherApps: true)
-        CPYSnippetsEditorWindowController.sharedController.showWindow(self)
     }
 
     @objc func terminate() {
@@ -180,12 +172,6 @@ extension AppDelegate: NSApplicationDelegate {
         if !AppEnvironment.current.defaults.bool(forKey: Preferences.General.loginItem) && !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
             promptToAddLoginItems()
         }
-
-        // Sparkle
-        let updater = SUUpdater.shared()
-        updater?.feedURL = Constants.Application.appcastURL
-        updater?.automaticallyChecksForUpdates = AppEnvironment.current.defaults.bool(forKey: Preferences.Update.enableAutomaticCheck)
-        updater?.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Preferences.Update.checkInterval))
 
         // Binding Events
         bind()
