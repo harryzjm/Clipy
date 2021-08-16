@@ -155,9 +155,9 @@ fileprivate extension FilterMenu {
 
         let title = { () -> String in
             switch primaryPboardType {
-            case .deprecatedTIFF: return "(Image)"
-            case .deprecatedPDF: return "(PDF)"
-            case .deprecatedFilenames: return "(Filenames)"
+            case .tiff: return "(Image)"
+            case .pdf: return "(PDF)"
+            case .fileURL: return "(Filenames)"
             default: return clip.title
             }
         }()

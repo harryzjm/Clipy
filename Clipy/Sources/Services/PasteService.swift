@@ -95,8 +95,8 @@ extension PasteService {
         lock.lock(); defer { lock.unlock() }
 
         let pasteboard = NSPasteboard.general
-        pasteboard.declareTypes([.deprecatedString], owner: nil)
-        pasteboard.setString(string, forType: .deprecatedString)
+        pasteboard.declareTypes([.string], owner: nil)
+        pasteboard.setString(string, forType: .string)
     }
 
     func copyToPasteboard(with clip: CPYClip) {
@@ -117,27 +117,27 @@ extension PasteService {
         pasteboard.declareTypes(types, owner: nil)
         types.forEach { type in
             switch type {
-            case .deprecatedString:
+            case .string:
                 let pbString = clipData.stringValue
-                pasteboard.setString(pbString, forType: .deprecatedString)
-            case .deprecatedRTFD:
+                pasteboard.setString(pbString, forType: .string)
+            case .rtfd:
                 guard let rtfData = clipData.RTFData else { return }
-                pasteboard.setData(rtfData, forType: .deprecatedRTFD)
-            case .deprecatedRTF:
+                pasteboard.setData(rtfData, forType: .rtfd)
+            case .rtf:
                 guard let rtfData = clipData.RTFData else { return }
-                pasteboard.setData(rtfData, forType: .deprecatedRTF)
-            case .deprecatedPDF:
+                pasteboard.setData(rtfData, forType: .rtf)
+            case .pdf:
                 guard let pdfData = clipData.PDF, let pdfRep = NSPDFImageRep(data: pdfData) else { return }
-                pasteboard.setData(pdfRep.pdfRepresentation, forType: .deprecatedPDF)
-            case .deprecatedFilenames:
+                pasteboard.setData(pdfRep.pdfRepresentation, forType: .pdf)
+            case .fileURL:
                 let fileNames = clipData.fileNames
-                pasteboard.setPropertyList(fileNames, forType: .deprecatedFilenames)
-            case .deprecatedURL:
+                pasteboard.setPropertyList(fileNames, forType: .fileURL)
+            case .URL:
                 let url = clipData.URLs
-                pasteboard.setPropertyList(url, forType: .deprecatedURL)
-            case .deprecatedTIFF:
+                pasteboard.setPropertyList(url, forType: .URL)
+            case .tiff:
                 guard let image = clipData.image, let imageData = image.tiffRepresentation else { return }
-                pasteboard.setData(imageData, forType: .deprecatedTIFF)
+                pasteboard.setData(imageData, forType: .tiff)
             default: break
             }
         }
