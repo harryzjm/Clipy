@@ -135,7 +135,7 @@ extension ClipService {
         // Create Realm object
         let clip = CPYClip()
         clip.dataPath = savedPath
-        clip.title = data.stringValue[0...10000]
+        clip.title = data.stringValue?[0...10000] ?? ""
         clip.dataHash = "\(savedHash)"
         clip.updateTime = unixTime
         clip.primaryType = data.primaryType?.rawValue ?? ""
@@ -154,7 +154,8 @@ extension ClipService {
             // Save Realm and .data file
             let dispatchRealm = try! Realm()
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
-                data.archive(toFilePath: savedPath)
+                try? JSONEncoder().encode(data).write(to: .init(fileURLWithPath: savedPath))
+//                data.archive(toFilePath: savedPath)
                 dispatchRealm.transaction {
                     dispatchRealm.add(clip, update: .all)
                 }

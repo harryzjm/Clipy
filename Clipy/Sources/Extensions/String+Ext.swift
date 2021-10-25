@@ -1,5 +1,5 @@
 //
-//  String+Substring.swift
+//  String+Ext.swift
 //
 //  Clipy
 //  GitHub: https://github.com/clipy
@@ -11,6 +11,23 @@
 //
 
 import Foundation
+
+extension Optional where Wrapped == String {
+    var count: Int {
+        guard case .some(let str) = self else { return 0 }
+        return str.count
+    }
+
+    var isEmpty: Bool {
+        guard case .some(let str) = self else { return true }
+        return str.isEmpty
+    }
+
+    var isNotEmpty: Bool {
+        guard case .some(let str) = self else { return false }
+        return !str.isEmpty
+    }
+}
 
 extension String {
     subscript (range: CountableClosedRange<Int>) -> String {

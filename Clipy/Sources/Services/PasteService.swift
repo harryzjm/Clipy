@@ -91,7 +91,8 @@ extension PasteService {
         }
     }
 
-    func copyToPasteboard(with string: String) {
+    func copyToPasteboard(with string: String?) {
+        guard let string = string else { return }
         lock.lock(); defer { lock.unlock() }
 
         let pasteboard = NSPasteboard.general
@@ -113,33 +114,10 @@ extension PasteService {
         }
 
         let pasteboard = NSPasteboard.general
-        let types = clipData.types
+        let types = clipData.content.compactMap(\.toPasteboardType)
         pasteboard.declareTypes(types, owner: nil)
-        types.forEach { type in
-            switch type {
-            case .string:
-                let pbString = clipData.stringValue
-                pasteboard.setString(pbString, forType: .string)
-            case .rtfd:
-                guard let rtfData = clipData.RTFData else { return }
-                pasteboard.setData(rtfData, forType: .rtfd)
-            case .rtf:
-                guard let rtfData = clipData.RTFData else { return }
-                pasteboard.setData(rtfData, forType: .rtf)
-            case .pdf:
-                guard let pdfData = clipData.PDF, let pdfRep = NSPDFImageRep(data: pdfData) else { return }
-                pasteboard.setData(pdfRep.pdfRepresentation, forType: .pdf)
-            case .fileURL:
-                let fileNames = clipData.fileNames
-                pasteboard.setPropertyList(fileNames, forType: .fileURL)
-            case .URL:
-                let url = clipData.URLs
-                pasteboard.setPropertyList(url, forType: .URL)
-            case .tiff:
-                guard let image = clipData.image, let imageData = image.tiffRepresentation else { return }
-                pasteboard.setData(imageData, forType: .tiff)
-            default: break
-            }
+        clipData.content.forEach { type in
+            type.recover(to: pasteboard)
         }
     }
 }
