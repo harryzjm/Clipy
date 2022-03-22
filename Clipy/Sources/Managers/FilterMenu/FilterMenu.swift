@@ -155,10 +155,10 @@ fileprivate extension FilterMenu {
 
         let title = { () -> String in
             switch primaryPboardType {
-//            case .tiff: return "(Image)"
-//            case .pdf: return "(PDF)"
-//            case .fileURL: return "(Filenames)"
-            default: return clip.title
+//                case .tiff: return "(Image)"
+//                case .pdf: return "(PDF)"
+                case .fileURL: return "[File] " + clip.title.replace(pattern: "file://", withTemplate: "")
+                default: return clip.title
             }
         }()
         let attributedTitle = title.trim(with: prefix, keyWord: filter, maxWidth: config.maxWidthOfMenuItem, fontSize: config.menuFontSize)

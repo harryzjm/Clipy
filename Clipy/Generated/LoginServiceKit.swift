@@ -61,7 +61,9 @@ public extension LoginServiceKit {
         guard let snapshots = loginItemsListSnapshots() else { return false }
 
         let url = URL(fileURLWithPath: path)
-        LSSharedFileListInsertItemURL(snapshots.fileList, snapshots.items.last, nil, nil, url as CFURL, nil, nil)
+        if let item = snapshots.items.last {
+            LSSharedFileListInsertItemURL(snapshots.fileList, item, nil, nil, url as CFURL, nil, nil)
+        }
         return true
     }
 
@@ -99,7 +101,7 @@ private extension LoginServiceKit {
     static func loginItemsListSnapshots() -> (fileList: LSSharedFileList, items: [LSSharedFileListItem])? {
         guard let sharedFileList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil) else { return nil }
         let fileList = sharedFileList.takeRetainedValue()
-        let loginItemsListSnapshot: NSArray = LSSharedFileListCopySnapshot(fileList, nil).takeRetainedValue()
+        let loginItemsListSnapshot = LSSharedFileListCopySnapshot(fileList, nil)?.takeRetainedValue()
         let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem]
         return (fileList, loginItems ?? [])
     }

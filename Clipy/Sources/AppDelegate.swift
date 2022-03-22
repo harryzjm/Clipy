@@ -18,6 +18,7 @@ import Magnet
 import Screeen
 import RxScreeen
 import RealmSwift
+import LetsMove
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {

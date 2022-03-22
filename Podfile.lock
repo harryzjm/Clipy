@@ -2,6 +2,7 @@ PODS:
   - BartyCrouch (4.7.0)
   - KeyHolder (4.1.0):
     - Magnet (~> 3.3.0)
+  - LetsMove (1.25)
   - Magnet (3.3.0):
     - Sauce (~> 2.2.0)
   - PINCache (3.0.3):
@@ -39,6 +40,7 @@ PODS:
 DEPENDENCIES:
   - BartyCrouch
   - KeyHolder
+  - LetsMove
   - PINCache
   - RealmSwift
   - RxCocoa
@@ -54,6 +56,7 @@ SPEC REPOS:
   trunk:
     - BartyCrouch
     - KeyHolder
+    - LetsMove
     - Magnet
     - PINCache
     - PINOperation
@@ -73,6 +76,7 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   BartyCrouch: 039aef8be77cba6f8139c559d8e8e9d2a117649a
   KeyHolder: 7fce073043392cddc3e3126f3f9bdaa5ecf1f19e
+  LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
   Magnet: a44a5a14eecc77433cbaad1431b78f7d20725bf2
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
@@ -89,6 +93,6 @@ SPEC CHECKSUMS:
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
 
-PODFILE CHECKSUM: 2c21a2b81debc1673772107472f37bdeb427ff96
+PODFILE CHECKSUM: 890f6dd007729a2b48315c8bc5eb73593e4a07da
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

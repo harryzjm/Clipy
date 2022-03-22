@@ -29,4 +29,7 @@ final class CPYClip: Object {
         return "dataHash"
     }
 
+    public override class func indexedProperties() -> [String] {
+        return ["updateTime"]
+    }
 }

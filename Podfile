@@ -14,6 +14,7 @@ target 'Clipy' do
   pod 'PINCache'
   pod 'KeyHolder'
 
+  pod 'LetsMove'
   pod 'SwiftHEXColors'
 
   # Utility
