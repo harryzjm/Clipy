@@ -106,11 +106,11 @@ extension ClipService {
         save(with: data)
     }
 
-    func create(with image: NSImage) {
+    func create(with title: String, image: NSImage) {
         lock.lock(); defer { lock.unlock() }
 
         // Create only image data
-        let data = CPYClipData(image: image)
+        let data = CPYClipData(title: title, image: image)
         save(with: data)
     }
 
@@ -127,7 +127,7 @@ extension ClipService {
 
         // Overwrite same history
         let isOverwriteHistory = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.overwriteSameHistory)
-        let savedHash = (isOverwriteHistory) ? data.hash : Int(arc4random() % 1000000)
+        let savedHash = (isOverwriteHistory) ? data.identifier : "\(arc4random_uniform(.max))"
 
         // Saved time and path
         let unixTime = Int(Date().timeIntervalSince1970)
@@ -136,7 +136,7 @@ extension ClipService {
         let clip = CPYClip()
         clip.dataPath = savedPath
         clip.title = data.stringValue?[0...10000] ?? ""
-        clip.dataHash = "\(savedHash)"
+        clip.dataHash = savedHash
         clip.updateTime = unixTime
         clip.primaryType = data.primaryType?.rawValue ?? ""
 
@@ -155,7 +155,6 @@ extension ClipService {
             let dispatchRealm = try! Realm()
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
                 try? JSONEncoder().encode(data).write(to: .init(fileURLWithPath: savedPath))
-//                data.archive(toFilePath: savedPath)
                 dispatchRealm.transaction {
                     dispatchRealm.add(clip, update: .all)
                 }

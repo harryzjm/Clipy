@@ -27,6 +27,8 @@ class FilterMenu: NSMenu {
 
     let config: FilterMenuConfig
     let item: TextFieldMenuItem
+    
+    let homePath = FileManager.default.homeDirectoryForCurrentUser.absoluteString.replace(pattern: "^file://", withTemplate: "")
 
     override init(title: String) {
         config = FilterMenuConfig.current()
@@ -155,10 +157,13 @@ fileprivate extension FilterMenu {
 
         let title = { () -> String in
             switch primaryPboardType {
-//                case .tiff: return "(Image)"
+//            case .tiff: return "(Image)"
 //                case .pdf: return "(PDF)"
-                case .fileURL: return "[File] " + clip.title.replace(pattern: "file://", withTemplate: "")
-                default: return clip.title
+            case .fileURL:
+                return "[File] " + clip.title
+                    .replace(pattern: "^file://", withTemplate: "")
+                    .replace(pattern: "^\(homePath)", withTemplate: "~/")
+            default: return clip.title
             }
         }()
         let attributedTitle = title.trim(with: prefix, keyWord: filter, maxWidth: config.maxWidthOfMenuItem, fontSize: config.menuFontSize)
@@ -170,14 +175,12 @@ fileprivate extension FilterMenu {
             let maxLengthOfToolTip = AppEnvironment.current.defaults.integer(forKey: Preferences.Menu.maxLengthOfToolTip)
             menuItem.toolTip = (originTitle as NSString).substring(to: min(originTitle.count, maxLengthOfToolTip))
         }
-
+        
         let isImage = !clip.isColorCode && config.isShowImage
         let isColor = clip.isColorCode && config.isShowColorCode
         if clip.thumbnailPath.isNotEmpty && (isImage || isColor) {
             PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
-                DispatchQueue.main.async {
-                    menuItem?.image = object as? NSImage
-                }
+                menuItem?.image = object as? NSImage
             }
         }
 

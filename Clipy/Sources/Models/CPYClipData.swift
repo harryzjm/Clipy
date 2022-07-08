@@ -12,23 +12,11 @@
 
 import Cocoa
 import SwiftHEXColors
+import CommonCrypto
 
 final class CPYClipData: NSObject, Codable {
-
-    // MARK: - Properties
-    //    fileprivate let kTypesKey       = "types"
-    //    fileprivate let kStringValueKey = "stringValue"
-    //    fileprivate let kRTFDataKey     = "RTFData"
-    //    fileprivate let kPDFKey         = "PDF"
-    //    fileprivate let kFileNamesKey   = "filenames"
-    //    fileprivate let kURLsKey        = "URL"
-    //    fileprivate let kImageKey       = "image"
-
-    //    var types          = [NSPasteboard.PasteboardType]()
     var content = [TypeContent]()
 
-    //    var fileNames      = [String]()
-    //    var URLs           = [String]()
     var stringValue: String? {
         return content.lazy.compactMap { type in
             switch type {
@@ -44,63 +32,46 @@ final class CPYClipData: NSObject, Codable {
         }.first
     }
 
-    //    init(from decoder: Decoder) throws {
-    //        let container = try decoder.singleValueContainer()
-    //        try super.init(string: container.decode(String.self))
-    //    }
-
-    //    override var hash: Int {
-    //        var hash = types.map { $0.rawValue }.joined().hash
-    //        if let image = self.image, let imageData = image.tiffRepresentation {
-    //            hash ^= imageData.count
-    //        } else if let image = self.image {
-    //            hash ^= image.hash
-    //        }
-    //        if !fileNames.isEmpty {
-    //            fileNames.forEach { hash ^= $0.hash }
-    //        } else if !self.URLs.isEmpty {
-    //            URLs.forEach { hash ^= $0.hash }
-    //        } else if let pdf = PDF {
-    //            hash ^= pdf.count
-    //        } else if !stringValue.isEmpty {
-    //            hash ^= stringValue.hash
-    //        }
-    ////        if let data = RTFData {
-    ////            hash ^= data.count
-    ////        }
-    //        return hash
-    //    }
+    var identifier: String {
+        content.reduce("") { $0 + $1.identifier }.md5
+    }
+    
     var primaryType: NSPasteboard.PasteboardType? {
         return content.first?.toPasteboardType
     }
     var isOnlyStringType: Bool {
+        if content.count == 1, case .string = content.first {
+            return true
+        }
         return false
-        //        return types == [.string]
     }
     var thumbnailImage: NSImage? {
-        return nil
-        //        let defaults = UserDefaults.standard
-        //        let width = defaults.integer(forKey: Preferences.Menu.thumbnailWidth)
-        //        let height = defaults.integer(forKey: Preferences.Menu.thumbnailHeight)
-        //
-        //        if let image = image, fileNames.isEmpty {
-        //            // Image only data
-        //            return image.resizeImage(CGFloat(width), CGFloat(height))
-        //        } else if let fileName = fileNames.first, let path = fileName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), let url = URL(string: path) {
-        //            //  In the case of the local file correct data is not included in the image variable
-        //            //  Judge the image from the path and create a thumbnail
-        //            switch url.pathExtension.lowercased() {
-        //                case "jpg", "jpeg", "png", "bmp", "tiff":
-        //                    return NSImage(contentsOfFile: fileName)?.resizeImage(CGFloat(width), CGFloat(height))
-        //                default: break
-        //            }
-        //        }
-        //        return nil
+        let defaults = UserDefaults.standard
+        let width = defaults.integer(forKey: Preferences.Menu.thumbnailWidth)
+        let height = defaults.integer(forKey: Preferences.Menu.thumbnailHeight)
+        
+        let image: NSImage? = content.compactMap { value in
+            switch value {
+            case .png(let image):
+                return image.image
+            case .tiff(let image):
+                return image.image
+            case .fileURL(let url):
+                if url.firstSubstring(pattern: "(jpg|jpeg|png|bmp|tiff)$").isNotEmpty {
+                    lError(URL.init(fileURLWithPath:url), NSImage(byReferencing: .init(fileURLWithPath: url)))
+                    return NSImage(contentsOf: .init(fileURLWithPath: url))
+                }
+                return nil
+            default: return nil
+            }
+        }.first
+        return image?.resizeImage(CGFloat(width), CGFloat(height))
     }
     var colorCodeImage: NSImage? {
-        return nil
-        //        guard let color = NSColor(hexString: stringValue) else { return nil }
-        //        return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
+        guard
+            let hex = stringValue?.firstSubstring(pattern: "(?<=0x)[0-9a-f]{6}\\b|\\b[0-9a-f]{6}\\b", options:.caseInsensitive),
+            let color = NSColor(hexString: hex) else { return nil }
+        return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
     }
 
     static var availableTypes: [NSPasteboard.PasteboardType] {
@@ -137,9 +108,9 @@ final class CPYClipData: NSObject, Codable {
         }
     }
 
-    init(image: NSImage) {
-        //        self.types = [.tiff]
-        //        self.image = image
+    init(title: String, image: NSImage) {
+        super.init()
+        self.content = [.string(title), .tiff(.init(image: image))]
     }
 }
 
@@ -178,6 +149,7 @@ extension CPYClipData {
                     guard let image = pasteboard.readObjects(forClasses: [NSImage.self], options: nil)?.first as? NSImage else { return nil }
                     self = .tiff(.init(image: image))
                 default:
+                    lWarning("unkonwn type:", type)
                     return nil
             }
         }
@@ -216,6 +188,27 @@ extension CPYClipData {
                 case .tiff: return .tiff
             }
         }
+        
+        var identifier: String {
+            switch self {
+            case .string(let value):
+                return "string" + value.md5
+            case .fileURL(let value):
+                return "fileURL" + value
+            case .URL(let value):
+                return "URL" + value
+            case .rtf(let value):
+                return "rtf" + value.md5
+            case .rtfd(let value):
+                return "rtfd" + value.md5
+            case .tiff(let value):
+                return "tiff" + (value.content?.md5 ?? "")
+            case .png(let value):
+                return "png" + (value.content?.md5 ?? "")
+            case .pdf(let value):
+                return "png" + value.md5
+            }
+        }
     }
 }
 
@@ -233,5 +226,33 @@ struct Image: Codable {
     var image: NSImage? {
         get { return content.flatMap(NSImage.init(data:)) }
         set { content = newValue?.tiffRepresentation(using: .jpeg, factor: 7) }
+    }
+}
+
+extension Data {
+    var md5: String {
+        var digest = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
+        _ = withUnsafeBytes { (bytes: UnsafeRawBufferPointer) in
+            return CC_MD5(bytes.baseAddress, CC_LONG(count), &digest)
+        }
+        return digest.map { String(format: "%02x", $0) }.joined()
+    }
+}
+
+extension String {
+    var md5: String {
+        let count = Int(CC_MD5_DIGEST_LENGTH)
+        var digest = [UInt8](repeating: 0, count: count)
+        guard let data = data(using: .utf8) else { return "" }
+        CC_MD5((data as NSData).bytes, CC_LONG(data.count), &digest)
+        return string(from: digest, length: count)
+    }
+    
+    private func string(from bytes: [UInt8], length: Int) -> String {
+        var digestHex = ""
+        for index in 0 ..< length {
+            digestHex += String(format: "%02x", bytes[index])
+        }
+        return digestHex.lowercased()
     }
 }

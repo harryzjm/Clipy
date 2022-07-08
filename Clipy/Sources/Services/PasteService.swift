@@ -58,36 +58,38 @@ extension PasteService {
     func paste(with clip: CPYClip) {
         guard !clip.isInvalidated else { return }
 
-        guard
-            let data = try? Data(contentsOf: .init(fileURLWithPath: clip.dataPath)),
-            let clipData = data.unarchive() as? CPYClipData
-        else { return }
+        do {
+            let data = try Data(contentsOf: .init(fileURLWithPath: clip.dataPath))
+            let clipData = try JSONDecoder().decode(CPYClipData.self, from: data)
 
-        // Handling modifier actions
-        let isPastePlainText = self.isPastePlainText
-        let isPasteAndDeleteHistory = self.isPasteAndDeleteHistory
-        let isDeleteHistory = self.isDeleteHistory
-        guard isPastePlainText || isPasteAndDeleteHistory || isDeleteHistory else {
-            copyToPasteboard(with: clip)
-            paste()
-            return
-        }
+            // Handling modifier actions
+            let isPastePlainText = self.isPastePlainText
+            let isPasteAndDeleteHistory = self.isPasteAndDeleteHistory
+            let isDeleteHistory = self.isDeleteHistory
+            guard isPastePlainText || isPasteAndDeleteHistory || isDeleteHistory else {
+                copyToPasteboard(with: clip)
+                paste()
+                return
+            }
 
-        // Increment change count for don't copy paste item
-        if isPasteAndDeleteHistory {
-            AppEnvironment.current.clipService.incrementChangeCount()
-        }
-        // Paste history
-        if isPastePlainText {
-            copyToPasteboard(with: clipData.stringValue)
-            paste()
-        } else if isPasteAndDeleteHistory {
-            copyToPasteboard(with: clip)
-            paste()
-        }
-        // Delete clip
-        if isDeleteHistory || isPasteAndDeleteHistory {
-            AppEnvironment.current.clipService.delete(with: clip)
+            // Increment change count for don't copy paste item
+            if isPasteAndDeleteHistory {
+                AppEnvironment.current.clipService.incrementChangeCount()
+            }
+            // Paste history
+            if isPastePlainText {
+                copyToPasteboard(with: clipData.stringValue)
+                paste()
+            } else if isPasteAndDeleteHistory {
+                copyToPasteboard(with: clip)
+                paste()
+            }
+            // Delete clip
+            if isDeleteHistory || isPasteAndDeleteHistory {
+                AppEnvironment.current.clipService.delete(with: clip)
+            }
+        } catch {
+            lError(error)
         }
     }
 
@@ -103,21 +105,22 @@ extension PasteService {
     func copyToPasteboard(with clip: CPYClip) {
         lock.lock(); defer { lock.unlock() }
 
-        guard
-            let data = try? Data(contentsOf: .init(fileURLWithPath: clip.dataPath)),
-            let clipData = data.unarchive() as? CPYClipData
-        else { return }
+        do {
+            let data = try Data(contentsOf: .init(fileURLWithPath: clip.dataPath))
+            let clipData = try JSONDecoder().decode(CPYClipData.self, from: data)
+            if isPastePlainText {
+                copyToPasteboard(with: clipData.stringValue)
+                return
+            }
 
-        if isPastePlainText {
-            copyToPasteboard(with: clipData.stringValue)
-            return
-        }
-
-        let pasteboard = NSPasteboard.general
-        let types = clipData.content.compactMap(\.toPasteboardType)
-        pasteboard.declareTypes(types, owner: nil)
-        clipData.content.forEach { type in
-            type.recover(to: pasteboard)
+            let pasteboard = NSPasteboard.general
+            let types = clipData.content.compactMap(\.toPasteboardType)
+            pasteboard.declareTypes(types, owner: nil)
+            clipData.content.forEach { type in
+                type.recover(to: pasteboard)
+            }
+        } catch {
+            lError(error)
         }
     }
 }

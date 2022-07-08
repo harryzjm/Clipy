@@ -215,7 +215,7 @@ private extension AppDelegate {
         // Observe Screenshot image
         screenshotObserver.rx.addedImage
             .subscribe(onNext: { image in
-                AppEnvironment.current.clipService.create(with: image)
+                AppEnvironment.current.clipService.create(with: "Screenshot", image: image)
             })
             .disposed(by: disposeBag)
     }
