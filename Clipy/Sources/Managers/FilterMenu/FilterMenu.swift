@@ -56,8 +56,8 @@ class FilterMenu: NSMenu {
                 return self.manageItems(filterRes, with: filter)
             }
             .filterNil()
-            .catchErrorJustReturn([])
-            .observeOn(ConcurrentMainScheduler.instance)
+            .catchAndReturn([])
+            .observe(on: ConcurrentMainScheduler.instance)
             .subscribe { [weak self]event in
                 guard let self = self, case .next(var new) = event else { return }
                 self.highlight(menuItem: nil)
@@ -152,17 +152,21 @@ fileprivate extension FilterMenu {
         }()
 
         let primaryPboardType = NSPasteboard.PasteboardType(rawValue: clip.primaryType)
-        let originTitle = clip.title
         let prefix = inline && config.isMarkWithNumber && keyEquivalent.isNotEmpty ? keyEquivalent:""
+        var originTitle = clip.title
 
         let title = { () -> String in
             switch primaryPboardType {
-//            case .tiff: return "(Image)"
-//                case .pdf: return "(PDF)"
+            case .png: return "[Image] " + clip.title
+            case .tiff: return "[Image] " + clip.title
+            case .pdf: return "[PDF] " + clip.title
             case .fileURL:
-                return "[File] " + clip.title
+                originTitle = originTitle.removingPercentEncoding ?? originTitle
+                let str = clip.title
                     .replace(pattern: "^file://", withTemplate: "")
                     .replace(pattern: "^\(homePath)", withTemplate: "~/")
+                    .removingPercentEncoding ?? ""
+                return "[File] " +  str
             default: return clip.title
             }
         }()

@@ -12,67 +12,49 @@
 
 import Foundation
 import Cocoa
+import WebKit
 
 extension NSImage {
-    func resizeImage(_ width: CGFloat, _ height: CGFloat) -> NSImage? {
-
-        let representations = self.representations
-        var bitmapRep: NSBitmapImageRep?
-
-        for rep in representations {
-            if let rep = rep as? NSBitmapImageRep {
-                bitmapRep = rep
-                break
+    enum CropType {
+        case head
+        case center
+        case tail
+    }
+    
+    func cropToSquare(with length: CGFloat, and type: CropType) -> NSImage? {
+        let rect = { length -> CGRect in
+            switch type {
+            case .head: return .init(x: 0, y: 0, width: length, height: length)
+            case .center: return .init(x: (size.width - length) / 2, y: (size.height - length) / 2, width: length, height: length)
+            case .tail: return .init(x: size.width - length, y: size.height - length, width: length, height: length)
             }
-        }
+        }(min(size.width, size.height))
+        return crop(to: rect).resize(withSize: .init(width: length, height: length))
+    }
+    
+}
 
-        if bitmapRep == nil {
+fileprivate extension NSImage {
+    func crop(to rect: CGRect) -> NSImage {
+        var imageRect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        guard let imageRef = self.cgImage(forProposedRect: &imageRect, context: nil, hints: nil) else {
+            return NSImage(size: rect.size)
+        }
+        guard let crop = imageRef.cropping(to: rect) else {
+            return NSImage(size: rect.size)
+        }
+        return NSImage(cgImage: crop, size: NSZeroSize)
+    }
+    
+    func resize(withSize targetSize: NSSize) -> NSImage? {
+        let frame = NSRect(x: 0, y: 0, width: targetSize.width, height: targetSize.height)
+        guard let representation = self.bestRepresentation(for: frame, context: nil, hints: nil) else {
             return nil
         }
-
-        let origWidth = CGFloat(bitmapRep!.pixelsWide)
-        let origHeight = CGFloat(bitmapRep!.pixelsHigh)
-
-        let aspect = CGFloat(origWidth) / CGFloat(origHeight)
-
-        let targetWidth = width
-        let targetHeight = height
-        var newWidth: CGFloat
-        var newHeight: CGFloat
-
-        if aspect >= 1 {
-            newWidth = targetWidth
-            newHeight = newWidth / aspect
-
-            if targetHeight < newHeight {
-                newHeight = targetHeight
-                newWidth = targetHeight * aspect
-            }
-        } else {
-            newHeight = targetHeight
-            newWidth = targetHeight * aspect
-
-            if targetWidth < newWidth {
-                newWidth = targetWidth
-                newHeight = targetWidth / aspect
-            }
-        }
-
-        if origWidth < newWidth {
-            newWidth = origWidth
-        }
-        if origHeight < newHeight {
-            newHeight = origHeight
-        }
-
-        let newImageRep = self.bestRepresentation(for: NSRect(x: 0, y: 0, width: newWidth, height: newHeight), context: nil, hints: nil)
-        if newImageRep == nil {
-            return nil
-        }
-
-        let thumbnail = NSImage(size: NSSize(width: newWidth, height: newHeight))
-        thumbnail.addRepresentation(newImageRep!)
-
-        return thumbnail
+        let image = NSImage(size: targetSize, flipped: false, drawingHandler: { (_) -> Bool in
+            return representation.draw(in: frame)
+        })
+        
+        return image
     }
 }

@@ -44,13 +44,12 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showAlertBeforeClearHistory)
 
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showToolTipOnMenuItem)
-        defaultValues.updateValue(NSNumber(value: 200), forKey: Preferences.Menu.maxLengthOfToolTip)
+        defaultValues.updateValue(NSNumber(value: 400), forKey: Preferences.Menu.maxLengthOfToolTip)
 
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showColorPreviewInTheMenu)
 
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showImageInTheMenu)
-        defaultValues.updateValue(NSNumber(value: 100), forKey: Preferences.Menu.thumbnailWidth)
-        defaultValues.updateValue(NSNumber(value: 32), forKey: Preferences.Menu.thumbnailHeight)
+        defaultValues.updateValue(NSNumber(value: 32), forKey: Preferences.Menu.thumbnailLength)
 
         /* Updates */
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Update.enableAutomaticCheck)

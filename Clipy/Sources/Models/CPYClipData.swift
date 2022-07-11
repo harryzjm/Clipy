@@ -47,8 +47,7 @@ final class CPYClipData: NSObject, Codable {
     }
     var thumbnailImage: NSImage? {
         let defaults = UserDefaults.standard
-        let width = defaults.integer(forKey: Preferences.Menu.thumbnailWidth)
-        let height = defaults.integer(forKey: Preferences.Menu.thumbnailHeight)
+        let length = defaults.integer(forKey: Preferences.Menu.thumbnailLength)
         
         let image: NSImage? = content.compactMap { value in
             switch value {
@@ -57,19 +56,18 @@ final class CPYClipData: NSObject, Codable {
             case .tiff(let image):
                 return image.image
             case .fileURL(let url):
-                if url.firstSubstring(pattern: "(jpg|jpeg|png|bmp|tiff)$").isNotEmpty {
-                    lError(URL.init(fileURLWithPath:url), NSImage(byReferencing: .init(fileURLWithPath: url)))
-                    return NSImage(contentsOf: .init(fileURLWithPath: url))
-                }
-                return nil
+                guard url.firstSubstring(pattern: "(jpg|jpeg|png|bmp|tiff)$").isNotEmpty else { return nil }
+                var imagePath = url.replace(pattern: "^file://", withTemplate: "")
+                imagePath = imagePath.removingPercentEncoding ?? imagePath
+                return NSImage.init(contentsOfFile: imagePath)
             default: return nil
             }
         }.first
-        return image?.resizeImage(CGFloat(width), CGFloat(height))
+        return image?.cropToSquare(with: CGFloat(length), and: .center)
     }
     var colorCodeImage: NSImage? {
         guard
-            let hex = stringValue?.firstSubstring(pattern: "(?<=0x)[0-9a-f]{6}\\b|\\b[0-9a-f]{6}\\b", options:.caseInsensitive),
+            let hex = stringValue?.firstSubstring(pattern: "(?<=0x)[0-9a-f]{6}\\b|(?<=#)[0-9a-f]{6}\\b|\\b[0-9a-f]{6}\\b", options:.caseInsensitive),
             let color = NSColor(hexString: hex) else { return nil }
         return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
     }
