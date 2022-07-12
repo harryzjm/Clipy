@@ -17,6 +17,7 @@ struct Preferences {
         static let loginItem = "loginItem"
         static let inputPasteCommand = "kCPYPrefInputPasteCommandKey"
 
+        static let maxShowHistorySize = "kCPYPrefMaxShowHistorySizeKey"
         static let maxHistorySize = "kCPYPrefMaxHistorySizeKey"
         static let reorderClipsAfterPasting = "kCPYPrefReorderClipsAfterPasting"
 

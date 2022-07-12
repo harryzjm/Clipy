@@ -42,7 +42,7 @@ class FilterMenu: NSMenu {
         let clipResults = realm
             .objects(CPYClip.self)
             .sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
-
+    
         filterRelay
             .distinctUntilChanged()
             .map { [weak self]filter -> [NSMenuItem]? in
@@ -95,7 +95,7 @@ class FilterMenu: NSMenu {
 fileprivate extension FilterMenu {
     func manageItems(_ clipResults: Results<CPYClip>, with filter: String) -> [NSMenuItem] {
         var items: [NSMenuItem] = []
-        let totalCount = min(clipResults.count, config.maxHistory)
+        let totalCount = min(clipResults.count, config.maxShowHistory)
         let remain = max(totalCount - config.placeInLine, 0)
         items += clipResults[0..<totalCount - remain]
             .enumerated()

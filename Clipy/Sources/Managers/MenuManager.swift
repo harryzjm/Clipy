@@ -136,6 +136,7 @@ private extension MenuManager {
         let defaults = AppEnvironment.current.defaults
         Observable.merge(
             defaults.rx.observe(Int.self, Preferences.General.reorderClipsAfterPasting, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
+            defaults.rx.observe(Int.self, Preferences.General.maxShowHistorySize, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Int.self, Preferences.General.maxHistorySize, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Int.self, Preferences.General.maxWidthOfMenuItem, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Bool.self, Preferences.Menu.showIconInTheMenu, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
