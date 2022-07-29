@@ -36,6 +36,10 @@ extension String {
 
         return String(self[startIndex..<endIndex])
     }
+    
+    var trim: String {
+         return trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 
     func searchRange(of filter: String) -> Range<String.Index>? {
         var pattern: String?

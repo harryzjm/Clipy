@@ -30,9 +30,6 @@ struct Preferences {
         static let numberOfItemsPlaceInline = "kCPYPrefNumberOfItemsPlaceInlineKey"
         static let numberOfItemsPlaceInsideFolder = "kCPYPrefNumberOfItemsPlaceInsideFolderKey"
 
-        static let copySameHistory = "kCPYPrefCopySameHistroy"
-        static let overwriteSameHistory = "kCPYPrefOverwriteSameHistroy"
-
         static let showIconInTheMenu = "kCPYPrefShowIconInTheMenuKey"
 
         static let addNumericKeyEquivalents = "addNumericKeyEquivalents"

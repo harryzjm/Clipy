@@ -206,8 +206,7 @@ fileprivate extension String {
             .font: font
         ]
 
-        let trim = replace(pattern: " *\n *", withTemplate: " ")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let trim = replace(pattern: "\\s+", withTemplate: " ").trim
 
         let prefixWidth = prefix.sizeOf(attributes: attributes).width
         let att = NSMutableAttributedString(string: prefix, attributes: attributes)

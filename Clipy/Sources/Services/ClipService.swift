@@ -24,9 +24,8 @@ final class ClipService {
     fileprivate var cachedChangeCount = BehaviorRelay<Int>(value: 0)
     fileprivate var storeTypes = [String: NSNumber]()
     fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .userInteractive)
-    fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
     fileprivate var disposeBag = DisposeBag()
-
+    
     // MARK: - Clips
     func startMonitoring() {
         disposeBag = DisposeBag()
@@ -87,8 +86,6 @@ final class ClipService {
 // MARK: - Create Clip
 extension ClipService {
     fileprivate func create() {
-        lock.lock(); defer { lock.unlock() }
-
         // Store types
         if !storeTypes.values.contains(NSNumber(value: true)) { return }
         // Pasteboard types
@@ -107,56 +104,46 @@ extension ClipService {
     }
 
     func create(with title: String, image: NSImage) {
-        lock.lock(); defer { lock.unlock() }
-
         // Create only image data
         let data = CPYClipData(title: title, image: image)
         save(with: data)
     }
 
     fileprivate func save(with data: CPYClipData) {
-        let realm = try! Realm()
-        // Copy already copied history
-        let isCopySameHistory = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.copySameHistory)
-        if realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)") != nil, !isCopySameHistory { return }
-        // Don't save invalidated clip
-        if let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)"), clip.isInvalidated { return }
-
         // Don't save empty string history
-        if data.isOnlyStringType && data.stringValue.isEmpty { return }
-
-        // Overwrite same history
-        let isOverwriteHistory = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.overwriteSameHistory)
-        let savedHash = (isOverwriteHistory) ? data.identifier : "\(arc4random_uniform(.max))"
-
-        // Saved time and path
-        let unixTime = Int(Date().timeIntervalSince1970)
-        let savedPath = CPYUtilities.applicationSupportFolder() + "/\(NSUUID().uuidString).data"
-        // Create Realm object
-        let clip = CPYClip()
-        clip.dataPath = savedPath
-        clip.title = data.stringValue?[0...10000] ?? ""
-        clip.dataHash = savedHash
-        clip.updateTime = unixTime
-        clip.primaryType = data.primaryType?.rawValue ?? ""
-
-        DispatchQueue.main.async {
+        if !data.isValid { return }
+        
+        DispatchQueue.global(qos: .userInteractive).async {
+            // Saved time and path
+            let unixTime = Int(Date().timeIntervalSince1970)
+            let savedPath = CPYUtilities.applicationSupportFolder() + "/\(NSUUID().uuidString).data"
+            // Create Realm object
+            let clip = CPYClip()
+            clip.dataHash = data.identifier
+            clip.dataPath = savedPath
+            clip.title = data.stringValue?[0...10000] ?? ""
+            clip.updateTime = unixTime
+            clip.primaryType = data.primaryType?.rawValue ?? ""
+            
             // Save thumbnail image
             if let thumbnailImage = data.thumbnailImage {
                 PINCache.shared.setObjectAsync(thumbnailImage, forKey: "\(unixTime)", completion: nil)
                 clip.thumbnailPath = "\(unixTime)"
-            }
-            if let colorCodeImage = data.colorCodeImage {
+            } else if let colorCodeImage = data.colorCodeImage {
                 PINCache.shared.setObjectAsync(colorCodeImage, forKey: "\(unixTime)", completion: nil)
                 clip.thumbnailPath = "\(unixTime)"
                 clip.isColorCode = true
             }
-            // Save Realm and .data file
-            let dispatchRealm = try! Realm()
+            
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
                 try? JSONEncoder().encode(data).write(to: .init(fileURLWithPath: savedPath))
-                dispatchRealm.transaction {
-                    dispatchRealm.add(clip, update: .all)
+                
+                DispatchQueue.main.async {
+                    // Save Realm and .data file
+                    let dispatchRealm = try! Realm()
+                    dispatchRealm.transaction {
+                        dispatchRealm.add(clip, update: .all)
+                    }
                 }
             }
         }

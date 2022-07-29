@@ -170,9 +170,11 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: true)
 
         // Show Login Item
+        #if RELEASE
         if !AppEnvironment.current.defaults.bool(forKey: Preferences.General.loginItem) && !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
             promptToAddLoginItems()
         }
+        #endif
 
         // Binding Events
         bind()

@@ -34,9 +34,6 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(value: 10), forKey: Preferences.Menu.numberOfItemsPlaceInline)
         defaultValues.updateValue(NSNumber(value: 15), forKey: Preferences.Menu.numberOfItemsPlaceInsideFolder)
 
-        defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.copySameHistory)
-        defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.overwriteSameHistory)
-
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showIconInTheMenu)
 
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.addNumericKeyEquivalents)
@@ -45,7 +42,7 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showAlertBeforeClearHistory)
 
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showToolTipOnMenuItem)
-        defaultValues.updateValue(NSNumber(value: 400), forKey: Preferences.Menu.maxLengthOfToolTip)
+        defaultValues.updateValue(NSNumber(value: 500), forKey: Preferences.Menu.maxLengthOfToolTip)
 
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showColorPreviewInTheMenu)
 
@@ -83,6 +80,7 @@ final class CPYUtilities {
             do {
                 try fileManager.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
             } catch {
+                lError(error)
                 return false
             }
         }

@@ -39,12 +39,15 @@ final class CPYClipData: NSObject, Codable {
     var primaryType: NSPasteboard.PasteboardType? {
         return content.first?.toPasteboardType
     }
-    var isOnlyStringType: Bool {
-        if content.count == 1, case .string = content.first {
-            return true
+    
+    var isValid: Bool {
+        if content.count == 1, case .string(let value) = content.first {
+            return value.isNotEmpty
         }
-        return false
+        
+        return true
     }
+    
     var thumbnailImage: NSImage? {
         let defaults = UserDefaults.standard
         let length = defaults.integer(forKey: Preferences.Menu.thumbnailLength)
@@ -110,6 +113,11 @@ final class CPYClipData: NSObject, Codable {
         super.init()
         self.content = [.string(title), .tiff(.init(image: image))]
     }
+    
+    init(title: String) {
+        super.init()
+        self.content = [.string(title)]
+    }
 }
 
 extension CPYClipData {
@@ -126,13 +134,13 @@ extension CPYClipData {
         init?(pasteboard: NSPasteboard, type: NSPasteboard.PasteboardType) {
             switch type {
                 case .string:
-                    guard let str = pasteboard.string(forType: .string) else { return nil }
+                    guard let str = pasteboard.string(forType: .string)?.trim, str.isNotEmpty else { return nil }
                     self = .string(str)
                 case .fileURL:
-                    guard let str = pasteboard.string(forType: .fileURL) else { return nil }
+                guard let str = pasteboard.string(forType: .fileURL)?.trim, str.isNotEmpty else { return nil }
                     self = .fileURL(str)
                 case .URL:
-                    guard let str = pasteboard.string(forType: .URL) else { return nil }
+                    guard let str = pasteboard.string(forType: .URL)?.trim, str.isNotEmpty else { return nil }
                     self = .URL(str)
                 case .rtf:
                     guard let data = pasteboard.data(forType: .rtf) else { return nil }
