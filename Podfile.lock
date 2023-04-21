@@ -12,12 +12,12 @@ PODS:
     - PINCache/Core
   - PINCache/Core (3.0.3):
     - PINOperation (~> 1.2.1)
-  - PINOperation (1.2.1)
-  - Realm (10.28.2):
-    - Realm/Headers (= 10.28.2)
-  - Realm/Headers (10.28.2)
-  - RealmSwift (10.28.2):
-    - Realm (= 10.28.2)
+  - PINOperation (1.2.2)
+  - Realm (10.38.0):
+    - Realm/Headers (= 10.38.0)
+  - Realm/Headers (10.38.0)
+  - RealmSwift (10.38.0):
+    - Realm (= 10.38.0)
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
@@ -33,9 +33,9 @@ PODS:
   - RxSwift (6.5.0)
   - Sauce (2.2.0)
   - Screeen (2.0.1)
-  - SwiftGen (6.5.1)
+  - SwiftGen (6.6.2)
   - SwiftHEXColors (1.4.1)
-  - SwiftLint (0.47.1)
+  - SwiftLint (0.51.0)
 
 DEPENDENCIES:
   - BartyCrouch
@@ -79,9 +79,9 @@ SPEC CHECKSUMS:
   LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
   Magnet: a44a5a14eecc77433cbaad1431b78f7d20725bf2
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
-  PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
-  Realm: e617c54ad0f566b3d0f6a2abae7010de05f252ac
-  RealmSwift: 8a516a8759d80d52ebcec1ff1076f5f5159f98b2
+  PINOperation: daa34d4aa1d8449089be7d405b9d974abc4724c6
+  Realm: 5902885dd1d5e71b0b020830caab937ecdf5bf07
+  RealmSwift: 0fc037d6c32c7c4fc9362892380f380114ecdcf0
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
   RxOptional: 3664964c96b69dd20c9cf78bdfe546615e26eca8
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
@@ -89,10 +89,10 @@ SPEC CHECKSUMS:
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   Sauce: 3ade51738563f86b08888cf4b91ae5943012088b
   Screeen: e5c570d3df139b8d5d0e1ffd41094204787d9f1a
-  SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
+  SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
-  SwiftLint: f80f1be7fa96d30e0aa68e58d45d4ea1ccaac519
+  SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
 
-PODFILE CHECKSUM: 890f6dd007729a2b48315c8bc5eb73593e4a07da
+PODFILE CHECKSUM: d59288c8dd57379ceb5bb8ef7107fde6806e0a04
 
 COCOAPODS: 1.12.0

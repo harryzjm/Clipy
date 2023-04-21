@@ -26,8 +26,10 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      version=config.build_settings['MACOSX_DEPLOYMENT_TARGET'].split(".")
-      if version.first.to_f < 11
+      version = config.build_settings['MACOSX_DEPLOYMENT_TARGET']
+      if version.nil?
+        config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '11.0'
+      elsif version.split(".").first.to_f < 11
         config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '11.0'
       end
     end
