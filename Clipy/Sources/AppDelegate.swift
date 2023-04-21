@@ -19,6 +19,7 @@ import Screeen
 import RxScreeen
 import RealmSwift
 import LetsMove
+import LaunchAtLogin
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {
@@ -146,10 +147,14 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     private func toggleAddingToLoginItems(_ isEnable: Bool) {
-        let appPath = Bundle.main.bundlePath
-        LoginServiceKit.removeLoginItems(at: appPath)
-        guard isEnable else { return }
-        LoginServiceKit.addLoginItems(at: appPath)
+        if #available(macOS 10.13, *) {
+            LaunchAtLogin.isEnabled = isEnable
+        } else {
+            let appPath = Bundle.main.bundlePath
+            LoginServiceKit.removeLoginItems(at: appPath)
+            guard isEnable else { return }
+            LoginServiceKit.addLoginItems(at: appPath)
+        }
     }
 
     private func reflectLoginItemState() {
