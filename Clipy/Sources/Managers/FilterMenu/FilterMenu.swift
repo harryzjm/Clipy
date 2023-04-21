@@ -27,7 +27,7 @@ class FilterMenu: NSMenu {
 
     let config: FilterMenuConfig
     let item: TextFieldMenuItem
-    
+
     let homePath = FileManager.default.homeDirectoryForCurrentUser.absoluteString.replace(pattern: "^file://", withTemplate: "")
 
     override init(title: String) {
@@ -42,7 +42,7 @@ class FilterMenu: NSMenu {
         let clipResults = realm
             .objects(CPYClip.self)
             .sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
-    
+
         filterRelay
             .distinctUntilChanged()
             .map { [weak self]filter -> [NSMenuItem]? in
@@ -152,7 +152,7 @@ fileprivate extension FilterMenu {
         }()
 
         let primaryPboardType = NSPasteboard.PasteboardType(rawValue: clip.primaryType)
-        let prefix = inline && config.isMarkWithNumber && keyEquivalent.isNotEmpty ? keyEquivalent:""
+        let prefix = inline && config.isMarkWithNumber && keyEquivalent.isNotEmpty ? keyEquivalent : ""
         var originTitle = clip.title
 
         let title = { () -> String in
@@ -166,7 +166,7 @@ fileprivate extension FilterMenu {
                     .replace(pattern: "^file://", withTemplate: "")
                     .replace(pattern: "^\(homePath)", withTemplate: "~/")
                     .removingPercentEncoding ?? ""
-                return "[File] " +  str
+                return "[File] " + str
             default: return clip.title
             }
         }()
@@ -179,7 +179,7 @@ fileprivate extension FilterMenu {
             let maxLengthOfToolTip = AppEnvironment.current.defaults.integer(forKey: Preferences.Menu.maxLengthOfToolTip)
             menuItem.toolTip = (originTitle as NSString).substring(to: min(originTitle.count, maxLengthOfToolTip))
         }
-        
+
         let isImage = !clip.isColorCode && config.isShowImage
         let isColor = clip.isColorCode && config.isShowColorCode
         if clip.thumbnailPath.isNotEmpty && (isImage || isColor) {

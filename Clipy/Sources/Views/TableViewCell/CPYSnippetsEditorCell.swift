@@ -57,7 +57,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             newFrame.origin.x += 8
             newFrame.origin.y += 2
             newFrame.size.height -= 2
-            textColor = isHighlighted ? .labelColor:Asset.Color.clipy.color
+            textColor = isHighlighted ? .labelColor : Asset.Color.clipy.color
         case .none:
             newFrame = cellFrame
             newFrame.origin.y += 2

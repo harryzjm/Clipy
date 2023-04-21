@@ -36,7 +36,7 @@ extension String {
 
         return String(self[startIndex..<endIndex])
     }
-    
+
     var trim: String {
          return trimmingCharacters(in: .whitespacesAndNewlines)
     }

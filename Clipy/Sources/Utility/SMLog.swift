@@ -59,7 +59,7 @@ private struct SMLog {
             print(prefix, content, terminator: terminator)
         }
 
-        async ? queue.async(execute: handle):handle()
+        async ? queue.async(execute: handle) : handle()
     }
 
     func check(_ level: SMLogLevel) -> Bool {
@@ -67,7 +67,7 @@ private struct SMLog {
     }
 
     func manage(level: SMLogLevel, file: StaticString, function: StaticString, line: UInt, date: Date, isMain: Bool) -> String {
-        let isMainThread = isMain ? "1":"0"
+        let isMainThread = isMain ? "1" : "0"
         let fileName = file.description.components(separatedBy: "/").last?.components(separatedBy: ".").first ?? ""
         let functionName = function.description.firstSubstring(pattern: "[a-z]+", options: .caseInsensitive) ?? ""
         let minute = Calendar.autoupdatingCurrent.component(.minute, from: date)

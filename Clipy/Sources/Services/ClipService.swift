@@ -25,7 +25,7 @@ final class ClipService {
     fileprivate var storeTypes = [String: NSNumber]()
     fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .userInteractive)
     fileprivate var disposeBag = DisposeBag()
-    
+
     // MARK: - Clips
     func startMonitoring() {
         disposeBag = DisposeBag()
@@ -112,7 +112,7 @@ extension ClipService {
     fileprivate func save(with data: CPYClipData) {
         // Don't save empty string history
         if !data.isValid { return }
-        
+
         DispatchQueue.global(qos: .userInteractive).async {
             // Saved time and path
             let unixTime = Int(Date().timeIntervalSince1970)
@@ -124,7 +124,7 @@ extension ClipService {
             clip.title = data.stringValue?[0...10000] ?? ""
             clip.updateTime = unixTime
             clip.primaryType = data.primaryType?.rawValue ?? ""
-            
+
             // Save thumbnail image
             if let thumbnailImage = data.thumbnailImage {
                 PINCache.shared.setObjectAsync(thumbnailImage, forKey: "\(unixTime)", completion: nil)
@@ -134,10 +134,10 @@ extension ClipService {
                 clip.thumbnailPath = "\(unixTime)"
                 clip.isColorCode = true
             }
-            
+
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
                 try? JSONEncoder().encode(data).write(to: .init(fileURLWithPath: savedPath))
-                
+
                 DispatchQueue.main.async {
                     // Save Realm and .data file
                     let dispatchRealm = try! Realm()

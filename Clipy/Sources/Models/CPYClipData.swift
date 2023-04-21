@@ -35,23 +35,23 @@ final class CPYClipData: NSObject, Codable {
     var identifier: String {
         content.reduce("") { $0 + $1.identifier }.md5
     }
-    
+
     var primaryType: NSPasteboard.PasteboardType? {
         return content.first?.toPasteboardType
     }
-    
+
     var isValid: Bool {
         if content.count == 1, case .string(let value) = content.first {
             return value.isNotEmpty
         }
-        
+
         return true
     }
-    
+
     var thumbnailImage: NSImage? {
         let defaults = UserDefaults.standard
         let length = defaults.integer(forKey: Preferences.Menu.thumbnailLength)
-        
+
         let image: NSImage? = content.compactMap { value in
             switch value {
             case .png(let image):
@@ -62,7 +62,7 @@ final class CPYClipData: NSObject, Codable {
                 guard url.firstSubstring(pattern: "(jpg|jpeg|png|bmp|tiff)$").isNotEmpty else { return nil }
                 var imagePath = url.replace(pattern: "^file://", withTemplate: "")
                 imagePath = imagePath.removingPercentEncoding ?? imagePath
-                return NSImage.init(contentsOfFile: imagePath)
+                return NSImage(contentsOfFile: imagePath)
             default: return nil
             }
         }.first
@@ -70,7 +70,7 @@ final class CPYClipData: NSObject, Codable {
     }
     var colorCodeImage: NSImage? {
         guard
-            let hex = stringValue?.firstSubstring(pattern: "(?<=0x)[0-9a-f]{6}\\b|(?<=#)[0-9a-f]{6}\\b|\\b[0-9a-f]{6}\\b", options:.caseInsensitive),
+            let hex = stringValue?.firstSubstring(pattern: "(?<=0x)[0-9a-f]{6}\\b|(?<=#)[0-9a-f]{6}\\b|\\b[0-9a-f]{6}\\b", options: .caseInsensitive),
             let color = NSColor(hexString: hex) else { return nil }
         return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
     }
@@ -113,7 +113,7 @@ final class CPYClipData: NSObject, Codable {
         super.init()
         self.content = [.string(title), .tiff(.init(image: image))]
     }
-    
+
     init(title: String) {
         super.init()
         self.content = [.string(title)]
@@ -194,7 +194,7 @@ extension CPYClipData {
                 case .tiff: return .tiff
             }
         }
-        
+
         var identifier: String {
             switch self {
             case .string(let value):
@@ -253,7 +253,7 @@ extension String {
         CC_MD5((data as NSData).bytes, CC_LONG(data.count), &digest)
         return string(from: digest, length: count)
     }
-    
+
     private func string(from bytes: [UInt8], length: Int) -> String {
         var digestHex = ""
         for index in 0 ..< length {

@@ -20,7 +20,7 @@ extension NSImage {
         case center
         case tail
     }
-    
+
     func cropToSquare(with length: CGFloat, and type: CropType) -> NSImage? {
         let rect = { length -> CGRect in
             switch type {
@@ -31,7 +31,7 @@ extension NSImage {
         }(min(size.width, size.height))
         return crop(to: rect).resize(withSize: .init(width: length, height: length))
     }
-    
+
 }
 
 fileprivate extension NSImage {
@@ -43,18 +43,18 @@ fileprivate extension NSImage {
         guard let crop = imageRef.cropping(to: rect) else {
             return NSImage(size: rect.size)
         }
-        return NSImage(cgImage: crop, size: NSZeroSize)
+        return NSImage(cgImage: crop, size: NSSize.zero)
     }
-    
+
     func resize(withSize targetSize: NSSize) -> NSImage? {
         let frame = NSRect(x: 0, y: 0, width: targetSize.width, height: targetSize.height)
         guard let representation = self.bestRepresentation(for: frame, context: nil, hints: nil) else {
             return nil
         }
-        let image = NSImage(size: targetSize, flipped: false, drawingHandler: { (_) -> Bool in
+        let image = NSImage(size: targetSize, flipped: false, drawingHandler: { _ -> Bool in
             return representation.draw(in: frame)
         })
-        
+
         return image
     }
 }
