@@ -49,7 +49,6 @@ class FilterMenu: NSMenu {
                 guard let self = self else { return nil }
                 var filterRes = clipResults
                 if filter.isNotEmpty {
-                    lError(filter)
                     let predicate = NSPredicate(format: "title LIKE[c] %@", "*" + filter + "*")
                     filterRes = filterRes.filter(predicate)
                 }

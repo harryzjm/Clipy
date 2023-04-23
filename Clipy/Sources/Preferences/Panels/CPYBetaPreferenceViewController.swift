@@ -12,4 +12,14 @@
 
 import Cocoa
 
-final class CPYBetaPreferenceViewController: NSViewController {}
+final class CPYBetaPreferenceViewController: NSViewController {
+    @IBOutlet private weak var versionTF: NSTextField!
+
+    override func loadView() {
+        super.loadView()
+
+        versionTF.stringValue = Bundle.main.appVersion.map { str in
+            return "Version: \(str)"
+        } ?? ""
+    }
+}

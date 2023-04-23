@@ -98,4 +98,24 @@ extension String {
         }
     }
 
+    func firstMatch(pattern: String,
+                    options: NSRegularExpression.Options = [],
+                    matchingOptions: NSRegularExpression.MatchingOptions = []) -> String? {
+        do {
+            let regex = try NSRegularExpression(pattern: pattern, options: options)
+            guard
+                let result = regex.firstMatch(in: self,
+                                              options: matchingOptions,
+                                              range: .init(location: 0, length: count))
+            else { return nil }
+            return (1..<result.numberOfRanges).lazy.compactMap { i in
+                let range = result.range(at: i)
+                guard range.location != NSNotFound else { return nil }
+                return (self as NSString).substring(with: range)
+            }.first
+        } catch {
+            lError(error)
+            return nil
+        }
+    }
 }

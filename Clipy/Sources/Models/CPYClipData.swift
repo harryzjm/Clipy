@@ -41,11 +41,7 @@ final class CPYClipData: NSObject, Codable {
     }
 
     var isValid: Bool {
-        if content.count == 1, case .string(let value) = content.first {
-            return value.isNotEmpty
-        }
-
-        return true
+        return content.count > 0
     }
 
     var thumbnailImage: NSImage? {
@@ -59,7 +55,7 @@ final class CPYClipData: NSObject, Codable {
             case .tiff(let image):
                 return image.image
             case .fileURL(let url):
-                guard url.firstSubstring(pattern: "(jpg|jpeg|png|bmp|tiff)$").isNotEmpty else { return nil }
+                guard url.firstMatch(pattern: "\\.(jpg|jpeg|png|bmp|tiff)$").isNotEmpty else { return nil }
                 var imagePath = url.replace(pattern: "^file://", withTemplate: "")
                 imagePath = imagePath.removingPercentEncoding ?? imagePath
                 return NSImage(contentsOfFile: imagePath)
@@ -70,7 +66,7 @@ final class CPYClipData: NSObject, Codable {
     }
     var colorCodeImage: NSImage? {
         guard
-            let hex = stringValue?.firstSubstring(pattern: "(?<=0x)[0-9a-f]{6}\\b|(?<=#)[0-9a-f]{6}\\b|\\b[0-9a-f]{6}\\b", options: .caseInsensitive),
+            let hex = stringValue?.firstMatch(pattern: "^0x([0-9a-fA-F]{6})$|^#([0-9a-fA-F]{6})$"),
             let color = NSColor(hexString: hex) else { return nil }
         return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
     }
