@@ -33,6 +33,22 @@ internal enum Asset {
     internal static let iconFolder = ImageAsset(name: "Common/icon_folder")
     internal static let iconText = ImageAsset(name: "Common/icon_text")
   }
+  internal enum FileIcon {
+    internal static let apk = ImageAsset(name: "FileIcon/apk")
+    internal static let code = ImageAsset(name: "FileIcon/code")
+    internal static let dmg = ImageAsset(name: "FileIcon/dmg")
+    internal static let doc = ImageAsset(name: "FileIcon/doc")
+    internal static let folder = ImageAsset(name: "FileIcon/folder")
+    internal static let image = ImageAsset(name: "FileIcon/image")
+    internal static let music = ImageAsset(name: "FileIcon/music")
+    internal static let pdf = ImageAsset(name: "FileIcon/pdf")
+    internal static let ppt = ImageAsset(name: "FileIcon/ppt")
+    internal static let txt = ImageAsset(name: "FileIcon/txt")
+    internal static let unknow = ImageAsset(name: "FileIcon/unknow")
+    internal static let video = ImageAsset(name: "FileIcon/video")
+    internal static let xls = ImageAsset(name: "FileIcon/xls")
+    internal static let zip = ImageAsset(name: "FileIcon/zip")
+  }
   internal enum Preference {
     internal static let prefBeta = ImageAsset(name: "Preference/pref_beta")
     internal static let prefBetaOn = ImageAsset(name: "Preference/pref_beta_on")

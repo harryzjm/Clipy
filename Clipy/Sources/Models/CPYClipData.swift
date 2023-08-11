@@ -47,17 +47,20 @@ final class CPYClipData: NSObject, Codable {
         let defaults = UserDefaults.standard
         let length = defaults.integer(forKey: Preferences.Menu.thumbnailLength)
 
-        let image: NSImage? = content.compactMap { value in
+        let image: NSImage? = content.compactMap { value -> NSImage? in
             switch value {
             case .png(let image):
                 return image.image
             case .tiff(let image):
                 return image.image
             case .fileURL(let url):
-                guard url.firstMatch(pattern: "\\.(jpg|jpeg|png|bmp|tiff)$").isNotEmpty else { return nil }
+                guard url.firstMatch(pattern: "\\.(jpg|jpeg|png|bmp|tiff)$").isNotEmpty else {
+                    let ext = (url as NSString).pathExtension
+                    return CPYClipData.FileType(ext).image
+                }
                 var imagePath = url.replace(pattern: "^file://", withTemplate: "")
                 imagePath = imagePath.removingPercentEncoding ?? imagePath
-                return NSImage(contentsOfFile: imagePath)
+                return NSImage(contentsOfFile: imagePath) ?? FileType.image.image
             default: return nil
             }
         }.first

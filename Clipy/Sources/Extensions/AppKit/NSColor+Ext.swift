@@ -19,12 +19,12 @@ extension NSColor {
             return nil
         }
 
-        let containAlpha = hexString.count > 6;
-        let alphaHex = containAlpha ? 8:0;
+        let containAlpha = hexString.count > 6
+        let alphaHex = containAlpha ? 8 : 0
 
-        self.init(red:   CGFloat( (hexVal >> (16 + alphaHex)) & 0xFF ) / 255.0,
+        self.init(red: CGFloat( (hexVal >> (16 + alphaHex)) & 0xFF ) / 255.0,
                   green: CGFloat( (hexVal >> (8 + alphaHex)) & 0xFF ) / 255.0,
-                  blue:  CGFloat( (hexVal >> (0 + alphaHex)) & 0xFF ) / 255.0,
-                  alpha: containAlpha ? CGFloat( hexVal & 0xFF ):alpha)
+                  blue: CGFloat( (hexVal >> (0 + alphaHex)) & 0xFF ) / 255.0,
+                  alpha: containAlpha ? CGFloat( hexVal & 0xFF ) : alpha)
     }
 }
