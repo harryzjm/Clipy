@@ -1,5 +1,4 @@
 PODS:
-  - BartyCrouch (4.11.0)
   - KeyHolder (4.1.0):
     - Magnet (~> 3.3.0)
   - LetsMove (1.25)
@@ -34,11 +33,9 @@ PODS:
   - Sauce (2.2.0)
   - Screeen (2.0.1)
   - SwiftGen (6.6.2)
-  - SwiftHEXColors (1.4.1)
   - SwiftLint (0.51.0)
 
 DEPENDENCIES:
-  - BartyCrouch
   - KeyHolder
   - LetsMove
   - PINCache
@@ -49,12 +46,10 @@ DEPENDENCIES:
   - RxSwift
   - Sauce
   - SwiftGen
-  - SwiftHEXColors
   - SwiftLint
 
 SPEC REPOS:
   trunk:
-    - BartyCrouch
     - KeyHolder
     - LetsMove
     - Magnet
@@ -70,11 +65,9 @@ SPEC REPOS:
     - Sauce
     - Screeen
     - SwiftGen
-    - SwiftHEXColors
     - SwiftLint
 
 SPEC CHECKSUMS:
-  BartyCrouch: 13832c060befe72cd1df8d3711e7aeeacb8808ba
   KeyHolder: 7fce073043392cddc3e3126f3f9bdaa5ecf1f19e
   LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
   Magnet: a44a5a14eecc77433cbaad1431b78f7d20725bf2
@@ -90,9 +83,8 @@ SPEC CHECKSUMS:
   Sauce: 3ade51738563f86b08888cf4b91ae5943012088b
   Screeen: e5c570d3df139b8d5d0e1ffd41094204787d9f1a
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
-  SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
   SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
 
-PODFILE CHECKSUM: d59288c8dd57379ceb5bb8ef7107fde6806e0a04
+PODFILE CHECKSUM: 05a263dd3d32b896a26a6581bc6f4639d2d6b3a8
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.11.3

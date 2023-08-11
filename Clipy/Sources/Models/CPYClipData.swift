@@ -11,7 +11,6 @@
 //
 
 import Cocoa
-import SwiftHEXColors
 import CommonCrypto
 
 final class CPYClipData: NSObject, Codable {
@@ -66,7 +65,7 @@ final class CPYClipData: NSObject, Codable {
     }
     var colorCodeImage: NSImage? {
         guard
-            let hex = stringValue?.firstMatch(pattern: "^0x([0-9a-fA-F]{6})$|^#([0-9a-fA-F]{6})$"),
+            let hex = stringValue?.firstMatch(pattern: "^(?:0x|#)?([0-9a-fA-F]{6,8})$"),
             let color = NSColor(hexString: hex) else { return nil }
         return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
     }

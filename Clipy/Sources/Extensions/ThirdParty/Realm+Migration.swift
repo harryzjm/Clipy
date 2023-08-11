@@ -58,6 +58,7 @@ extension Realm {
             }
         })
         Realm.Configuration.defaultConfiguration = config
-        _ = try! Realm()
+        let realm = try! Realm()
+        lDebug(realm.configuration.fileURL)
     }
 }

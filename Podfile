@@ -15,10 +15,7 @@ target 'Clipy' do
   pod 'KeyHolder'
 
   pod 'LetsMove'
-  pod 'SwiftHEXColors'
 
-  # Utility
-  pod 'BartyCrouch'
   pod 'SwiftLint'
   pod 'SwiftGen'
 end
@@ -32,6 +29,11 @@ post_install do |installer|
       elsif version.split(".").first.to_f < 11
         config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '11.0'
       end
+
+      xcconfig_path = config.base_configuration_reference.real_path
+      xcconfig = File.read(xcconfig_path)
+      xcconfig_mod = xcconfig.gsub(/DT_TOOLCHAIN_DIR/, "TOOLCHAIN_DIR")
+      File.open(xcconfig_path, "w") { |file| file << xcconfig_mod }
     end
   end
 end
