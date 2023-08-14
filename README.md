@@ -24,16 +24,17 @@ __Distribution Site__ : <https://clipy-app.com>
 
 
 ### Development Environment
-* macOS 10.15 Catalina
-* Xcode 12.3
+* macOS 13.0+ Ventura
+* Xcode 14.3.1
 * Swift 5
 
 ### Why have this fork
 1. May be [github.com/Clipy/Clipy](https://github.com/Clipy/Clipy) is abandoned?
-2. Add search function
-3. Support dark mode
-4. Support '*' and '?' search
-5. Update third-party libraries
+2. Delete everything related to network
+3. Add search function
+4. Support dark mode
+5. Support '*' and '?' search
+6. Update third-party libraries
 
 | Char | Count | 
 | :----- | :---- | 

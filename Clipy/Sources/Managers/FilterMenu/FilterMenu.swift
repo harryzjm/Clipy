@@ -23,7 +23,6 @@ class FilterMenu: NSMenu {
     fileprivate let realm = try! Realm()
 
     fileprivate let filterRelay = BehaviorRelay<String>(value: "")
-    fileprivate let clipResultsRelay = BehaviorRelay<Results<CPYClip>?>(value: nil)
 
     let config: FilterMenuConfig
     let item: TextFieldMenuItem

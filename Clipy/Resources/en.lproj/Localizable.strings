@@ -1,9 +1,7 @@
 "Add" = "Add";
-"Are you sure want to delete this item?" = "Are you sure want to delete this item?";
 "Are you sure you want to clear your clipboard history?" = "Are you sure you want to clear your clipboard history?";
 "Cancel" = "Cancel";
 "Clear History" = "Clear History";
-"Delete Item" = "Delete Item";
 "Don't Launch" = "Don't Launch";
 "General" = "General";
 "History" = "History";
@@ -12,13 +10,10 @@
 "Menu" = "Menu";
 "Open System Preferences" = "Open System Preferences";
 "Please allow Accessibility" = "Please allow Accessibility.";
-"Please fill in the contents of the snippet" = "Please fill in the contents of the snippet";
 "Preferences" = "Preferences...";
 "Restart Clipy" = "Restart Clipy";
 "Quit Clipy" = "Quit Clipy";
 "Shortcuts" = "Shortcuts";
-"Snippet" = "Snippet";
 "To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
 "Type" = "Type";
-"Updates" = "Updates";
 "You can change this setting in the Preferences if you want" = "You can change this setting in the Preferences if you want.";

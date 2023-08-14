@@ -107,22 +107,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         AppEnvironment.current.pasteService.paste(with: clip)
     }
 
-    @objc func selectSnippetMenuItem(_ sender: AnyObject) {
-        guard let primaryKey = sender.representedObject as? String else {
-            lError("Cannot fetch snippet primary key")
-            NSSound.beep()
-            return
-        }
-        let realm = try! Realm()
-        guard let snippet = realm.object(ofType: CPYSnippet.self, forPrimaryKey: primaryKey) else {
-            lError("Cannot fetch snippet data")
-            NSSound.beep()
-            return
-        }
-        AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content)
-        AppEnvironment.current.pasteService.paste()
-    }
-
     // MARK: - Login Item Methods
     private func promptToAddLoginItems() {
         let alert = NSAlert()

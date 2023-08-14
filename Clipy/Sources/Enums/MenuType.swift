@@ -14,14 +14,11 @@ import Foundation
 
 enum MenuType: String {
     case history    = "HistoryMenu"
-    case snippet    = "SnippetMenu"
 
     var userDefaultsKey: String {
         switch self {
         case .history:
             return Constants.HotKey.historyKeyCombo
-        case .snippet:
-            return Constants.HotKey.snippetKeyCombo
         }
     }
 
@@ -29,8 +26,6 @@ enum MenuType: String {
         switch self {
         case .history:
             return #selector(HotKeyService.popupHistoryMenu)
-        case .snippet:
-            return #selector(HotKeyService.popUpSnippetMenu)
         }
     }
 

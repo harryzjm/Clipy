@@ -62,8 +62,6 @@ internal enum Asset {
     internal static let prefShortcutOn = ImageAsset(name: "Preference/pref_shortcut_on")
     internal static let prefType = ImageAsset(name: "Preference/pref_type")
     internal static let prefTypeOn = ImageAsset(name: "Preference/pref_type_on")
-    internal static let prefUpdate = ImageAsset(name: "Preference/pref_update")
-    internal static let prefUpdateOn = ImageAsset(name: "Preference/pref_update_on")
   }
   internal enum StatusIcon {
     internal static let statusbarMenuBlack = ImageAsset(name: "StatusIcon/statusbar_menu_black")
