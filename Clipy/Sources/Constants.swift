@@ -49,15 +49,8 @@ struct Constants {
         static let closeSnippetEditor = "kCPYSnippetEditorWillCloseNotification"
     }
 
-    struct Xml {
-        static let fileType = "xml"
-        static let type = "type"
-        static let rootElement = "folders"
-        static let folderElement = "folder"
-        static let snippetElement = "snippet"
-        static let titleElement = "title"
-        static let snippetsElement = "snippets"
-        static let contentElement = "content"
+    struct Config {
+        static let fileType = "json"
     }
 
     struct HotKey {

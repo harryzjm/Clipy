@@ -93,12 +93,12 @@ extension CPYPreferencesWindowController: NSWindowDelegate {
 // MARK: - Layout
 private extension CPYPreferencesWindowController {
     func resetImages() {
-        generalImageView.image = Asset.Preference.prefGeneral.image
-        menuImageView.image = Asset.Preference.prefMenu.image
-        typeImageView.image = Asset.Preference.prefType.image
-        excludeImageView.image = Asset.Preference.prefExcluded.image
-        shortcutsImageView.image = Asset.Preference.prefShortcut.image
-        betaImageView.image = Asset.Preference.prefBeta.image
+        generalImageView.image = Asset.Preference.general.image
+        menuImageView.image = Asset.Preference.menu.image
+        typeImageView.image = Asset.Preference.type.image
+        excludeImageView.image = Asset.Preference.excluded.image
+        shortcutsImageView.image = Asset.Preference.shortcut.image
+        betaImageView.image = Asset.Preference.beta.image
 
         generalTextField.textColor = Asset.Color.tabTitle.color
         menuTextField.textColor = Asset.Color.tabTitle.color
@@ -113,22 +113,22 @@ private extension CPYPreferencesWindowController {
 
         switch index {
         case 0:
-            generalImageView.image = Asset.Preference.prefGeneralOn.image
+            generalImageView.image = Asset.Preference.generalOn.image
             generalTextField.textColor = Asset.Color.clipy.color
         case 1:
-            menuImageView.image = Asset.Preference.prefMenuOn.image
+            menuImageView.image = Asset.Preference.menuOn.image
             menuTextField.textColor = Asset.Color.clipy.color
         case 2:
-            typeImageView.image = Asset.Preference.prefTypeOn.image
+            typeImageView.image = Asset.Preference.typeOn.image
             typeTextField.textColor = Asset.Color.clipy.color
         case 3:
-            excludeImageView.image = Asset.Preference.prefExcludedOn.image
+            excludeImageView.image = Asset.Preference.excludedOn.image
             excludeTextField.textColor = Asset.Color.clipy.color
         case 4:
-            shortcutsImageView.image = Asset.Preference.prefShortcutOn.image
+            shortcutsImageView.image = Asset.Preference.shortcutOn.image
             shortcutsTextField.textColor = Asset.Color.clipy.color
         case 5:
-            betaImageView.image = Asset.Preference.prefBetaOn.image
+            betaImageView.image = Asset.Preference.betaOn.image
             betaTextField.textColor = Asset.Color.clipy.color
         default: break
         }

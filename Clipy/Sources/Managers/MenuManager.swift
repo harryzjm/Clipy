@@ -22,6 +22,7 @@ final class MenuManager: NSObject {
         let v = NSMenu(title: Constants.Menu.config)
         v.addItem(.init(title: L10n.clearHistory, action: #selector(AppDelegate.clearAllHistory)))
         v.addItem(.init(title: L10n.preferences, action: #selector(AppDelegate.showPreferenceWindow)))
+        v.addItem(.init(title: L10n.snippets, action: #selector(AppDelegate.showSnippetEditorWindow)))
         v.addItem(.separator())
         v.addItem(.init(title: L10n.restartClipy, action: #selector(AppDelegate.restart)))
         v.addItem(.init(title: L10n.quitClipy, action: #selector(AppDelegate.terminate)))
@@ -66,16 +67,17 @@ final class MenuManager: NSObject {
 // MARK: - Popup Menu
 extension MenuManager {
     func popUpMenu(_ type: MenuType) {
+        let current = statusItem?.button?.window?.frame.origin
+        let pt = current.flatMap { pt -> CGPoint in
+            let mouse = NSEvent.mouseLocation
+            return NSPoint(x: mouse.x - pt.x, y: pt.y - mouse.y)
+        } ?? .zero
+
         switch type {
         case .history:
-            let current = statusItem?.button?.window?.frame.origin
-            let pt = current.flatMap { pt -> CGPoint in
-                let mouse = NSEvent.mouseLocation
-                return NSPoint(x: mouse.x - pt.x, y: pt.y - mouse.y)
-            }
-            FilterMenu(title: L10n.history).popUp(positioning: nil, at: pt ?? .zero, in: statusItem?.button)
+            FilterMenu(title: L10n.history).popUp(positioning: nil, at: pt, in: statusItem?.button)
         case .snippet:
-            snippetMenu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+            snippetMenu?.popUp(positioning: nil, at: pt, in: statusItem?.button)
         }
     }
 
@@ -272,14 +274,13 @@ private extension MenuManager {
 private extension MenuManager {
     func changeStatusItem(_ type: StatusType) {
         removeStatusItem()
-        if type == .none { return }
 
         let image: NSImage?
         switch type {
         case .black:
-            image = Asset.StatusIcon.statusbarMenuBlack.image
+            image = Asset.StatusIcon.menuBlack.image
         case .white:
-            image = Asset.StatusIcon.statusbarMenuWhite.image
+            image = Asset.StatusIcon.menuWhite.image
         }
         image?.isTemplate = true
 

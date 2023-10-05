@@ -25,6 +25,13 @@ class CPYPlaceHolderTextView: NSTextView {
             needsDisplay = true
         }
     }
+
+    override var string: String {
+        didSet {
+            needsDisplay = true
+        }
+    }
+
     override var textContainerOrigin: NSPoint {
         return NSPoint(x: 0, y: 7)
     }

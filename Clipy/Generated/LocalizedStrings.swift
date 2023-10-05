@@ -50,6 +50,8 @@ internal enum L10n {
   internal static let shortcuts = L10n.tr("Localizable", "Shortcuts", fallback: "Shortcuts")
   /// Snippet
   internal static let snippet = L10n.tr("Localizable", "Snippet", fallback: "Snippet")
+  /// Snippets...
+  internal static let snippets = L10n.tr("Localizable", "Snippets", fallback: "Snippets...")
   /// To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.
   internal static let toDoThisActionPleaseAllowAccessibilityInSecurityPrivacyPreferencesLocatedInSystemPreferences = L10n.tr("Localizable", "To do this action please allow Accessibility in Security Privacy preferences located in System Preferences", fallback: "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.")
   /// Type

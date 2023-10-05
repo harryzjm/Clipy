@@ -57,6 +57,11 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         CPYPreferencesWindowController.sharedController.showWindow(self)
     }
 
+    @objc func showSnippetEditorWindow() {
+        NSApp.activate(ignoringOtherApps: true)
+        CPYSnippetsEditorWindowController.sharedController.showWindow(self)
+    }
+
     @objc func terminate() {
         NSApp.terminate(nil)
     }

@@ -47,14 +47,12 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
         switch iconType {
         case .folder:
             var imageFrame = NSRect.zero
-            var cellFrame = cellFrame
-            NSDivideRect(cellFrame, &imageFrame, &cellFrame, 15, .minX)
-            imageFrame.origin.x += 5
+            var newCellFrame = NSRect.zero
+            NSDivideRect(cellFrame, &imageFrame, &newCellFrame, 15, .minX)
             imageFrame.origin.y += 5
             imageFrame.size = NSSize(width: 16, height: 13)
 
-            newFrame = cellFrame
-            newFrame.origin.x += 8
+            newFrame = newCellFrame
             newFrame.origin.y += 2
             newFrame.size.height -= 2
             textColor = isHighlighted ? .labelColor : Asset.Color.clipy.color
@@ -64,6 +62,8 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             newFrame.size.height -= 2
             textColor = .labelColor
         }
+
+        textColor = isItemEnabled ? textColor : .disabledControlTextColor
 
         super.draw(withFrame: newFrame, in: controlView)
     }
@@ -88,14 +88,11 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
 
             NSDivideRect(theRect, &imageFrame, &cellRect, 15, .minX)
 
-            imageFrame.origin.x += 5
             imageFrame.origin.y += 4
             imageFrame.size = CGSize(width: 16, height: 15)
-
             imageFrame.origin.y += ceil((cellRect.size.height - imageFrame.size.height) / 2)
 
             var newFrame = cellRect
-            newFrame.origin.x += 10
             newFrame.origin.y += 2
             newFrame.size.height -= 2
 
