@@ -19,7 +19,14 @@ class TextFieldContentView: NSView, NSTextFieldDelegate {
         get { titleTF.stringValue }
         set { titleTF.stringValue = newValue }
     }
-    var eventHandler: EventHandlerRef?
+
+    private lazy var eventMonitor = RunLoopLocalEventMonitor(runLoopMode: .eventTracking) { event in
+        if self.processInterceptedEvent(event) {
+          return nil
+        } else {
+          return event
+        }
+    }
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -51,57 +58,33 @@ class TextFieldContentView: NSView, NSTextFieldDelegate {
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
 
-        if eventHandler != nil {
-            RemoveEventHandler(eventHandler)
-            eventHandler = nil
+        if let _ = window {
+            eventMonitor.start()
+        } else {
+            eventMonitor.stop()
         }
-
-        guard
-            window?.className == "NSMenuWindowManagerWindow",
-            let dispatcher = GetEventDispatcherTarget()
-        else { return }
-
-        let evts = [EventTypeSpec(eventClass: OSType(kEventClassKeyboard),
-                                  eventKind: UInt32(kEventRawKeyDown)),
-                    EventTypeSpec(eventClass: OSType(kEventClassKeyboard),
-                                  eventKind: UInt32(kEventRawKeyRepeat))]
-
-        let carbonCallback: EventHandlerUPP = { handler, event, userData in
-            guard let event = event, let userData = userData else { return noErr }
-            let content = Unmanaged<TextFieldContentView>.fromOpaque(userData).takeUnretainedValue()
-            let processed = content.processInterceptedEvent(event: event)
-            if processed {
-                return noErr
-            } else {
-                return CallNextEventHandler(handler, event)
-            }
-        }
-
-        // Install handler.
-        InstallEventHandler(dispatcher, carbonCallback, 2, evts, Unmanaged.passUnretained(self).toOpaque(), &eventHandler)
     }
 
-    func processInterceptedEvent(event: EventRef) -> Bool {
+    func processInterceptedEvent(_ event: NSEvent) -> Bool {
         let first = window?.firstResponder
 
         guard
             first != queryTF,
             first != queryTF.currentEditor(),
-            let ev = NSEvent(eventRef: .init(event)),
-            ev.type == .keyDown,
-            !shouldPassthru(keyCode: ev.keyCode),
-            !ev.modifierFlags.contains(.control)
+            event.type == .keyDown,
+            !shouldPassthru(keyCode: event.keyCode),
+            !event.modifierFlags.contains(.control)
         else { return false }
 
         var query = queryTF.stringValue
 
-        if ev.modifierFlags.contains(.option) || ev.modifierFlags.contains(.command) {
-            guard ev.keyCode == 51 else { return false }
+        if event.modifierFlags.contains(.option) || event.modifierFlags.contains(.command) {
+            guard event.keyCode == 51 else { return false }
             set(query: "")
             return true
         }
 
-        if ev.keyCode == 51 {
+        if event.keyCode == 51 {
             if !query.isEmpty {
                 query.removeLast()
                 set(query: query)
@@ -109,7 +92,7 @@ class TextFieldContentView: NSView, NSTextFieldDelegate {
             return true
         }
 
-        if let chars = ev.charactersIgnoringModifiers, chars.count == 1 {
+        if let chars = event.charactersIgnoringModifiers, chars.count == 1 {
             query.append(chars)
             set(query: query)
             return true

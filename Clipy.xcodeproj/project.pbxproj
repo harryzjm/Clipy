@@ -18,6 +18,7 @@
 		60BBF2042546A9280051EA70 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BBF2032546A9280051EA70 /* Preferences.swift */; };
 		60C260EA2A85E5C300240EAB /* NSColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C260E92A85E5C300240EAB /* NSColor+Ext.swift */; };
 		60ECF5FA2544633500E34067 /* NSFont+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ECF5F92544633500E34067 /* NSFont+Ext.swift */; };
+		95178F012AD59BCD00928198 /* RunLoopLocalEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95178F002AD59BCD00928198 /* RunLoopLocalEventMonitor.swift */; };
 		952E3FE52ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E3FE22ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.swift */; };
 		952E3FE62ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 952E3FE32ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.xib */; };
 		9536DC7B2A872C8A00270908 /* CPYClipData+FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9536DC7A2A872C8A00270908 /* CPYClipData+FileType.swift */; };
@@ -70,8 +71,8 @@
 		FA3778931F3B691A003B5BAB /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3778921F3B691A003B5BAB /* AppEnvironment.swift */; };
 		FA3778951F3B6920003B5BAB /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3778941F3B6920003B5BAB /* Environment.swift */; };
 		FA431F021E6718CE00ACFF56 /* Collection+Safe.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA431F011E6718CE00ACFF56 /* Collection+Safe.swift */; };
-		FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
-		FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FAA4BCCC2163DC9100FF5D18 /* AccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4BCCB2163DC9100FF5D18 /* AccessibilityService.swift */; };
 		FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */; };
 		FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */; };
@@ -110,6 +111,7 @@
 		60C260E92A85E5C300240EAB /* NSColor+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSColor+Ext.swift"; sourceTree = "<group>"; };
 		60ECF5F92544633500E34067 /* NSFont+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSFont+Ext.swift"; sourceTree = "<group>"; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		95178F002AD59BCD00928198 /* RunLoopLocalEventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLoopLocalEventMonitor.swift; sourceTree = "<group>"; };
 		952E3FE22ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetsEditorWindowController.swift; sourceTree = "<group>"; };
 		952E3FE32ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYSnippetsEditorWindowController.xib; sourceTree = "<group>"; };
 		9536DC7A2A872C8A00270908 /* CPYClipData+FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPYClipData+FileType.swift"; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 				605F36792547BEAA00AE9701 /* FilterMenuConfig.swift */,
 				603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */,
 				608D9CA92541934D00C9434B /* TextFieldMenuItem.swift */,
+				95178F002AD59BCD00928198 /* RunLoopLocalEventMonitor.swift */,
 			);
 			path = FilterMenu;
 			sourceTree = "<group>";
@@ -555,7 +558,7 @@
 			);
 			mainGroup = FAC43DBD1B35D8B100C06102;
 			packageReferences = (
-				608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin.git" */,
+				608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
 			);
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
 			projectDirPath = "";
@@ -572,7 +575,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA1DB5131DDCB4C0007F95C8 /* CPYPreferencesWindowController.xib in Resources */,
-				FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */,
+				FA6DD5141C7DEDB600317E73 /* (null) in Resources */,
 				FA1DB51E1DDCB4C0007F95C8 /* CPYTypePreferenceViewController.xib in Resources */,
 				FA1DB4901DDCA5D9007F95C8 /* Images.xcassets in Resources */,
 				FA1DB51D1DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.xib in Resources */,
@@ -580,7 +583,7 @@
 				FA1DB51B1DDCB4C0007F95C8 /* CPYGeneralPreferenceViewController.xib in Resources */,
 				FA1DB51A1DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.xib in Resources */,
 				FA1DB5191DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.xib in Resources */,
-				FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */,
+				FA6DD5151C7DEDB600317E73 /* (null) in Resources */,
 				FA1DB4941DDCB22C007F95C8 /* dsa_pub.pem in Resources */,
 				FA1DB4981DDCB2CB007F95C8 /* Localizable.strings in Resources */,
 				FA1DB49F1DDCB417007F95C8 /* MainMenu.xib in Resources */,
@@ -708,6 +711,7 @@
 				FA1DB4B41DDCB452007F95C8 /* NSBundle+Version.swift in Sources */,
 				603AD8FF25427ABA00A6C6F6 /* FilterMenu.swift in Sources */,
 				FA1DB5171DDCB4C0007F95C8 /* CPYTypePreferenceViewController.swift in Sources */,
+				95178F012AD59BCD00928198 /* RunLoopLocalEventMonitor.swift in Sources */,
 				FA1DB4A21DDCB433007F95C8 /* AppDelegate.swift in Sources */,
 				FA1DB5141DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.swift in Sources */,
 				FA1DB4BC1DDCB452007F95C8 /* Realm+NoCatch.swift in Sources */,
@@ -954,7 +958,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.4.0;
+				MARKETING_VERSION = 1.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy.debug";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -986,7 +990,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.4.0;
+				MARKETING_VERSION = 1.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1020,7 +1024,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin.git" */ = {
+		608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin.git";
 			requirement = {
@@ -1033,7 +1037,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		608423DF29F234E9005F6B3C /* LaunchAtLogin */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin.git" */;
+			package = 608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin" */;
 			productName = LaunchAtLogin;
 		};
 /* End XCSwiftPackageProductDependency section */
