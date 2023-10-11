@@ -12,28 +12,28 @@ PODS:
   - PINCache/Core (3.0.3):
     - PINOperation (~> 1.2.1)
   - PINOperation (1.2.2)
-  - Realm (10.38.0):
-    - Realm/Headers (= 10.38.0)
-  - Realm/Headers (10.38.0)
-  - RealmSwift (10.38.0):
-    - Realm (= 10.38.0)
-  - RxCocoa (6.5.0):
-    - RxRelay (= 6.5.0)
-    - RxSwift (= 6.5.0)
+  - Realm (10.43.0):
+    - Realm/Headers (= 10.43.0)
+  - Realm/Headers (10.43.0)
+  - RealmSwift (10.43.0):
+    - Realm (= 10.43.0)
+  - RxCocoa (6.6.0):
+    - RxRelay (= 6.6.0)
+    - RxSwift (= 6.6.0)
   - RxOptional (5.0.2):
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
-  - RxRelay (6.5.0):
-    - RxSwift (= 6.5.0)
+  - RxRelay (6.6.0):
+    - RxSwift (= 6.6.0)
   - RxScreeen (2.1.0):
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
     - Screeen (~> 2.0.1)
-  - RxSwift (6.5.0)
+  - RxSwift (6.6.0)
   - Sauce (2.2.0)
   - Screeen (2.0.1)
   - SwiftGen (6.6.2)
-  - SwiftLint (0.51.0)
+  - SwiftLint (0.53.0)
 
 DEPENDENCIES:
   - KeyHolder
@@ -73,17 +73,17 @@ SPEC CHECKSUMS:
   Magnet: a44a5a14eecc77433cbaad1431b78f7d20725bf2
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: daa34d4aa1d8449089be7d405b9d974abc4724c6
-  Realm: 5902885dd1d5e71b0b020830caab937ecdf5bf07
-  RealmSwift: 0fc037d6c32c7c4fc9362892380f380114ecdcf0
-  RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
+  Realm: fc65bea3f5c3da2ecdc76324f180e054e7cf4eb0
+  RealmSwift: a7d48361c585769690c175428cc2bf15e1074444
+  RxCocoa: 44a80de90e25b739b5aeaae3c8c371a32e3343cc
   RxOptional: 3664964c96b69dd20c9cf78bdfe546615e26eca8
-  RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
+  RxRelay: 45eaa5db8ee4fb50e5ebd57deec0159e97fa51e6
   RxScreeen: 18efe5daecca6db6e7e18400c436fb4d252a2f7b
-  RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
+  RxSwift: a4b44f7d24599f674deebd1818eab82e58410632
   Sauce: 3ade51738563f86b08888cf4b91ae5943012088b
   Screeen: e5c570d3df139b8d5d0e1ffd41094204787d9f1a
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
-  SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
+  SwiftLint: 5ce4d6a8ff83f1b5fd5ad5dbf30965d35af65e44
 
 PODFILE CHECKSUM: 05a263dd3d32b896a26a6581bc6f4639d2d6b3a8
 

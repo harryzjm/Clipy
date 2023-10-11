@@ -43,6 +43,12 @@ __Distribution Site__ : <https://clipy-app.com>
 > At first time, you launch this app, may be had some UI bug. You should relaunch and the bug fix, it may be a bug, but I don`t know why. If you know, please tell me.  
 > Now, this app has a bug, may be cause  arrow keys in the menu is useless. But I don't found how to solve this problem, so I add restart app item(maybe you can add shortcut), and everything is ok, I will fix this bug in next time.
 
+### Translate old snippets  
+```shell
+# ./script/translate.py 
+./translate.py snippets.xml
+```
+
 ### How to Build
 0. Move to the project root directory.
 1. Run `pod install --repo-update` in Terminal.
