@@ -14,8 +14,10 @@ import Foundation
 
 /// Domain projection of `CPYFolderTable` plus its snippets.
 ///
-/// Subclasses `NSObject` because `CPYSnippetsEditorWindowController` uses instances directly as
-/// `NSOutlineView` items, which needs stable `isEqual:` identity.
+/// The `NSObject` inheritance is vestigial: it existed so the old `NSOutlineView`-based snippets
+/// editor could use instances directly as items, which needed stable `isEqual:` identity. The
+/// SwiftUI editor projects these into value types instead, so the base class and the
+/// `@objc dynamic` property attributes could be dropped in a follow-up.
 ///
 /// `snippets` is always kept sorted by `CPYSnippet.index`; that column is the single source of
 /// truth for ordering, and `rearrangesSnippetIndex()` rewrites it from the array order.

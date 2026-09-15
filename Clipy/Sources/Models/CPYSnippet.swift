@@ -14,8 +14,10 @@ import Cocoa
 
 /// Domain projection of `CPYSnippetTable`.
 ///
-/// Subclasses `NSObject` because `CPYSnippetsEditorWindowController` uses instances directly as
-/// `NSOutlineView` items, which needs stable `isEqual:` identity.
+/// The `NSObject` inheritance is vestigial: it existed so the old `NSOutlineView`-based snippets
+/// editor could use instances directly as items, which needed stable `isEqual:` identity. The
+/// SwiftUI editor projects these into value types instead, so the base class and the
+/// `@objc dynamic` property attributes could be dropped in a follow-up.
 final class CPYSnippet: NSObject {
 
     // MARK: - Properties

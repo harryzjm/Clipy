@@ -20,6 +20,8 @@ struct Constants {
             static let name = "Clipy"
         #endif
         static let appcastURL = URL(string: "https://clipy-app.com/appcast.xml")!
+        /// Identifier SwiftUI assigns to the window backing the `Settings` scene.
+        static let settingsWindowIdentifier = "com_apple_SwiftUI_Settings_window"
     }
 
     struct Menu {
@@ -34,7 +36,6 @@ struct Constants {
         static let snippets = "snippets"
         static let content = "content"
         static let selector = "selector"
-        static let draggedDataType = "public.data"
     }
 
     struct UserDefaults {
@@ -43,14 +44,6 @@ struct Constants {
         static let suppressAlertForLoginItem = "suppressAlertForLoginItem"
         static let suppressAlertForDeleteSnippet = "kCPYSuppressAlertForDeleteSnippet"
         static let excludeApplications = "kCPYExcludeApplications"
-    }
-
-    struct Notification {
-        static let closeSnippetEditor = "kCPYSnippetEditorWillCloseNotification"
-    }
-
-    struct Config {
-        static let fileType = "json"
     }
 
     struct HotKey {

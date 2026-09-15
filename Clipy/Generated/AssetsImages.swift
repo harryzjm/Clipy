@@ -65,22 +65,6 @@ internal enum Asset {
     internal static let update = ImageAsset(name: "Preference/update")
     internal static let updateOn = ImageAsset(name: "Preference/update_on")
   }
-  internal enum Snippet {
-    internal static let addFolder = ImageAsset(name: "Snippet/add_folder")
-    internal static let addFolderOn = ImageAsset(name: "Snippet/add_folder_on")
-    internal static let addSnippet = ImageAsset(name: "Snippet/add_snippet")
-    internal static let addSnippetOn = ImageAsset(name: "Snippet/add_snippet_on")
-    internal static let deleteSnippet = ImageAsset(name: "Snippet/delete_snippet")
-    internal static let deleteSnippetOn = ImageAsset(name: "Snippet/delete_snippet_on")
-    internal static let enableSnippet = ImageAsset(name: "Snippet/enable_snippet")
-    internal static let enableSnippetOn = ImageAsset(name: "Snippet/enable_snippet_on")
-    internal static let export = ImageAsset(name: "Snippet/export")
-    internal static let exportOn = ImageAsset(name: "Snippet/export_on")
-    internal static let iconFolderBlue = ImageAsset(name: "Snippet/icon_folder_blue")
-    internal static let iconFolderWhite = ImageAsset(name: "Snippet/icon_folder_white")
-    internal static let `import` = ImageAsset(name: "Snippet/import")
-    internal static let importOn = ImageAsset(name: "Snippet/import_on")
-  }
   internal enum StatusIcon {
     internal static let menuBlack = ImageAsset(name: "StatusIcon/menu_black")
     internal static let menuWhite = ImageAsset(name: "StatusIcon/menu_white")

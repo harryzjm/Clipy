@@ -20,19 +20,11 @@ import RxScreeen
 import LetsMove
 import LaunchAtLogin
 
-@NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Properties
     let screenshotObserver = ScreenShotObserver()
     let disposeBag = DisposeBag()
-
-    // MARK: - Init
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Open the databases and run their migrations before anything touches the store.
-        AppEnvironment.current.box.setup()
-    }
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
@@ -51,13 +43,60 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Menu Actions
     @objc func showPreferenceWindow() {
-        NSApp.activate(ignoringOtherApps: true)
-        CPYPreferencesWindowController.sharedController.showWindow(self)
+        activateApp()
+        // `activate()` is asynchronous and SwiftUI will not materialise the Settings window
+        // while the app is still inactive, so let activation land before performing the item.
+        DispatchQueue.main.async { [weak self] in
+            self?.openSettingsWindow()
+        }
+    }
+
+    private func activateApp() {
+        if #available(macOS 14.0, *) {
+            // `activate(ignoringOtherApps:)` is deprecated under macOS 14 cooperative activation.
+            NSApp.activate()
+        } else {
+            NSApp.activate(ignoringOtherApps: true)
+        }
+    }
+
+    private func openSettingsWindow() {
+        guard let item = settingsMenuItem(), let menu = item.menu else {
+            lError("Could not locate the Settings menu item")
+            return
+        }
+        menu.performActionForItem(at: menu.index(of: item))
+        bringSettingsWindowForward()
+    }
+
+    /// SwiftUI installs the Settings item with a private `menuAction:` selector bound to its own
+    /// callback object, so `NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, ...)`
+    /// reports success while doing nothing at all. Find the real item and perform that instead.
+    private func settingsMenuItem() -> NSMenuItem? {
+        guard let appMenu = NSApp.mainMenu?.items.first?.submenu else { return nil }
+        let documented: Set<Selector> = [Selector(("showSettingsWindow:")), Selector(("showPreferencesWindow:"))]
+        // Prefer the documented selectors in case a future SwiftUI stops using `menuAction:`,
+        // then fall back to the standard ⌘, key equivalent, which is localisation-independent.
+        return appMenu.items.first { item in item.action.map { documented.contains($0) } ?? false }
+            ?? appMenu.items.first { $0.keyEquivalent == "," && $0.keyEquivalentModifierMask == .command }
+    }
+
+    /// SwiftUI materialises the `Settings` window asynchronously, and an inactive `LSUIElement`
+    /// app does not get it ordered front for free — so poll briefly and order it front ourselves.
+    private func bringSettingsWindowForward(retriesRemaining: Int = 20) {
+        if let window = NSApp.windows.first(where: { $0.identifier?.rawValue == Constants.Application.settingsWindowIdentifier }) {
+            window.makeKeyAndOrderFront(self)
+            return
+        }
+        guard retriesRemaining > 0 else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            self?.bringSettingsWindowForward(retriesRemaining: retriesRemaining - 1)
+        }
     }
 
     @objc func showSnippetEditorWindow() {
-        NSApp.activate(ignoringOtherApps: true)
-        CPYSnippetsEditorWindowController.sharedController.showWindow(self)
+        activateApp()
+        SnippetsEditorWindowController.shared.showWindow(self)
     }
 
     @objc func terminate() {
@@ -214,6 +253,10 @@ extension AppDelegate: NSApplicationDelegate {
         #if RELEASE
             PFMoveToApplicationsFolderIfNecessary()
         #endif
+        // Moved off `awakeFromNib`, which only ran because MainMenu.xib instantiated this
+        // object. Must stay after PFMove (that call can relaunch the process) and before
+        // anything touches the store.
+        AppEnvironment.current.box.setup()
     }
 
 }

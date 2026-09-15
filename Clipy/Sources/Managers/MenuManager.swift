@@ -35,7 +35,6 @@ final class MenuManager: NSObject {
     fileprivate let snippetIcon = Asset.Common.iconText.image
     // Other
     fileprivate let disposeBag = DisposeBag()
-    fileprivate let notificationCenter = NotificationCenter.default
     fileprivate let kMaxKeyEquivalents = 10
     fileprivate let shortenSymbol = "..."
     // Latest snapshot from the snippet change signal, used to build the snippet menu.
@@ -119,13 +118,6 @@ private extension MenuManager {
             })
             .disposed(by: disposeBag)
 
-        // Edit snippets
-        notificationCenter.rx.notification(Notification.Name(rawValue: Constants.Notification.closeSnippetEditor))
-            .asDriver(onErrorDriveWith: .empty())
-            .drive(onNext: { [weak self] _ in
-                self?.createClipMenu()
-            })
-            .disposed(by: disposeBag)
         // Observe change preference settings
         let defaults = AppEnvironment.current.defaults
         Observable.merge(
