@@ -10,56 +10,78 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
-  /// Add
-  internal static let add = L10n.tr("Localizable", "Add", fallback: "Add")
-  /// Are you sure want to delete this item?
-  internal static let areYouSureWantToDeleteThisItem = L10n.tr("Localizable", "Are you sure want to delete this item?", fallback: "Are you sure want to delete this item?")
-  /// Are you sure you want to clear your clipboard history?
-  internal static let areYouSureYouWantToClearYourClipboardHistory = L10n.tr("Localizable", "Are you sure you want to clear your clipboard history?", fallback: "Are you sure you want to clear your clipboard history?")
-  /// Cancel
-  internal static let cancel = L10n.tr("Localizable", "Cancel", fallback: "Cancel")
-  /// Clear History
-  internal static let clearHistory = L10n.tr("Localizable", "Clear History", fallback: "Clear History")
-  /// Delete Item
-  internal static let deleteItem = L10n.tr("Localizable", "Delete Item", fallback: "Delete Item")
-  /// Don't Launch
-  internal static let donTLaunch = L10n.tr("Localizable", "Don't Launch", fallback: "Don't Launch")
-  /// General
-  internal static let general = L10n.tr("Localizable", "General", fallback: "General")
-  /// History
-  internal static let history = L10n.tr("Localizable", "History", fallback: "History")
-  /// Launch Clipy on system startup?
-  internal static let launchClipyOnSystemStartup = L10n.tr("Localizable", "Launch Clipy on system startup?", fallback: "Launch Clipy on system startup?")
-  /// Launch on system startup
-  internal static let launchOnSystemStartup = L10n.tr("Localizable", "Launch on system startup", fallback: "Launch on system startup")
-  /// Menu
-  internal static let menu = L10n.tr("Localizable", "Menu", fallback: "Menu")
-  /// Open System Preferences
-  internal static let openSystemPreferences = L10n.tr("Localizable", "Open System Preferences", fallback: "Open System Preferences")
-  /// Please allow Accessibility.
-  internal static let pleaseAllowAccessibility = L10n.tr("Localizable", "Please allow Accessibility", fallback: "Please allow Accessibility.")
-  /// Please fill in the contents of the snippet
-  internal static let pleaseFillInTheContentsOfTheSnippet = L10n.tr("Localizable", "Please fill in the contents of the snippet", fallback: "Please fill in the contents of the snippet")
-  /// Preferences...
-  internal static let preferences = L10n.tr("Localizable", "Preferences", fallback: "Preferences...")
-  /// Quit Clipy
-  internal static let quitClipy = L10n.tr("Localizable", "Quit Clipy", fallback: "Quit Clipy")
-  /// Restart Clipy
-  internal static let restartClipy = L10n.tr("Localizable", "Restart Clipy", fallback: "Restart Clipy")
-  /// Shortcuts
-  internal static let shortcuts = L10n.tr("Localizable", "Shortcuts", fallback: "Shortcuts")
-  /// Snippet
-  internal static let snippet = L10n.tr("Localizable", "Snippet", fallback: "Snippet")
-  /// Snippets...
-  internal static let snippets = L10n.tr("Localizable", "Snippets", fallback: "Snippets...")
-  /// To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.
-  internal static let toDoThisActionPleaseAllowAccessibilityInSecurityPrivacyPreferencesLocatedInSystemPreferences = L10n.tr("Localizable", "To do this action please allow Accessibility in Security Privacy preferences located in System Preferences", fallback: "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.")
-  /// Type
-  internal static let type = L10n.tr("Localizable", "Type", fallback: "Type")
-  /// Updates
-  internal static let updates = L10n.tr("Localizable", "Updates", fallback: "Updates")
-  /// You can change this setting in the Preferences if you want.
-  internal static let youCanChangeThisSettingInThePreferencesIfYouWant = L10n.tr("Localizable", "You can change this setting in the Preferences if you want", fallback: "You can change this setting in the Preferences if you want.")
+  internal enum Alert {
+    internal enum Accessibility {
+      /// To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.
+      internal static let message = L10n.tr("Localizable", "alert.accessibility.message", fallback: "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.")
+      /// Open System Preferences
+      internal static let openPreferences = L10n.tr("Localizable", "alert.accessibility.openPreferences", fallback: "Open System Preferences")
+      /// Alert – accessibility permission
+      internal static let title = L10n.tr("Localizable", "alert.accessibility.title", fallback: "Please allow Accessibility.")
+    }
+    internal enum ClearHistory {
+      /// Alert – clear clipboard history
+      internal static let message = L10n.tr("Localizable", "alert.clearHistory.message", fallback: "Are you sure you want to clear your clipboard history?")
+    }
+    internal enum DeleteSnippet {
+      /// Alert – delete snippet / folder
+      internal static let message = L10n.tr("Localizable", "alert.deleteSnippet.message", fallback: "Are you sure want to delete this item?")
+    }
+    internal enum LoginItem {
+      /// Don't Launch
+      internal static let dontLaunch = L10n.tr("Localizable", "alert.loginItem.dontLaunch", fallback: "Don't Launch")
+      /// Launch on system startup
+      internal static let launch = L10n.tr("Localizable", "alert.loginItem.launch", fallback: "Launch on system startup")
+      /// You can change this setting in the Preferences if you want.
+      internal static let message = L10n.tr("Localizable", "alert.loginItem.message", fallback: "You can change this setting in the Preferences if you want.")
+      /// Alert – add to login items
+      internal static let title = L10n.tr("Localizable", "alert.loginItem.title", fallback: "Launch Clipy on system startup?")
+    }
+  }
+  internal enum Common {
+    /// Shared across multiple screens
+    internal static let cancel = L10n.tr("Localizable", "common.cancel", fallback: "Cancel")
+    /// Clear History
+    internal static let clearHistory = L10n.tr("Localizable", "common.clearHistory", fallback: "Clear History")
+    /// Delete Item
+    internal static let deleteItem = L10n.tr("Localizable", "common.deleteItem", fallback: "Delete Item")
+    /// Menu
+    internal static let menu = L10n.tr("Localizable", "common.menu", fallback: "Menu")
+  }
+  internal enum ExcludedApps {
+    /// Preferences – Excluded Apps pane
+    internal static let addButton = L10n.tr("Localizable", "excludedApps.addButton", fallback: "Add")
+  }
+  internal enum Menu {
+    /// History
+    internal static let historyTitle = L10n.tr("Localizable", "menu.historyTitle", fallback: "History")
+    /// Status bar menu
+    internal static let preferences = L10n.tr("Localizable", "menu.preferences", fallback: "Preferences...")
+    /// Quit
+    internal static let quit = L10n.tr("Localizable", "menu.quit", fallback: "Quit")
+    /// Restart
+    internal static let restart = L10n.tr("Localizable", "menu.restart", fallback: "Restart")
+    /// Snippet
+    internal static let snippetHeader = L10n.tr("Localizable", "menu.snippetHeader", fallback: "Snippet")
+    /// Snippets...
+    internal static let snippets = L10n.tr("Localizable", "menu.snippets", fallback: "Snippets...")
+  }
+  internal enum Preferences {
+    /// Beta
+    internal static let beta = L10n.tr("Localizable", "preferences.beta", fallback: "Beta")
+    /// Excluded Apps
+    internal static let excluded = L10n.tr("Localizable", "preferences.excluded", fallback: "Excluded Apps")
+    /// Preferences window – pane titles
+    internal static let general = L10n.tr("Localizable", "preferences.general", fallback: "General")
+    /// Shortcuts
+    internal static let shortcuts = L10n.tr("Localizable", "preferences.shortcuts", fallback: "Shortcuts")
+    /// Type
+    internal static let type = L10n.tr("Localizable", "preferences.type", fallback: "Type")
+  }
+  internal enum Snippets {
+    /// Snippets editor
+    internal static let emptyContentPlaceholder = L10n.tr("Localizable", "snippets.emptyContentPlaceholder", fallback: "Please fill in the contents of the snippet")
+  }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

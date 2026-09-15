@@ -15,11 +15,11 @@ extension CPYSnippet {
 
     func merge() {
         let table = toTable
-        AppEnvironment.current.box.snippetWrite { try $0.snippetDb.upsertSnippet(table) }
+        AppEnvironment.current.box.snippetTransaction { try $0.snippetDb.upsertSnippet(table) }.run()
     }
 
     func remove() {
         let identifier = self.identifier
-        AppEnvironment.current.box.snippetWrite { try $0.removeSnippet(identifier: identifier) }
+        AppEnvironment.current.box.snippetTransaction { try $0.removeSnippet(identifier: identifier) }.run()
     }
 }

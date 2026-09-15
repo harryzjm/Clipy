@@ -19,7 +19,7 @@ struct ShortcutsPane: View {
 
     var body: some View {
         Form {
-            Section(L10n.menu) {
+            Section(L10n.Common.menu) {
                 recorder("History:", combo: $historyKeyCombo) { combo in
                     AppEnvironment.current.hotKeyService.change(with: .history, keyCombo: combo)
                 }

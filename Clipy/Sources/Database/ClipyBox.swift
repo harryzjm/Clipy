@@ -104,23 +104,3 @@ extension ClipyBox {
                     f)
     }
 }
-
-// MARK: - Fire and forget
-extension ClipyBox {
-    /// Runs a write that nobody waits on. Errors are already logged by `StorageBox`.
-    func clipWrite(file: String = #file,
-                   function: String = #function,
-                   line: Int = #line,
-                   _ f: @escaping (ClipServiceTransaction) throws -> Void) {
-        _ = clipTransaction(file: file, function: function, line: line, f)
-            .subscribe(onError: { _ in })
-    }
-
-    func snippetWrite(file: String = #file,
-                      function: String = #function,
-                      line: Int = #line,
-                      _ f: @escaping (SnippetServiceTransaction) throws -> Void) {
-        _ = snippetTransaction(file: file, function: function, line: line, f)
-            .subscribe(onError: { _ in })
-    }
-}

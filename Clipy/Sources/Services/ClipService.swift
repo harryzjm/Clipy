@@ -139,33 +139,30 @@ extension ClipService {
         // Don't save empty string history
         if !data.isValid { return }
 
-        DispatchQueue.global(qos: .userInteractive).async {
-            // Saved time and path
-            let unixTime = Int(Date().timeIntervalSince1970)
-            let savedPath = CPYUtilities.applicationSupportFolder() + "/\(NSUUID().uuidString).data"
-            // Create clip
-            let clip = CPYClip()
-            clip.dataHash = data.identifier
-            clip.dataPath = savedPath
-            clip.title = data.stringValue?[0...10000] ?? ""
-            clip.updateTime = unixTime
-            clip.primaryType = data.primaryType?.rawValue ?? ""
+        let unixTime = Int(Date().timeIntervalSince1970)
+        let savedPath = CPYUtilities.applicationSupportFolder() + "/\(NSUUID().uuidString).data"
+        // Create clip
+        let clip = CPYClip()
+        clip.dataHash = data.identifier
+        clip.dataPath = savedPath
+        clip.title = data.stringValue?[0...10000] ?? ""
+        clip.updateTime = unixTime
+        clip.primaryType = data.primaryType?.rawValue ?? ""
 
-            // Save thumbnail image
-            if let thumbnailImage = data.thumbnailImage {
-                PINCache.shared.setObjectAsync(thumbnailImage, forKey: "\(unixTime)", completion: nil)
-                clip.thumbnailPath = "\(unixTime)"
-            } else if let colorCodeImage = data.colorCodeImage {
-                PINCache.shared.setObjectAsync(colorCodeImage, forKey: "\(unixTime)", completion: nil)
-                clip.thumbnailPath = "\(unixTime)"
-                clip.isColorCode = true
-            }
+        // Save thumbnail image
+        if let thumbnailImage = data.thumbnailImage {
+            PINCache.shared.setObjectAsync(thumbnailImage, forKey: "\(unixTime)", completion: nil)
+            clip.thumbnailPath = "\(unixTime)"
+        } else if let colorCodeImage = data.colorCodeImage {
+            PINCache.shared.setObjectAsync(colorCodeImage, forKey: "\(unixTime)", completion: nil)
+            clip.thumbnailPath = "\(unixTime)"
+            clip.isColorCode = true
+        }
 
-            if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
-                try? JSONEncoder().encode(data).write(to: .init(fileURLWithPath: savedPath))
-                // The store runs on its own serial queue, so no main-thread hop is needed.
-                AppEnvironment.current.box.clipWrite { try $0.insertClip(clip) }
-            }
+        if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
+            try? JSONEncoder().encode(data).write(to: .init(fileURLWithPath: savedPath))
+            // The store runs on its own serial queue, so no main-thread hop is needed.
+            AppEnvironment.current.box.clipTransaction { try $0.insertClip(clip) }.run()
         }
     }
 

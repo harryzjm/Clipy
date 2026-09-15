@@ -21,15 +21,16 @@ struct SnippetsEditorView: View {
         NavigationSplitView {
             SnippetsSidebar(store: store)
                 .navigationSplitViewColumnWidth(min: 200, ideal: 250, max: 400)
+                .toolbar(removing: .sidebarToggle)
         } detail: {
             SnippetDetailView(store: store)
         }
         .toolbar { toolbar }
-        .alert(L10n.deleteItem, isPresented: $store.isDeleteConfirmationPresented) {
-            Button(L10n.cancel, role: .cancel) {}
-            Button(L10n.deleteItem, role: .destructive) { store.deleteSelection() }
+        .alert(L10n.Common.deleteItem, isPresented: $store.isDeleteConfirmationPresented) {
+            Button(L10n.Common.cancel, role: .cancel) {}
+            Button(L10n.Common.deleteItem, role: .destructive) { store.deleteSelection() }
         } message: {
-            Text(L10n.areYouSureWantToDeleteThisItem)
+            Text(L10n.Alert.DeleteSnippet.message)
         }
     }
 
@@ -50,9 +51,9 @@ struct SnippetsEditorView: View {
             .help("Add Folder")
 
             Button { store.isDeleteConfirmationPresented = true } label: {
-                Label(L10n.deleteItem, systemImage: "trash")
+                Label(L10n.Common.deleteItem, systemImage: "trash")
             }
-            .help(L10n.deleteItem)
+            .help(L10n.Common.deleteItem)
             .disabled(store.selection == nil)
 
             Button { store.toggleEnabled() } label: {

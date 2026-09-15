@@ -22,12 +22,12 @@ struct PreferencesRootView: View {
 
         var title: String {
             switch self {
-            case .general: return L10n.general
-            case .menu: return L10n.menu
-            case .type: return L10n.type
-            case .excluded: return "Excluded Apps"
-            case .shortcuts: return L10n.shortcuts
-            case .beta: return "Beta"
+            case .general: return L10n.Preferences.general
+            case .menu: return L10n.Common.menu
+            case .type: return L10n.Preferences.type
+            case .excluded: return L10n.Preferences.excluded
+            case .shortcuts: return L10n.Preferences.shortcuts
+            case .beta: return L10n.Preferences.beta
             }
         }
 
@@ -56,6 +56,7 @@ struct PreferencesRootView: View {
                     .tag(pane)
             }
             .navigationSplitViewColumnWidth(min: 170, ideal: 190, max: 240)
+            .toolbar(removing: .sidebarToggle)
         } detail: {
             detail
                 .navigationTitle(current.title)

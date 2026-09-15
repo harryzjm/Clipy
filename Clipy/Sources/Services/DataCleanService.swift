@@ -60,8 +60,7 @@ final class DataCleanService {
         let payloadFiles = paths.filter { ($0 as NSString).pathExtension == "data" }
         let referenced = Set(referencedFiles.filter { ($0 as NSString).pathExtension == "data" })
 
-        // Delete diff datas
-        DispatchQueue.main.async {
+        LQueue.main.dispatch {
             referenced.symmetricDifference(payloadFiles)
                 .map { CPYUtilities.applicationSupportFolder() + "/" + "\($0)" }
                 .forEach { CPYUtilities.deleteData(at: $0) }

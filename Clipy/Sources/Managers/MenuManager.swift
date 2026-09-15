@@ -19,12 +19,12 @@ final class MenuManager: NSObject {
     fileprivate var snippetMenu: NSMenu?
     fileprivate lazy var configMenu: NSMenu = {
         let v = NSMenu(title: Constants.Menu.config)
-        v.addItem(.init(title: L10n.clearHistory, action: #selector(AppDelegate.clearAllHistory)))
-        v.addItem(.init(title: L10n.preferences, action: #selector(AppDelegate.showPreferenceWindow)))
-        v.addItem(.init(title: L10n.snippets, action: #selector(AppDelegate.showSnippetEditorWindow)))
+        v.addItem(.init(title: L10n.Common.clearHistory, action: #selector(AppDelegate.clearAllHistory)))
+        v.addItem(.init(title: L10n.Menu.preferences, action: #selector(AppDelegate.showPreferenceWindow)))
+        v.addItem(.init(title: L10n.Menu.snippets, action: #selector(AppDelegate.showSnippetEditorWindow)))
         v.addItem(.separator())
-        v.addItem(.init(title: L10n.restartClipy, action: #selector(AppDelegate.restart)))
-        v.addItem(.init(title: L10n.quitClipy, action: #selector(AppDelegate.terminate)))
+        v.addItem(.init(title: L10n.Menu.restart, action: #selector(AppDelegate.restart)))
+        v.addItem(.init(title: L10n.Menu.quit, action: #selector(AppDelegate.terminate)))
         return v
     }()
 
@@ -71,7 +71,7 @@ extension MenuManager {
 
         switch type {
         case .history:
-            FilterMenu(title: L10n.history).popUp(positioning: nil, at: pt, in: statusItem?.button)
+            FilterMenu(title: L10n.Menu.historyTitle).popUp(positioning: nil, at: pt, in: statusItem?.button)
         case .snippet:
             snippetMenu?.popUp(positioning: nil, at: pt, in: statusItem?.button)
         }
@@ -210,7 +210,7 @@ private extension MenuManager {
         }
 
         // Snippet title
-        let labelItem = NSMenuItem(title: L10n.snippet, action: nil)
+        let labelItem = NSMenuItem(title: L10n.Menu.snippetHeader, action: nil)
         labelItem.isEnabled = false
         menu.addItem(labelItem)
 

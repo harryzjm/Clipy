@@ -31,7 +31,7 @@ struct ExcludeAppPane: View {
                 Button {
                     store.addApplications()
                 } label: {
-                    Label("Add", systemImage: "plus")
+                    Label(L10n.ExcludedApps.addButton, systemImage: "plus")
                 }
 
                 Button {

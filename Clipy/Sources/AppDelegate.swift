@@ -18,7 +18,6 @@ import Magnet
 import Screeen
 import RxScreeen
 import LetsMove
-import LaunchAtLogin
 
 class AppDelegate: NSObject, NSMenuItemValidation {
 
@@ -44,20 +43,14 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - Menu Actions
     @objc func showPreferenceWindow() {
         activateApp()
-        // `activate()` is asynchronous and SwiftUI will not materialise the Settings window
-        // while the app is still inactive, so let activation land before performing the item.
-        DispatchQueue.main.async { [weak self] in
+
+        LQueue.main.dispatchAsync { [weak self] in
             self?.openSettingsWindow()
         }
     }
 
     private func activateApp() {
-        if #available(macOS 14.0, *) {
-            // `activate(ignoringOtherApps:)` is deprecated under macOS 14 cooperative activation.
-            NSApp.activate()
-        } else {
-            NSApp.activate(ignoringOtherApps: true)
-        }
+        NSApp.activate()
     }
 
     private func openSettingsWindow() {
@@ -71,7 +64,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     /// SwiftUI installs the Settings item with a private `menuAction:` selector bound to its own
     /// callback object, so `NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, ...)`
-    /// reports success while doing nothing at all. Find the real item and perform that instead.
+    /// reports success while doing nothing at all. Find the real item and perform that instead.1
     private func settingsMenuItem() -> NSMenuItem? {
         guard let appMenu = NSApp.mainMenu?.items.first?.submenu else { return nil }
         let documented: Set<Selector> = [Selector(("showSettingsWindow:")), Selector(("showPreferencesWindow:"))]
@@ -113,10 +106,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
-            alert.messageText = L10n.clearHistory
-            alert.informativeText = L10n.areYouSureYouWantToClearYourClipboardHistory
-            alert.addButton(withTitle: L10n.clearHistory)
-            alert.addButton(withTitle: L10n.cancel)
+            alert.messageText = L10n.Common.clearHistory
+            alert.informativeText = L10n.Alert.ClearHistory.message
+            alert.addButton(withTitle: L10n.Common.clearHistory)
+            alert.addButton(withTitle: L10n.Common.cancel)
             alert.showsSuppressionButton = true
 
             NSApp.activate(ignoringOtherApps: true)
@@ -181,10 +174,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - Login Item Methods
     private func promptToAddLoginItems() {
         let alert = NSAlert()
-        alert.messageText = L10n.launchClipyOnSystemStartup
-        alert.informativeText = L10n.youCanChangeThisSettingInThePreferencesIfYouWant
-        alert.addButton(withTitle: L10n.launchOnSystemStartup)
-        alert.addButton(withTitle: L10n.donTLaunch)
+        alert.messageText = L10n.Alert.LoginItem.title
+        alert.informativeText = L10n.Alert.LoginItem.message
+        alert.addButton(withTitle: L10n.Alert.LoginItem.launch)
+        alert.addButton(withTitle: L10n.Alert.LoginItem.dontLaunch)
         alert.showsSuppressionButton = true
         NSApp.activate(ignoringOtherApps: true)
 
@@ -202,14 +195,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     private func toggleAddingToLoginItems(_ isEnable: Bool) {
-        if #available(macOS 10.13, *) {
-            LaunchAtLogin.isEnabled = isEnable
-        } else {
-            let appPath = Bundle.main.bundlePath
-            LoginServiceKit.removeLoginItems(at: appPath)
-            guard isEnable else { return }
-            LoginServiceKit.addLoginItems(at: appPath)
-        }
+        LaunchAtLogin.isEnabled = isEnable
     }
 
     private func reflectLoginItemState() {

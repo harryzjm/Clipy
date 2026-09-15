@@ -69,12 +69,12 @@ private struct SMLog {
     func manage(level: SMLogLevel, file: StaticString, function: StaticString, line: UInt, date: Date, isMain: Bool) -> String {
         let isMainThread = isMain ? "1" : "0"
         let fileName = file.description.components(separatedBy: "/").last?.components(separatedBy: ".").first ?? ""
-        let functionName = function.description.firstSubstring(pattern: "[a-z]+", options: .caseInsensitive) ?? ""
+//        let functionName = function.description.firstSubstring(pattern: "[a-z]+", options: .caseInsensitive) ?? ""
         let minute = Calendar.autoupdatingCurrent.component(.minute, from: date)
         let second = Calendar.autoupdatingCurrent.component(.second, from: date)
         let nanosecond = Calendar.autoupdatingCurrent.component(.nanosecond, from: date)
         let dateFormat = String(format: "%02d:%02d.%02d", minute, second, nanosecond / 10000000)
-        return "[" + fileName + "." + functionName + ":\(line)] " +
+        return "[" + fileName + ":\(line)] " +
             isMainThread + " " +
             dateFormat + " " +
             level.icon + "> "

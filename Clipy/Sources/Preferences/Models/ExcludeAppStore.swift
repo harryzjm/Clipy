@@ -32,7 +32,7 @@ final class ExcludeAppStore {
         openPanel.allowedContentTypes = [.application]
         openPanel.allowsMultipleSelection = true
         openPanel.resolvesAliases = true
-        openPanel.prompt = L10n.add
+        openPanel.prompt = L10n.ExcludedApps.addButton
         let directories = NSSearchPathForDirectoriesInDomains(.applicationDirectory, .localDomainMask, true)
         openPanel.directoryURL = URL(fileURLWithPath: directories.first ?? NSHomeDirectory())
 

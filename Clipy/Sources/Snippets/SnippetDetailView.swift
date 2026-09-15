@@ -85,7 +85,7 @@ private struct SnippetContentView: View {
             .padding(8)
             .overlay(alignment: .topLeading) {
                 if text.wrappedValue.isEmpty {
-                    Text(L10n.pleaseFillInTheContentsOfTheSnippet)
+                    Text(L10n.Snippets.emptyContentPlaceholder)
                         .font(.system(size: 14))
                         .foregroundStyle(SwiftUI.Color(nsColor: .disabledControlTextColor))
                         .padding(.horizontal, 13)

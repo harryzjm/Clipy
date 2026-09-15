@@ -27,12 +27,12 @@ extension CPYFolder {
 
     func merge() {
         let table = toTable
-        AppEnvironment.current.box.snippetWrite { try $0.snippetDb.upsertFolder(table) }
+        AppEnvironment.current.box.snippetTransaction { try $0.snippetDb.upsertFolder(table) }.run()
     }
 
     func remove() {
         let identifier = self.identifier
-        AppEnvironment.current.box.snippetWrite { try $0.removeFolder(identifier: identifier) }
+        AppEnvironment.current.box.snippetTransaction { try $0.removeFolder(identifier: identifier) }.run()
     }
 
     /// Appends a snippet to this folder.
@@ -42,7 +42,7 @@ extension CPYFolder {
         snippet.folderIdentifier = identifier
         let copy = CPYSnippet(copying: snippet)
         let identifier = self.identifier
-        AppEnvironment.current.box.snippetWrite { try $0.appendSnippet(copy, folderIdentifier: identifier) }
+        AppEnvironment.current.box.snippetTransaction { try $0.appendSnippet(copy, folderIdentifier: identifier) }.run()
     }
 
     /// Moves a snippet into this folder at `index`, renumbering the folder afterwards.
@@ -50,9 +50,9 @@ extension CPYFolder {
         snippet.folderIdentifier = identifier
         let copy = CPYSnippet(copying: snippet)
         let identifier = self.identifier
-        AppEnvironment.current.box.snippetWrite {
+        AppEnvironment.current.box.snippetTransaction {
             try $0.insertSnippet(copy, folderIdentifier: identifier, index: index)
-        }
+        }.run()
     }
 
     /// Detaches a snippet from this folder. A no-op if it has already been re-parented, which is
@@ -60,16 +60,16 @@ extension CPYFolder {
     func removeSnippet(_ snippet: CPYSnippet) {
         let identifier = snippet.identifier
         let folderIdentifier = self.identifier
-        AppEnvironment.current.box.snippetWrite {
+        AppEnvironment.current.box.snippetTransaction {
             try $0.removeSnippet(identifier: identifier, fromFolder: folderIdentifier)
-        }
+        }.run()
     }
 
     /// Renumbers folders from the array order, in one transaction.
     static func rearrangesIndex(_ folders: [CPYFolder]) {
         folders.enumerated().forEach { $0.element.index = $0.offset }
         let snapshot = folders.map { CPYFolder(shallowCopying: $0) }
-        AppEnvironment.current.box.snippetWrite { try $0.rearrangeFolders(snapshot) }
+        AppEnvironment.current.box.snippetTransaction { try $0.rearrangeFolders(snapshot) }.run()
     }
 
     /// Renumbers this folder's snippets from the array order, in one transaction.
@@ -79,7 +79,7 @@ extension CPYFolder {
             $0.element.folderIdentifier = identifier
         }
         let snapshot = snippets.map { CPYSnippet(copying: $0) }
-        AppEnvironment.current.box.snippetWrite { try $0.rearrangeSnippets(snapshot) }
+        AppEnvironment.current.box.snippetTransaction { try $0.rearrangeSnippets(snapshot) }.run()
     }
 }
 

@@ -1,25 +1,43 @@
-"Add" = "Add";
-"Are you sure want to delete this item?" = "Are you sure want to delete this item?";
-"Are you sure you want to clear your clipboard history?" = "Are you sure you want to clear your clipboard history?";
-"Cancel" = "Cancel";
-"Clear History" = "Clear History";
-"Delete Item" = "Delete Item";
-"Don't Launch" = "Don't Launch";
-"General" = "General";
-"History" = "History";
-"Launch Clipy on system startup?" = "Launch Clipy on system startup?";
-"Launch on system startup" = "Launch on system startup";
-"Menu" = "Menu";
-"Open System Preferences" = "Open System Preferences";
-"Please allow Accessibility" = "Please allow Accessibility.";
-"Please fill in the contents of the snippet" = "Please fill in the contents of the snippet";
-"Preferences" = "Preferences...";
-"Snippets" = "Snippets...";
-"Restart Clipy" = "Restart Clipy";
-"Quit Clipy" = "Quit Clipy";
-"Shortcuts" = "Shortcuts";
-"Snippet" = "Snippet";
-"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
-"Type" = "Type";
-"Updates" = "Updates";
-"You can change this setting in the Preferences if you want" = "You can change this setting in the Preferences if you want.";
+/* Shared across multiple screens */
+"common.cancel" = "Cancel";
+"common.clearHistory" = "Clear History";
+"common.deleteItem" = "Delete Item";
+"common.menu" = "Menu";
+
+/* Status bar menu */
+"menu.preferences" = "Preferences...";
+"menu.snippets" = "Snippets...";
+"menu.restart" = "Restart";
+"menu.quit" = "Quit";
+"menu.historyTitle" = "History";
+"menu.snippetHeader" = "Snippet";
+
+/* Preferences window – pane titles */
+"preferences.general" = "General";
+"preferences.type" = "Type";
+"preferences.shortcuts" = "Shortcuts";
+"preferences.excluded" = "Excluded Apps";
+"preferences.beta" = "Beta";
+
+/* Preferences – Excluded Apps pane */
+"excludedApps.addButton" = "Add";
+
+/* Snippets editor */
+"snippets.emptyContentPlaceholder" = "Please fill in the contents of the snippet";
+
+/* Alert – clear clipboard history */
+"alert.clearHistory.message" = "Are you sure you want to clear your clipboard history?";
+
+/* Alert – add to login items */
+"alert.loginItem.title" = "Launch Clipy on system startup?";
+"alert.loginItem.message" = "You can change this setting in the Preferences if you want.";
+"alert.loginItem.launch" = "Launch on system startup";
+"alert.loginItem.dontLaunch" = "Don't Launch";
+
+/* Alert – accessibility permission */
+"alert.accessibility.title" = "Please allow Accessibility.";
+"alert.accessibility.message" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
+"alert.accessibility.openPreferences" = "Open System Preferences";
+
+/* Alert – delete snippet / folder */
+"alert.deleteSnippet.message" = "Are you sure want to delete this item?";
