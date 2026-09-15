@@ -7,7 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0009E185613184F0301F5DBD /* SnippetTransaction+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC8F67D828A3B1EF0319B7E /* SnippetTransaction+Ext.swift */; };
+		0B89E8F2062F22ECBE716413 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0399551AA760BF7249673A /* Atomic.swift */; };
+		12589B06D43B1173F15DF4E6 /* ClipDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA49382DE43C456A622AD7DF /* ClipDB.swift */; };
+		21A6653EEA5085AFF89FF284 /* StorageBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084BFD41184E56F2CC58C778 /* StorageBox.swift */; };
+		22B9A3486DB099DE5771913E /* ClipComponentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC74E18920F72DF37312617 /* ClipComponentService.swift */; };
+		2D077E1B40EC6D286F07A743 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0329B48B474C5EEFD1B0DF3D /* DataStore.swift */; };
+		30DDEC3B0D42C4C08ABF82E4 /* ClipyBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2020E335D34B072B655B174E /* ClipyBox.swift */; };
+		372D85BC0ADF08418FD02B2F /* CPYClipTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAED3299EBE0E76B7EFAF79A /* CPYClipTable.swift */; };
+		413C162A67D0F5E34575FB06 /* ViewTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13027F459BD3CACBD4EA11F8 /* ViewTracker.swift */; };
+		44E8DAD4361EB86860C9A2BE /* CPYSnippetTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38775CED5B507CA2D8E84C8D /* CPYSnippetTable.swift */; };
+		464310C455AC6A3B1FD7E1AB /* MutableSnippetMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 753A21ADC0462AFDD96BAA00 /* MutableSnippetMenuView.swift */; };
+		49EB7B5770C593729CAD8847 /* BoxChangeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCF177300D9A838E809A4AF /* BoxChangeSet.swift */; };
 		551677E926C417310040C38D /* LoginServiceKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551677E826C417300040C38D /* LoginServiceKit.swift */; };
+		59EE9CAC65001F7265BBF179 /* SnippetComponentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EADC2566575096B6F2EDD36 /* SnippetComponentService.swift */; };
 		603AD8FF25427ABA00A6C6F6 /* FilterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */; };
 		605F360C2546C9EE00AE9701 /* NSCoding+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605F360B2546C9ED00AE9701 /* NSCoding+Ext.swift */; };
 		605F367A2547BEAA00AE9701 /* FilterMenuConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605F36792547BEAA00AE9701 /* FilterMenuConfig.swift */; };
@@ -18,12 +31,21 @@
 		60BBF2042546A9280051EA70 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BBF2032546A9280051EA70 /* Preferences.swift */; };
 		60C260EA2A85E5C300240EAB /* NSColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C260E92A85E5C300240EAB /* NSColor+Ext.swift */; };
 		60ECF5FA2544633500E34067 /* NSFont+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ECF5F92544633500E34067 /* NSFont+Ext.swift */; };
+		70D991BA568C193F55941FAE /* CPYFolderTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AA7F6D750C27F424108D30 /* CPYFolderTable.swift */; };
 		95178F012AD59BCD00928198 /* RunLoopLocalEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95178F002AD59BCD00928198 /* RunLoopLocalEventMonitor.swift */; };
 		952E3FE52ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E3FE22ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.swift */; };
 		952E3FE62ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 952E3FE32ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.xib */; };
 		9536DC7B2A872C8A00270908 /* CPYClipData+FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9536DC7A2A872C8A00270908 /* CPYClipData+FileType.swift */; };
+		B24CCF508F1224F82D8B8731 /* CPYSnippet+Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54326D56285432B47239F6C7 /* CPYSnippet+Store.swift */; };
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
+		C5491A1E609D602653F1D4A0 /* ComponentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D719FD598071B3258B2BF0 /* ComponentService.swift */; };
+		C63004424A0E7BBC2FC8C4C3 /* Bag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7039B94D347B69D3F833B7 /* Bag.swift */; };
 		CAFD12B01F207DBC00DF1CEB /* Observable+Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */; };
+		CCEFFF11A3AF57B7297B7557 /* ClipTransaction+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E436594B25F06727A257A5D8 /* ClipTransaction+Ext.swift */; };
+		CE8ABF77EAC48B09D7516788 /* LQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E794D8C42E1480106B7354A5 /* LQueue.swift */; };
+		E38ABCCD19727D901310EE8B /* CPYFolder+Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E88AB154B2C7D49414090C /* CPYFolder+Store.swift */; };
+		E5625864C48FFFB473C084F6 /* ClipyBox+Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D59F459141548B9B662A22 /* ClipyBox+Signal.swift */; };
+		EFA56BF3601245ABAB2A4C69 /* SnippetDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A98C01970668545FC976E /* SnippetDB.swift */; };
 		FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D5CE71DDCC61600AC9052 /* ClipService.swift */; };
 		FA10897D20EC22E200A3FEFC /* AssetsImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10897B20EC22E200A3FEFC /* AssetsImages.swift */; };
 		FA10897E20EC22E200A3FEFC /* LocalizedStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */; };
@@ -41,8 +63,6 @@
 		FA1DB4B71DDCB452007F95C8 /* NSImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AC1DDCB452007F95C8 /* NSImage+Resize.swift */; };
 		FA1DB4B81DDCB452007F95C8 /* NSLock+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AD1DDCB452007F95C8 /* NSLock+Clipy.swift */; };
 		FA1DB4B91DDCB452007F95C8 /* NSMenuItem+Initialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AE1DDCB452007F95C8 /* NSMenuItem+Initialize.swift */; };
-		FA1DB4BB1DDCB452007F95C8 /* Realm+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4B01DDCB452007F95C8 /* Realm+Migration.swift */; };
-		FA1DB4BC1DDCB452007F95C8 /* Realm+NoCatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4B11DDCB452007F95C8 /* Realm+NoCatch.swift */; };
 		FA1DB4BD1DDCB452007F95C8 /* String+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4B21DDCB452007F95C8 /* String+Ext.swift */; };
 		FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */; };
 		FA1DB4D21DDCB479007F95C8 /* CPYAppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4CC1DDCB479007F95C8 /* CPYAppInfo.swift */; };
@@ -71,8 +91,8 @@
 		FA3778931F3B691A003B5BAB /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3778921F3B691A003B5BAB /* AppEnvironment.swift */; };
 		FA3778951F3B6920003B5BAB /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3778941F3B6920003B5BAB /* Environment.swift */; };
 		FA431F021E6718CE00ACFF56 /* Collection+Safe.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA431F011E6718CE00ACFF56 /* Collection+Safe.swift */; };
-		FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
-		FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FAA4BCCC2163DC9100FF5D18 /* AccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4BCCB2163DC9100FF5D18 /* AccessibilityService.swift */; };
 		FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */; };
 		FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */; };
@@ -82,6 +102,7 @@
 		FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E261B35DFD300C06102 /* Carbon.framework */; };
 		FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E281B35DFDA00C06102 /* Cocoa.framework */; };
 		FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE911B81DE045E2008A4BEC /* HotKeyService.swift */; };
+		FF3A0F6D86CFF52B0A382A1B /* MutableClipListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22FB483761DE17C470277F1 /* MutableClipListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -98,8 +119,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0329B48B474C5EEFD1B0DF3D /* DataStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		084BFD41184E56F2CC58C778 /* StorageBox.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StorageBox.swift; sourceTree = "<group>"; };
+		13027F459BD3CACBD4EA11F8 /* ViewTracker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ViewTracker.swift; sourceTree = "<group>"; };
+		2020E335D34B072B655B174E /* ClipyBox.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipyBox.swift; sourceTree = "<group>"; };
 		31064F137CFB046737D1709D /* Pods-Clipy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.debug.xcconfig"; sourceTree = "<group>"; };
 		314B299F1EC49BAF004DD070 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYPreferencesWindowController.xib; sourceTree = "<group>"; };
+		38775CED5B507CA2D8E84C8D /* CPYSnippetTable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CPYSnippetTable.swift; sourceTree = "<group>"; };
+		3A7039B94D347B69D3F833B7 /* Bag.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Bag.swift; sourceTree = "<group>"; };
+		4EADC2566575096B6F2EDD36 /* SnippetComponentService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SnippetComponentService.swift; sourceTree = "<group>"; };
+		54326D56285432B47239F6C7 /* CPYSnippet+Store.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "CPYSnippet+Store.swift"; sourceTree = "<group>"; };
 		551677E826C417300040C38D /* LoginServiceKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginServiceKit.swift; sourceTree = "<group>"; };
 		603AD8FE25427ABA00A6C6F6 /* FilterMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterMenu.swift; sourceTree = "<group>"; };
 		605F360B2546C9ED00AE9701 /* NSCoding+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSCoding+Ext.swift"; sourceTree = "<group>"; };
@@ -111,12 +140,27 @@
 		60C260E92A85E5C300240EAB /* NSColor+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSColor+Ext.swift"; sourceTree = "<group>"; };
 		60ECF5F92544633500E34067 /* NSFont+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSFont+Ext.swift"; sourceTree = "<group>"; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		753A21ADC0462AFDD96BAA00 /* MutableSnippetMenuView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MutableSnippetMenuView.swift; sourceTree = "<group>"; };
+		78D719FD598071B3258B2BF0 /* ComponentService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ComponentService.swift; sourceTree = "<group>"; };
+		79E88AB154B2C7D49414090C /* CPYFolder+Store.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "CPYFolder+Store.swift"; sourceTree = "<group>"; };
+		7CC8F67D828A3B1EF0319B7E /* SnippetTransaction+Ext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "SnippetTransaction+Ext.swift"; sourceTree = "<group>"; };
 		95178F002AD59BCD00928198 /* RunLoopLocalEventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLoopLocalEventMonitor.swift; sourceTree = "<group>"; };
 		952E3FE22ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetsEditorWindowController.swift; sourceTree = "<group>"; };
 		952E3FE32ACE57C60005DDC2 /* CPYSnippetsEditorWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYSnippetsEditorWindowController.xib; sourceTree = "<group>"; };
 		9536DC7A2A872C8A00270908 /* CPYClipData+FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPYClipData+FileType.swift"; sourceTree = "<group>"; };
 		9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
+		ACCF177300D9A838E809A4AF /* BoxChangeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BoxChangeSet.swift; sourceTree = "<group>"; };
+		B22FB483761DE17C470277F1 /* MutableClipListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MutableClipListView.swift; sourceTree = "<group>"; };
+		B6D59F459141548B9B662A22 /* ClipyBox+Signal.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "ClipyBox+Signal.swift"; sourceTree = "<group>"; };
+		C3AA7F6D750C27F424108D30 /* CPYFolderTable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CPYFolderTable.swift; sourceTree = "<group>"; };
+		C40A98C01970668545FC976E /* SnippetDB.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SnippetDB.swift; sourceTree = "<group>"; };
+		CA49382DE43C456A622AD7DF /* ClipDB.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipDB.swift; sourceTree = "<group>"; };
+		CAED3299EBE0E76B7EFAF79A /* CPYClipTable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CPYClipTable.swift; sourceTree = "<group>"; };
 		CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Void.swift"; sourceTree = "<group>"; };
+		CBC74E18920F72DF37312617 /* ClipComponentService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipComponentService.swift; sourceTree = "<group>"; };
+		E436594B25F06727A257A5D8 /* ClipTransaction+Ext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "ClipTransaction+Ext.swift"; sourceTree = "<group>"; };
+		E794D8C42E1480106B7354A5 /* LQueue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LQueue.swift; sourceTree = "<group>"; };
+		EF0399551AA760BF7249673A /* Atomic.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		FA0D5CE71DDCC61600AC9052 /* ClipService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipService.swift; sourceTree = "<group>"; };
 		FA10897B20EC22E200A3FEFC /* AssetsImages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetsImages.swift; sourceTree = "<group>"; };
 		FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedStrings.swift; sourceTree = "<group>"; };
@@ -135,8 +179,6 @@
 		FA1DB4AC1DDCB452007F95C8 /* NSImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+Resize.swift"; sourceTree = "<group>"; };
 		FA1DB4AD1DDCB452007F95C8 /* NSLock+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLock+Clipy.swift"; sourceTree = "<group>"; };
 		FA1DB4AE1DDCB452007F95C8 /* NSMenuItem+Initialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMenuItem+Initialize.swift"; sourceTree = "<group>"; };
-		FA1DB4B01DDCB452007F95C8 /* Realm+Migration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Realm+Migration.swift"; sourceTree = "<group>"; };
-		FA1DB4B11DDCB452007F95C8 /* Realm+NoCatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Realm+NoCatch.swift"; sourceTree = "<group>"; };
 		FA1DB4B21DDCB452007F95C8 /* String+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Ext.swift"; sourceTree = "<group>"; };
 		FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuManager.swift; sourceTree = "<group>"; };
 		FA1DB4CC1DDCB479007F95C8 /* CPYAppInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYAppInfo.swift; sourceTree = "<group>"; };
@@ -194,6 +236,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1116AB15211475A95080FC5A /* base */ = {
+			isa = PBXGroup;
+			children = (
+				78D719FD598071B3258B2BF0 /* ComponentService.swift */,
+				CBC74E18920F72DF37312617 /* ClipComponentService.swift */,
+				4EADC2566575096B6F2EDD36 /* SnippetComponentService.swift */,
+				ACCF177300D9A838E809A4AF /* BoxChangeSet.swift */,
+				13027F459BD3CACBD4EA11F8 /* ViewTracker.swift */,
+				8A68BB437A2B1C14F1DE55D5 /* View */,
+			);
+			path = base;
+			sourceTree = "<group>";
+		};
 		2CB0F71AAC48A392535FD3B0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,6 +260,17 @@
 				73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3B5DD5E7D87027F5264BDCF3 /* db */ = {
+			isa = PBXGroup;
+			children = (
+				084BFD41184E56F2CC58C778 /* StorageBox.swift */,
+				0329B48B474C5EEFD1B0DF3D /* DataStore.swift */,
+				CA49382DE43C456A622AD7DF /* ClipDB.swift */,
+				C40A98C01970668545FC976E /* SnippetDB.swift */,
+			);
+			path = db;
 			sourceTree = "<group>";
 		};
 		605F35B92546C2DF00AE9701 /* Protocol */ = {
@@ -239,6 +305,25 @@
 			path = FilterMenu;
 			sourceTree = "<group>";
 		};
+		636669BD5D3EBDD7DB5F3A55 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CAED3299EBE0E76B7EFAF79A /* CPYClipTable.swift */,
+				C3AA7F6D750C27F424108D30 /* CPYFolderTable.swift */,
+				38775CED5B507CA2D8E84C8D /* CPYSnippetTable.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		8A68BB437A2B1C14F1DE55D5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B22FB483761DE17C470277F1 /* MutableClipListView.swift */,
+				753A21ADC0462AFDD96BAA00 /* MutableSnippetMenuView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		952E3FDF2ACE57C60005DDC2 /* Snippets */ = {
 			isa = PBXGroup;
 			children = (
@@ -251,8 +336,6 @@
 		CAFD12AE1F207D9F00DF1CEB /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				FA1DB4B01DDCB452007F95C8 /* Realm+Migration.swift */,
-				FA1DB4B11DDCB452007F95C8 /* Realm+NoCatch.swift */,
 				CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */,
 			);
 			path = ThirdParty;
@@ -265,6 +348,20 @@
 				9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		E5E27813A17A49A4586A02B1 /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				2020E335D34B072B655B174E /* ClipyBox.swift */,
+				B6D59F459141548B9B662A22 /* ClipyBox+Signal.swift */,
+				E436594B25F06727A257A5D8 /* ClipTransaction+Ext.swift */,
+				7CC8F67D828A3B1EF0319B7E /* SnippetTransaction+Ext.swift */,
+				1116AB15211475A95080FC5A /* base */,
+				3B5DD5E7D87027F5264BDCF3 /* db */,
+				636669BD5D3EBDD7DB5F3A55 /* Model */,
+			);
+			path = Database;
 			sourceTree = "<group>";
 		};
 		FA06D2D21DD882BD002FB7C2 /* Resources */ = {
@@ -325,6 +422,7 @@
 				FA1DB4A01DDCB433007F95C8 /* AppDelegate.swift */,
 				FA1DB4A11DDCB433007F95C8 /* Constants.swift */,
 				60BBF2032546A9280051EA70 /* Preferences.swift */,
+				E5E27813A17A49A4586A02B1 /* Database */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -379,6 +477,8 @@
 				FA1DB4CF1DDCB479007F95C8 /* CPYDraggedData.swift */,
 				FA1DB4D01DDCB479007F95C8 /* CPYFolder.swift */,
 				FA1DB4D11DDCB479007F95C8 /* CPYSnippet.swift */,
+				79E88AB154B2C7D49414090C /* CPYFolder+Store.swift */,
+				54326D56285432B47239F6C7 /* CPYSnippet+Store.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -388,6 +488,9 @@
 			children = (
 				FA1DB4D91DDCB49C007F95C8 /* CPYUtilities.swift */,
 				60BBF171254670CD0051EA70 /* SMLog.swift */,
+				EF0399551AA760BF7249673A /* Atomic.swift */,
+				3A7039B94D347B69D3F833B7 /* Bag.swift */,
+				E794D8C42E1480106B7354A5 /* LQueue.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -542,9 +645,7 @@
 				TargetAttributes = {
 					FAC43DC51B35D8B100C06102 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 22XV5USFK3;
 						LastSwiftMigration = 1140;
-						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -558,7 +659,7 @@
 			);
 			mainGroup = FAC43DBD1B35D8B100C06102;
 			packageReferences = (
-				608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin.git" */,
+				608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
 			);
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
 			projectDirPath = "";
@@ -575,7 +676,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA1DB5131DDCB4C0007F95C8 /* CPYPreferencesWindowController.xib in Resources */,
-				FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */,
+				FA6DD5141C7DEDB600317E73 /* (null) in Resources */,
 				FA1DB51E1DDCB4C0007F95C8 /* CPYTypePreferenceViewController.xib in Resources */,
 				FA1DB4901DDCA5D9007F95C8 /* Images.xcassets in Resources */,
 				FA1DB51D1DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.xib in Resources */,
@@ -583,7 +684,7 @@
 				FA1DB51B1DDCB4C0007F95C8 /* CPYGeneralPreferenceViewController.xib in Resources */,
 				FA1DB51A1DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.xib in Resources */,
 				FA1DB5191DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.xib in Resources */,
-				FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */,
+				FA6DD5151C7DEDB600317E73 /* (null) in Resources */,
 				FA1DB4941DDCB22C007F95C8 /* dsa_pub.pem in Resources */,
 				FA1DB4981DDCB2CB007F95C8 /* Localizable.strings in Resources */,
 				FA1DB49F1DDCB417007F95C8 /* MainMenu.xib in Resources */,
@@ -603,11 +704,11 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Clipy/Pods-Clipy-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/KeyHolder/KeyHolder.framework",
 				"${BUILT_PRODUCTS_DIR}/LetsMove/LetsMove.framework",
+				"${BUILT_PRODUCTS_DIR}/MMKV/MMKV.framework",
+				"${BUILT_PRODUCTS_DIR}/MMKVCore/MMKVCore.framework",
 				"${BUILT_PRODUCTS_DIR}/Magnet/Magnet.framework",
 				"${BUILT_PRODUCTS_DIR}/PINCache/PINCache.framework",
 				"${BUILT_PRODUCTS_DIR}/PINOperation/PINOperation.framework",
-				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
-				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxOptional/RxOptional.framework",
 				"${BUILT_PRODUCTS_DIR}/RxRelay/RxRelay.framework",
@@ -615,16 +716,18 @@
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/Sauce/Sauce.framework",
 				"${BUILT_PRODUCTS_DIR}/Screeen/Screeen.framework",
+				"${BUILT_PRODUCTS_DIR}/WCDB.swift/WCDBSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/WCDBOptimizedSQLCipher/sqlcipher.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeyHolder.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LetsMove.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MMKV.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MMKVCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Magnet.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINCache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINOperation.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxOptional.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxRelay.framework",
@@ -632,6 +735,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sauce.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Screeen.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WCDBSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqlcipher.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -714,7 +819,6 @@
 				95178F012AD59BCD00928198 /* RunLoopLocalEventMonitor.swift in Sources */,
 				FA1DB4A21DDCB433007F95C8 /* AppDelegate.swift in Sources */,
 				FA1DB5141DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.swift in Sources */,
-				FA1DB4BC1DDCB452007F95C8 /* Realm+NoCatch.swift in Sources */,
 				FA1DB4B91DDCB452007F95C8 /* NSMenuItem+Initialize.swift in Sources */,
 				FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */,
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
@@ -743,9 +847,31 @@
 				608D9CAA2541934D00C9434B /* TextFieldMenuItem.swift in Sources */,
 				FA10897E20EC22E200A3FEFC /* LocalizedStrings.swift in Sources */,
 				FA1DB4EB1DDCB49C007F95C8 /* CPYPlaceHolderTextView.swift in Sources */,
-				FA1DB4BB1DDCB452007F95C8 /* Realm+Migration.swift in Sources */,
 				FA1DB5121DDCB4C0007F95C8 /* CPYPreferencesWindowController.swift in Sources */,
 				FA3778951F3B6920003B5BAB /* Environment.swift in Sources */,
+				0B89E8F2062F22ECBE716413 /* Atomic.swift in Sources */,
+				C63004424A0E7BBC2FC8C4C3 /* Bag.swift in Sources */,
+				CE8ABF77EAC48B09D7516788 /* LQueue.swift in Sources */,
+				30DDEC3B0D42C4C08ABF82E4 /* ClipyBox.swift in Sources */,
+				E5625864C48FFFB473C084F6 /* ClipyBox+Signal.swift in Sources */,
+				CCEFFF11A3AF57B7297B7557 /* ClipTransaction+Ext.swift in Sources */,
+				0009E185613184F0301F5DBD /* SnippetTransaction+Ext.swift in Sources */,
+				C5491A1E609D602653F1D4A0 /* ComponentService.swift in Sources */,
+				22B9A3486DB099DE5771913E /* ClipComponentService.swift in Sources */,
+				59EE9CAC65001F7265BBF179 /* SnippetComponentService.swift in Sources */,
+				49EB7B5770C593729CAD8847 /* BoxChangeSet.swift in Sources */,
+				413C162A67D0F5E34575FB06 /* ViewTracker.swift in Sources */,
+				FF3A0F6D86CFF52B0A382A1B /* MutableClipListView.swift in Sources */,
+				464310C455AC6A3B1FD7E1AB /* MutableSnippetMenuView.swift in Sources */,
+				21A6653EEA5085AFF89FF284 /* StorageBox.swift in Sources */,
+				2D077E1B40EC6D286F07A743 /* DataStore.swift in Sources */,
+				12589B06D43B1173F15DF4E6 /* ClipDB.swift in Sources */,
+				EFA56BF3601245ABAB2A4C69 /* SnippetDB.swift in Sources */,
+				372D85BC0ADF08418FD02B2F /* CPYClipTable.swift in Sources */,
+				70D991BA568C193F55941FAE /* CPYFolderTable.swift in Sources */,
+				44E8DAD4361EB86860C9A2BE /* CPYSnippetTable.swift in Sources */,
+				E38ABCCD19727D901310EE8B /* CPYFolder+Store.swift in Sources */,
+				B24CCF508F1224F82D8B8731 /* CPYSnippet+Store.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -941,12 +1067,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 22XV5USFK3;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = BSF5Y7PYM8;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1024,7 +1151,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin.git" */ = {
+		608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin.git";
 			requirement = {
@@ -1037,7 +1164,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		608423DF29F234E9005F6B3C /* LaunchAtLogin */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin.git" */;
+			package = 608423DE29F234E9005F6B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin" */;
 			productName = LaunchAtLogin;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -11,9 +11,12 @@
 //
 
 import Cocoa
-import RealmSwift
 
-final class CPYSnippet: Object {
+/// Domain projection of `CPYSnippetTable`.
+///
+/// Subclasses `NSObject` because `CPYSnippetsEditorWindowController` uses instances directly as
+/// `NSOutlineView` items, which needs stable `isEqual:` identity.
+final class CPYSnippet: NSObject {
 
     // MARK: - Properties
     @objc dynamic var index = 0
@@ -21,20 +24,23 @@ final class CPYSnippet: Object {
     @objc dynamic var title = ""
     @objc dynamic var content = ""
     @objc dynamic var identifier = UUID().uuidString
-    let folders = LinkingObjects(fromType: CPYFolder.self, property: "snippets")
 
-    var folder: CPYFolder? {
-        return folders.first
+    /// Owning folder. Replaces Realm's `LinkingObjects` inverse relationship.
+    /// Deliberately absent from `CodingKeys` so the exported JSON format stays unchanged.
+    var folderIdentifier = ""
+
+    override init() {
+        super.init()
     }
 
-    // MARK: Primary Key
-    override static func primaryKey() -> String? {
-        return "identifier"
-    }
-
-    // MARK: - Ignore Properties
-    override static func ignoredProperties() -> [String] {
-        return ["folder"]
+    init(copying other: CPYSnippet) {
+        super.init()
+        index = other.index
+        enable = other.enable
+        title = other.title
+        content = other.content
+        identifier = other.identifier
+        folderIdentifier = other.folderIdentifier
     }
 }
 
@@ -65,23 +71,5 @@ extension CPYSnippet: Codable {
         try container.encode(title, forKey: .title)
         try container.encode(content, forKey: .content)
         try container.encode(identifier, forKey: .identifier)
-    }
-}
-
-// MARK: - Add Snippet
-extension CPYSnippet {
-    func merge() {
-        let realm = try! Realm()
-        let copySnippet = CPYSnippet(value: self)
-        realm.transaction { realm.add(copySnippet, update: .all) }
-    }
-}
-
-// MARK: - Remove Snippet
-extension CPYSnippet {
-    func remove() {
-        let realm = try! Realm()
-        guard let snippet = realm.object(ofType: CPYSnippet.self, forPrimaryKey: identifier) else { return }
-        snippet.realm?.transaction { snippet.realm?.delete(snippet) }
     }
 }

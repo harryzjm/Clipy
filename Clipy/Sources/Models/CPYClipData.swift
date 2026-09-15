@@ -40,7 +40,7 @@ final class CPYClipData: NSObject, Codable {
     }
 
     var isValid: Bool {
-        return content.count > 0
+        return !content.isEmpty
     }
 
     var thumbnailImage: NSImage? {

@@ -12,7 +12,6 @@
 
 import Foundation
 import Cocoa
-import RealmSwift
 import PINCache
 import RxSwift
 import RxCocoa
@@ -21,10 +20,25 @@ import RxOptional
 final class ClipService {
 
     // MARK: - Properties
+    /// The clipboard history window, newest first, kept live by the store's change signal.
+    ///
+    /// Held here rather than fetched per menu so that `FilterMenu` has its items synchronously at
+    /// init — the menu is popped up on the very next line and would otherwise flash empty.
+    let clips = BehaviorRelay<[CPYClip]>(value: [])
+
+    /// Whether the history holds anything. Menu validation reads this instead of counting rows,
+    /// because AppKit calls `validateMenuItem` constantly while a menu is open and the database
+    /// runs on a serial background queue.
+    var hasHistory: Bool {
+        !clips.value.isEmpty
+    }
+
     fileprivate var cachedChangeCount = BehaviorRelay<Int>(value: 0)
     fileprivate var storeTypes = [String: NSNumber]()
     fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .userInteractive)
     fileprivate var disposeBag = DisposeBag()
+    /// Long-lived, for one-shot writes that must outlive a `startMonitoring()` restart.
+    fileprivate let writeBag = DisposeBag()
 
     // MARK: - Clips
     func startMonitoring() {
@@ -49,32 +63,44 @@ final class ClipService {
                 self?.storeTypes = $0
             })
             .disposed(by: disposeBag)
+        // History window. Re-subscribes when the retention size changes so the window keeps
+        // covering everything the menu could show.
+        AppEnvironment.current.defaults.rx
+            .observe(Int.self, Preferences.General.maxHistorySize)
+            .filterNil()
+            .distinctUntilChanged()
+            .flatMapLatest { maxHistorySize -> Observable<[CPYClip]> in
+                AppEnvironment.current.box
+                    .observeClips(ascending: false, limit: max(maxHistorySize, 1))
+                    .catchAndReturn([])
+            }
+            .observe(on: MainScheduler.instance)
+            .bind(to: clips)
+            .disposed(by: disposeBag)
     }
 
     func clearAll() {
-        let realm = try! Realm()
-        let clips = realm.objects(CPYClip.self)
-
-        // Delete saved images
-        clips
-            .filter { !$0.thumbnailPath.isEmpty }
-            .map { $0.thumbnailPath }
-            .forEach { PINCache.shared.removeObject(forKey: $0) }
-        // Delete Realm
-        realm.transaction { realm.delete(clips) }
-        // Delete writed datas
-        AppEnvironment.current.dataCleanService.cleanDatas()
+        AppEnvironment.current.box
+            .clipTransaction { try $0.clearAllClips() }
+            .subscribe(onNext: { thumbnailPaths in
+                // Delete saved images
+                thumbnailPaths.forEach { PINCache.shared.removeObject(forKey: $0) }
+                // Delete writed datas
+                AppEnvironment.current.dataCleanService.cleanDatas()
+            }, onError: { _ in })
+            .disposed(by: writeBag)
     }
 
     func delete(with clip: CPYClip) {
-        let realm = try! Realm()
-        // Delete saved images
-        let path = clip.thumbnailPath
-        if !path.isEmpty {
-            PINCache.shared.removeObject(forKey: path)
-        }
-        // Delete Realm
-        realm.transaction { realm.delete(clip) }
+        let dataHash = clip.dataHash
+        AppEnvironment.current.box
+            .clipTransaction { try $0.deleteClip(dataHash: dataHash) }
+            .subscribe(onNext: { thumbnailPath in
+                // Delete saved image
+                guard let thumbnailPath = thumbnailPath else { return }
+                PINCache.shared.removeObject(forKey: thumbnailPath)
+            }, onError: { _ in })
+            .disposed(by: writeBag)
     }
 
     func incrementChangeCount() {
@@ -117,7 +143,7 @@ extension ClipService {
             // Saved time and path
             let unixTime = Int(Date().timeIntervalSince1970)
             let savedPath = CPYUtilities.applicationSupportFolder() + "/\(NSUUID().uuidString).data"
-            // Create Realm object
+            // Create clip
             let clip = CPYClip()
             clip.dataHash = data.identifier
             clip.dataPath = savedPath
@@ -137,14 +163,8 @@ extension ClipService {
 
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
                 try? JSONEncoder().encode(data).write(to: .init(fileURLWithPath: savedPath))
-
-                DispatchQueue.main.async {
-                    // Save Realm and .data file
-                    let dispatchRealm = try! Realm()
-                    dispatchRealm.transaction {
-                        dispatchRealm.add(clip, update: .all)
-                    }
-                }
+                // The store runs on its own serial queue, so no main-thread hop is needed.
+                AppEnvironment.current.box.clipWrite { try $0.insertClip(clip) }
             }
         }
     }

@@ -17,7 +17,6 @@ import RxOptional
 import Magnet
 import Screeen
 import RxScreeen
-import RealmSwift
 import LetsMove
 import LaunchAtLogin
 
@@ -31,15 +30,14 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - Init
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Migrate Realm
-        Realm.migration()
+        // Open the databases and run their migrations before anything touches the store.
+        AppEnvironment.current.box.setup()
     }
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
-            let realm = try! Realm()
-            return !realm.objects(CPYClip.self).isEmpty
+            return AppEnvironment.current.clipService.hasHistory
         }
         return true
     }
@@ -102,14 +100,20 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             NSSound.beep()
             return
         }
-        let realm = try! Realm()
-        guard let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: primaryKey) else {
-            lError("Cannot fetch clip data")
-            NSSound.beep()
-            return
-        }
-
-        AppEnvironment.current.pasteService.paste(with: clip)
+        AppEnvironment.current.box
+            .clipTransaction { try $0.fetchClip(dataHash: primaryKey) }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { clip in
+                guard let clip = clip else {
+                    lError("Cannot fetch clip data")
+                    NSSound.beep()
+                    return
+                }
+                AppEnvironment.current.pasteService.paste(with: clip)
+            }, onError: { _ in
+                NSSound.beep()
+            })
+            .disposed(by: disposeBag)
     }
 
     @objc func selectSnippetMenuItem(_ sender: AnyObject) {
@@ -118,14 +122,21 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             NSSound.beep()
             return
         }
-        let realm = try! Realm()
-        guard let snippet = realm.object(ofType: CPYSnippet.self, forPrimaryKey: primaryKey) else {
-            lError("Cannot fetch snippet data")
-            NSSound.beep()
-            return
-        }
-        AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content)
-        AppEnvironment.current.pasteService.paste()
+        AppEnvironment.current.box
+            .snippetTransaction { try $0.fetchSnippet(identifier: primaryKey) }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { snippet in
+                guard let snippet = snippet else {
+                    lError("Cannot fetch snippet data")
+                    NSSound.beep()
+                    return
+                }
+                AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content)
+                AppEnvironment.current.pasteService.paste()
+            }, onError: { _ in
+                NSSound.beep()
+            })
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Login Item Methods

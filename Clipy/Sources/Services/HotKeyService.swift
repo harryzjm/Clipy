@@ -13,7 +13,7 @@
 import Foundation
 import Cocoa
 import Magnet
-import RealmSwift
+import RxSwift
 
 final class HotKeyService: NSObject {
     // MARK: - Properties
@@ -27,6 +27,8 @@ final class HotKeyService: NSObject {
     fileprivate(set) var historyKeyCombo: KeyCombo?
     fileprivate(set) var snippetKeyCombo: KeyCombo?
     fileprivate(set) var restartKeyCombo: KeyCombo?
+
+    fileprivate let disposeBag = DisposeBag()
 }
 
 // MARK: - Actions
@@ -188,15 +190,21 @@ extension HotKeyService {
 
     @objc func popupSnippetFolder(_ object: AnyObject) {
         guard let hotKey = object as? HotKey else { return }
-        let realm = try! Realm()
-        guard let folder = realm.object(ofType: CPYFolder.self, forPrimaryKey: hotKey.identifier) else {
-            // When already deleted folder, remove keycombos
-            unregisterSnippetHotKey(with: hotKey.identifier)
-            return
-        }
-        if !folder.enable { return }
+        let identifier = hotKey.identifier
+        AppEnvironment.current.box
+            .snippetTransaction { try $0.fetchFolder(identifier: identifier) }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] folder in
+                guard let folder = folder else {
+                    // When already deleted folder, remove keycombos
+                    self?.unregisterSnippetHotKey(with: identifier)
+                    return
+                }
+                if !folder.enable { return }
 
-        AppEnvironment.current.menuManager.popUpSnippetFolder(folder)
+                AppEnvironment.current.menuManager.popUpSnippetFolder(folder)
+            }, onError: { _ in })
+            .disposed(by: self.disposeBag)
     }
 
     fileprivate func setupSnippetHotKeys() {

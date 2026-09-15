@@ -11,9 +11,9 @@
 //
 
 import Cocoa
-import RealmSwift
 import KeyHolder
 import Magnet
+import RxSwift
 
 final class CPYSnippetsEditorWindowController: NSWindowController {
 
@@ -44,6 +44,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     }
 
     private var folders = [CPYFolder]()
+    private let disposeBag = DisposeBag()
     private var selectedSnippet: CPYSnippet? {
         guard let snippet = outlineView.item(atRow: outlineView.selectedRow) as? CPYSnippet else { return nil }
         return snippet
@@ -66,17 +67,13 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
         if #available(OSX 10.10, *) {
             self.window?.titlebarAppearsTransparent = true
         }
-        // HACK: Copy as an object that does not put under Realm management.
-        // https://github.com/realm/realm-cocoa/issues/1734
-        let realm = try! Realm()
-        folders = realm.objects(CPYFolder.self)
-                    .sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
-                    .map { $0.deepCopy() }
-        outlineView.reloadData()
-        // Select first folder
-        if let folder = folders.first {
-            outlineView.selectRowIndexes(IndexSet(integer: outlineView.row(forItem: folder)), byExtendingSelection: false)
-            changeItemFocus()
+        reloadFolders { [weak self] in
+            guard let self = self else { return }
+            // Select first folder
+            if let folder = self.folders.first {
+                self.outlineView.selectRowIndexes(IndexSet(integer: self.outlineView.row(forItem: folder)), byExtendingSelection: false)
+                self.changeItemFocus()
+            }
         }
     }
 
@@ -103,7 +100,7 @@ extension CPYSnippetsEditorWindowController {
     }
 
     @IBAction private func addFolderButtonTapped(_ sender: AnyObject) {
-        let folder = CPYFolder.create()
+        let folder = CPYFolder.create(after: folders)
         folders.append(folder)
         folder.merge()
         outlineView.reloadData()
@@ -130,7 +127,7 @@ extension CPYSnippetsEditorWindowController {
             folders.removeObject(folder)
             folder.remove()
             AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: folder.identifier)
-        } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: item) as? CPYFolder, let index = folder.snippets.index(of: snippet) {
+        } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: item) as? CPYFolder, let index = folder.snippets.firstIndex(where: { $0 === snippet }) {
             folder.snippets.remove(at: index)
             snippet.remove()
         }
@@ -167,21 +164,25 @@ extension CPYSnippetsEditorWindowController {
 
         do {
             let data = try Data(contentsOf: url)
-            let realm = try! Realm()
-            let lastFolder = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true).last
-
             let decoder = JSONDecoder()
             let importFolders = try decoder.decode([CPYFolder].self, from: data)
-            if let last = lastFolder {
+            let lastIndex = folders.map { $0.index }.max()
+            if let lastIndex = lastIndex {
                 importFolders.forEach { folder in
-                    folder.index += last.index
+                    folder.index += lastIndex
                 }
             }
-            realm.transaction { realm.add(importFolders, update: .all) }
-            folders = realm.objects(CPYFolder.self)
-                        .sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
-                        .map { $0.deepCopy() }
-            outlineView.reloadData()
+            AppEnvironment.current.box
+                .snippetTransaction { try $0.importFolders(importFolders) }
+                .observe(on: MainScheduler.instance)
+                .subscribe(onNext: { [weak self] in
+                    self?.reloadFolders()
+                }, onError: { [weak self] error in
+                    NSSound.beep()
+                    lError(error)
+                    self?.reloadFolders()
+                })
+                .disposed(by: disposeBag)
         } catch {
             NSSound.beep()
             lError(error)
@@ -189,10 +190,7 @@ extension CPYSnippetsEditorWindowController {
     }
 
     @IBAction private func exportSnippetButtonTapped(_ sender: AnyObject) {
-        let realm = try! Realm()
-        let folders = realm
-            .objects(CPYFolder.self)
-            .sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
+        let folders = self.folders.sorted { $0.index < $1.index }
 
         let panel = NSSavePanel()
         panel.accessoryView = nil
@@ -305,7 +303,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
             let data = NSKeyedArchiver.archivedData(withRootObject: draggedData)
             pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
         } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: snippet) as? CPYFolder {
-            guard let index = folder.snippets.index(of: snippet) else { return nil }
+            guard let index = folder.snippets.firstIndex(where: { $0 === snippet }) else { return nil }
             let draggedData = CPYDraggedData(type: .snippet, folderIdentifier: folder.identifier, snippetIdentifier: snippet.identifier, index: Int(index))
             let data = NSKeyedArchiver.archivedData(withRootObject: draggedData)
             pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
@@ -451,4 +449,26 @@ extension CPYSnippetsEditorWindowController: RecordViewDelegate {
     }
 
     func recordViewDidEndRecording(_ recordView: RecordView) {}
+}
+
+// MARK: - Store
+private extension CPYSnippetsEditorWindowController {
+    /// Reloads the detached working copy from the store.
+    ///
+    /// The outline view holds these objects directly as items, so they must stay reference types
+    /// with stable identity for the duration of a drag.
+    func reloadFolders(completion: (() -> Void)? = nil) {
+        AppEnvironment.current.box
+            .snippetTransaction { try $0.fetchFolders() }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] folders in
+                guard let self = self else { return }
+                self.folders = folders
+                self.outlineView.reloadData()
+                completion?()
+            }, onError: { _ in
+                completion?()
+            })
+            .disposed(by: disposeBag)
+    }
 }

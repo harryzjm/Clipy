@@ -10,26 +10,20 @@
 //  Copyright © 2015-2018 Clipy Project.
 //
 
-import Cocoa
-import RealmSwift
+import Foundation
 
-final class CPYClip: Object {
+/// Domain projection of `CPYClipTable`.
+///
+/// Kept as a reference type so the menu-building and paste paths keep their existing
+/// signatures; it holds no live database connection.
+final class CPYClip {
 
     // MARK: - Properties
-    @objc dynamic var dataPath = ""
-    @objc dynamic var title = ""
-    @objc dynamic var dataHash = ""
-    @objc dynamic var primaryType = ""
-    @objc dynamic var updateTime = 0
-    @objc dynamic var thumbnailPath = ""
-    @objc dynamic var isColorCode = false
-
-    // MARK: Primary Key
-    override static func primaryKey() -> String? {
-        return "dataHash"
-    }
-
-    public override class func indexedProperties() -> [String] {
-        return ["updateTime"]
-    }
+    var dataPath = ""
+    var title = ""
+    var dataHash = ""
+    var primaryType = ""
+    var updateTime = 0
+    var thumbnailPath = ""
+    var isColorCode = false
 }

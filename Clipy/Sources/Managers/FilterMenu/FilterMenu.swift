@@ -12,7 +12,6 @@
 
 import Foundation
 import Cocoa
-import RealmSwift
 import RxSwift
 import RxCocoa
 import RxOptional
@@ -20,10 +19,8 @@ import PINCache
 
 class FilterMenu: NSMenu {
     fileprivate let bag = DisposeBag()
-    fileprivate let realm = try! Realm()
 
     fileprivate let filterRelay = BehaviorRelay<String>(value: "")
-    fileprivate let clipResultsRelay = BehaviorRelay<Results<CPYClip>?>(value: nil)
 
     let config: FilterMenuConfig
     let item: TextFieldMenuItem
@@ -39,20 +36,22 @@ class FilterMenu: NSMenu {
         addItem(item)
 
         let ascending = !AppEnvironment.current.defaults.bool(forKey: Preferences.General.reorderClipsAfterPasting)
-        let clipResults = realm
-            .objects(CPYClip.self)
-            .sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
+        // `ClipService.clips` is a live, newest-first window over the whole retained history,
+        // and has a value already — so the first emission below is synchronous and the menu is
+        // fully built before it is popped up.
+        let clips = AppEnvironment.current.clipService.clips
+            .map { ascending ? $0.reversed() : $0 }
 
-        filterRelay
-            .distinctUntilChanged()
-            .map { [weak self]filter -> [NSMenuItem]? in
+        Observable
+            .combineLatest(clips, filterRelay.distinctUntilChanged())
+            .map { [weak self] clips, filter -> [NSMenuItem]? in
                 guard let self = self else { return nil }
-                var filterRes = clipResults
-                if filter.isNotEmpty {
-                    let predicate = NSPredicate(format: "title LIKE[c] %@", "*" + filter + "*")
-                    filterRes = filterRes.filter(predicate)
-                }
-                return self.manageItems(filterRes, with: filter)
+                // Filtered in memory rather than in SQL, so the user's `*`/`?` wildcards keep
+                // working and never reach the query as SQL wildcards.
+                let filtered = filter.isNotEmpty
+                    ? clips.filter { $0.title.searchRange(of: filter) != nil }
+                    : clips
+                return self.manageItems(filtered, with: filter)
             }
             .filterNil()
             .catchAndReturn([])
@@ -92,11 +91,11 @@ class FilterMenu: NSMenu {
 
 // MARK: - NSMenuItem
 fileprivate extension FilterMenu {
-    func manageItems(_ clipResults: Results<CPYClip>, with filter: String) -> [NSMenuItem] {
+    func manageItems(_ clipResults: [CPYClip], with filter: String) -> [NSMenuItem] {
         var items: [NSMenuItem] = []
         let totalCount = min(clipResults.count, config.maxShowHistory)
         let remain = max(totalCount - config.placeInLine, 0)
-        items += clipResults[0..<totalCount - remain]
+        items += clipResults[0..<(totalCount - remain)]
             .enumerated()
             .map { obj in
                 return self.item(with: obj.element, index: obj.offset + 1, filter: filter, inline: true)
@@ -106,14 +105,14 @@ fileprivate extension FilterMenu {
         items += (0 ..< res.quotient).map { i -> NSMenuItem in
             let begin = config.placeInLine + config.placeInsideFolder * i
             let end = begin + self.config.placeInsideFolder
-            return item(begin: begin, end: end, filter: filter) { clipResults[$0] }
+            return item(begin: begin, end: end, filter: filter) { clipResults[safe: $0] }
         }
 
         if res.remainder > 0 {
             let begin = config.placeInLine + config.placeInsideFolder * res.quotient
             let end = begin + res.remainder
 
-            items.append(item(begin: begin, end: end, filter: filter) { clipResults[$0] })
+            items.append(item(begin: begin, end: end, filter: filter) { clipResults[safe: $0] })
         }
         return items
     }

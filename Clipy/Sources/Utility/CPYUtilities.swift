@@ -11,7 +11,6 @@
 //
 
 import Cocoa
-import RealmSwift
 
 final class CPYUtilities {
     static func registerUserDefaultKeys() {

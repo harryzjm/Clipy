@@ -3,7 +3,9 @@ use_frameworks!
 inhibit_all_warnings!
 
 target 'Clipy' do
-  pod 'RealmSwift'
+  pod 'MMKV'
+  pod 'WCDB.swift'
+  
   pod 'RxCocoa'
   pod 'RxSwift'
   pod 'RxOptional'

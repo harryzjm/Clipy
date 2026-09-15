@@ -12,6 +12,18 @@
 
 import Foundation
 
+extension CustomDebugStringConvertible {
+    var compactDebug: String {
+        debugDescription.replace(pattern: "\\s+", withTemplate: " ").trim
+    }
+}
+
+extension CustomStringConvertible {
+    var compact: String {
+        description.replace(pattern: "\\s+", withTemplate: " ").trim
+    }
+}
+
 extension Optional where Wrapped == String {
     var count: Int {
         guard case .some(let str) = self else { return 0 }

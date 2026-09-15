@@ -11,7 +11,6 @@
 //
 
 import Cocoa
-import RealmSwift
 import RxCocoa
 import RxSwift
 import RxOptional
@@ -39,10 +38,8 @@ final class MenuManager: NSObject {
     fileprivate let notificationCenter = NotificationCenter.default
     fileprivate let kMaxKeyEquivalents = 10
     fileprivate let shortenSymbol = "..."
-    // Realm
-    fileprivate let realm = try! Realm()
-    fileprivate var clipToken: NotificationToken?
-    fileprivate var snippetToken: NotificationToken?
+    // Latest snapshot from the snippet change signal, used to build the snippet menu.
+    fileprivate var folders = [CPYFolder]()
 
     // MARK: - Enum Values
     enum StatusType: Int {
@@ -90,7 +87,6 @@ extension MenuManager {
         // Snippets
         var index = firstIndexOfMenuItems()
         folder.snippets
-            .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
             .filter { $0.enable }
             .forEach { snippet in
                 let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
@@ -104,19 +100,16 @@ extension MenuManager {
 // MARK: - Binding
 private extension MenuManager {
     func bind() {
-        // Realm Notification
-        clipToken = realm.objects(CPYClip.self)
-                        .observe { [weak self] _ in
-                            DispatchQueue.main.async { [weak self] in
-                                self?.createClipMenu()
-                            }
-                        }
-        snippetToken = realm.objects(CPYFolder.self)
-                        .observe { [weak self] _ in
-                            DispatchQueue.main.async { [weak self] in
-                                self?.createClipMenu()
-                            }
-                        }
+        // Snippet change signal, replacing the Realm notification tokens.
+        AppEnvironment.current.box
+            .observeSnippets()
+            .observe(on: MainScheduler.instance)
+            .catchAndReturn([])
+            .subscribe(onNext: { [weak self] folders in
+                self?.folders = folders
+                self?.createClipMenu()
+            })
+            .disposed(by: disposeBag)
         // Menu icon
         AppEnvironment.current.defaults.rx.observe(Int.self, Preferences.General.statusTypeItem, retainSelf: false)
             .filterNil()
@@ -218,7 +211,7 @@ private extension MenuManager {
 // MARK: - Snippets
 private extension MenuManager {
     func addSnippetItems(_ menu: NSMenu, separateMenu: Bool) {
-        let folderResults = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
+        let folderResults = folders
         guard !folderResults.isEmpty else { return }
         if separateMenu {
             menu.addItem(NSMenuItem.separator())
@@ -242,7 +235,6 @@ private extension MenuManager {
 
                 var i = firstIndex
                 folder.snippets
-                    .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
                     .filter { $0.enable }
                     .forEach { snippet in
                         let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)

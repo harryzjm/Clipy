@@ -56,8 +56,6 @@ final class PasteService {
 // MARK: - Copy
 extension PasteService {
     func paste(with clip: CPYClip) {
-        guard !clip.isInvalidated else { return }
-
         do {
             let data = try Data(contentsOf: .init(fileURLWithPath: clip.dataPath))
             let clipData = try JSONDecoder().decode(CPYClipData.self, from: data)
