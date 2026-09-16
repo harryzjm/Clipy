@@ -17,30 +17,25 @@ import PINCache
 final class DataCleanService {
 
     // MARK: - Properties
-    fileprivate var disposeBag = DisposeBag()
-    fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .utility)
     fileprivate let cleanBag = DisposeBag()
 
-    // MARK: - Monitoring
-    func startMonitoring() {
-        disposeBag = DisposeBag()
-        // Clean datas every 30 minutes
-        Observable<Int>
-            .interval(.seconds(60 * 30), scheduler: scheduler)
-            .subscribe(onNext: { [weak self] _ in
-                self?.cleanDatas()
-            })
-            .disposed(by: disposeBag)
-    }
-
     // MARK: - Delete Data
+    /// Drops clips outside the retention window and sweeps the payload files nothing points at
+    /// any more.
+    ///
+    /// Retention is a time window rather than a row count, so this runs once at launch instead of
+    /// on a timer; `ClipService.clearAll()` calls it again to collect what the wipe orphaned.
     func cleanDatas() {
-        let maxHistorySize = AppEnvironment.current.defaults.integer(forKey: Preferences.General.maxHistorySize)
+        let days = AppEnvironment.current.defaults.integer(forKey: Preferences.General.maxHistoryDays)
+        // A missing or nonsensical retention must not be read as "keep nothing". Falling back to
+        // a threshold of 0 matches no row, so nothing is deleted while the file sweep below still
+        // runs — `clearAll()` calls this purely for that sweep.
+        let threshold = days > 0 ? Int(Date().timeIntervalSince1970) - days * 86_400 : 0
 
         AppEnvironment.current.box
             .clipTransaction { transaction -> ([String], [String]) in
-                // Trim the overflow, then report what is still referenced on disk.
-                let orphanedThumbnails = try transaction.deleteOverflowingClips(maxHistorySize: maxHistorySize)
+                // Drop what expired, then report what is still referenced on disk.
+                let orphanedThumbnails = try transaction.deleteExpiredClips(olderThan: threshold)
                 let referencedFiles = try transaction.referencedDataFileNames()
                 return (orphanedThumbnails, referencedFiles)
             }

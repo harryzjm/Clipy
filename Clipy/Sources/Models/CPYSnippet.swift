@@ -27,8 +27,6 @@ final class CPYSnippet: NSObject {
     @objc dynamic var content = ""
     @objc dynamic var identifier = UUID().uuidString
 
-    /// Owning folder. Replaces Realm's `LinkingObjects` inverse relationship.
-    /// Deliberately absent from `CodingKeys` so the exported JSON format stays unchanged.
     var folderIdentifier = ""
 
     override init() {

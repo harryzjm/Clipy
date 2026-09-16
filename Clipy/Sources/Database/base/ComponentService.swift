@@ -11,11 +11,6 @@
 import Foundation
 import RxSwift
 
-/// A unit of work run against one `ComponentService`'s databases.
-///
-/// Ported from `ServiceBox/base/ComponentService.swift`. `beforeCommit()` is the hook where a
-/// component turns the deltas its DAO recorded during the transaction into change signals —
-/// this is what replaces Realm's `NotificationToken`.
 protocol Transaction {
     associatedtype T: ComponentService
     var service: T! { get set }

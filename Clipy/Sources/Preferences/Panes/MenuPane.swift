@@ -25,6 +25,8 @@ struct MenuPane: View {
     private var menuItemsAreMarkedWithNumbers = false
     @AppStorage(Preferences.Menu.showAlertBeforeClearHistory)
     private var showAlertBeforeClearHistory = true
+    @AppStorage(Preferences.Menu.filterMatchMode)
+    private var filterMatchMode = FilterMatchMode.like.rawValue
     @AppStorage(Preferences.Menu.showToolTipOnMenuItem)
     private var showToolTipOnMenuItem = true
     @AppStorage(Preferences.Menu.maxLengthOfToolTip)
@@ -53,6 +55,13 @@ struct MenuPane: View {
                 Toggle("Add key equivalents to numeric keys", isOn: $addNumericKeyEquivalents)
                 Toggle("Mark menu items with numbers", isOn: $menuItemsAreMarkedWithNumbers)
                     .disabled(!addNumericKeyEquivalents)
+            }
+
+            Section("Filter") {
+                Picker("Match mode:", selection: $filterMatchMode) {
+                    ForEach(FilterMatchMode.allCases) { Text($0.title).tag($0.rawValue) }
+                }
+                .pickerStyle(.segmented)
             }
 
             Section("Tool Tip") {

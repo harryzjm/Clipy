@@ -21,11 +21,10 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(value: false), forKey: Preferences.General.loginItem)
         defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.suppressAlertForLoginItem)
         defaultValues.updateValue(NSNumber(value: 25), forKey: Preferences.General.maxShowHistorySize)
-        defaultValues.updateValue(NSNumber(value: 100), forKey: Preferences.General.maxHistorySize)
+        defaultValues.updateValue(NSNumber(value: 30), forKey: Preferences.General.maxHistoryDays)
         defaultValues.updateValue(NSNumber(value: 0), forKey: Preferences.General.statusTypeItem)
         defaultValues.updateValue(AppDelegate.storeTypesDictionary(), forKey: Constants.UserDefaults.storeTypes)
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.General.inputPasteCommand)
-        defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.General.reorderClipsAfterPasting)
         defaultValues.updateValue(NSNumber(value: 260), forKey: Preferences.General.maxWidthOfMenuItem)
         defaultValues.updateValue(NSNumber(value: 14), forKey: Preferences.General.menuFontSize)
 
@@ -40,6 +39,8 @@ final class CPYUtilities {
 
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showAlertBeforeClearHistory)
 
+        defaultValues.updateValue(NSNumber(value: FilterMatchMode.like.rawValue), forKey: Preferences.Menu.filterMatchMode)
+
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showToolTipOnMenuItem)
         defaultValues.updateValue(NSNumber(value: 500), forKey: Preferences.Menu.maxLengthOfToolTip)
 
@@ -47,10 +48,6 @@ final class CPYUtilities {
 
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showImageInTheMenu)
         defaultValues.updateValue(NSNumber(value: 32), forKey: Preferences.Menu.thumbnailLength)
-
-        /* Updates */
-        defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Update.enableAutomaticCheck)
-        defaultValues.updateValue(NSNumber(value: 86400), forKey: Preferences.Update.checkInterval)
 
         /* Beta */
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Beta.pastePlainText)

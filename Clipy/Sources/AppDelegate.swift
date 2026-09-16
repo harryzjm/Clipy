@@ -19,19 +19,10 @@ import Screeen
 import RxScreeen
 import LetsMove
 
-class AppDelegate: NSObject, NSMenuItemValidation {
-
+class AppDelegate: NSObject {
     // MARK: - Properties
     let screenshotObserver = ScreenShotObserver()
     let disposeBag = DisposeBag()
-
-    // MARK: - NSMenuItem Validation
-    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        if menuItem.action == #selector(AppDelegate.clearAllHistory) {
-            return AppEnvironment.current.clipService.hasHistory
-        }
-        return true
-    }
 
     // MARK: - Class Methods
     static func storeTypesDictionary() -> [String: NSNumber] {
@@ -227,7 +218,7 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Services
         AppEnvironment.current.clipService.startMonitoring()
-        AppEnvironment.current.dataCleanService.startMonitoring()
+        AppEnvironment.current.dataCleanService.cleanDatas()
         AppEnvironment.current.excludeAppService.startMonitoring()
         AppEnvironment.current.hotKeyService.setupDefaultHotKeys()
 
@@ -239,10 +230,6 @@ extension AppDelegate: NSApplicationDelegate {
         #if RELEASE
             PFMoveToApplicationsFolderIfNecessary()
         #endif
-        // Moved off `awakeFromNib`, which only ran because MainMenu.xib instantiated this
-        // object. Must stay after PFMove (that call can relaunch the process) and before
-        // anything touches the store.
-        AppEnvironment.current.box.setup()
     }
 
 }
@@ -270,5 +257,11 @@ private extension AppDelegate {
                 AppEnvironment.current.clipService.create(with: "Screenshot", image: image)
             })
             .disposed(by: disposeBag)
+    }
+}
+
+extension AppDelegate: NSMenuItemValidation {
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        true
     }
 }

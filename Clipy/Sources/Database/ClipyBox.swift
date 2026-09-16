@@ -36,6 +36,7 @@ final class ClipyBox: StorageBox {
 
     override init(path: String = ClipyBox.databaseDirectory()) {
         _ = CPYUtilities.prepareSaveToPath(path)
+        lInfo("DB:", path)
 
         let mmkvRoot = (path as NSString).appendingPathComponent("mmkv")
         // Must run before any `MMKV(mmapID:rootPath:)`.
@@ -50,12 +51,6 @@ final class ClipyBox: StorageBox {
 
     deinit {
         store.clearMemoryCache()
-    }
-
-    /// Opens every database eagerly so migrations run at a known point in the launch sequence.
-    func setup() {
-        _ = clip.clipDb
-        _ = snippet.snippetDb
     }
 
     func setCanBeginTransactions(_ value: Bool) {

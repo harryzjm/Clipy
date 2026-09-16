@@ -18,8 +18,8 @@ struct Preferences {
         static let inputPasteCommand = "kCPYPrefInputPasteCommandKey"
 
         static let maxShowHistorySize = "kCPYPrefMaxShowHistorySizeKey"
-        static let maxHistorySize = "kCPYPrefMaxHistorySizeKey"
-        static let reorderClipsAfterPasting = "kCPYPrefReorderClipsAfterPasting"
+
+        static let maxHistoryDays = "maxHistoryDays"
 
         static let statusTypeItem = "kCPYPrefStatusTypeItemKey"
         static let maxWidthOfMenuItem = "kCPYPrefMaxWidthOfMenuItemKey"
@@ -36,6 +36,8 @@ struct Preferences {
         static let menuItemsAreMarkedWithNumbers = "menuItemsAreMarkedWithNumbers"
 
         static let showAlertBeforeClearHistory = "kCPYPrefShowAlertBeforeClearHistoryKey"
+
+        static let filterMatchMode = "filterMatchMode"
 
         static let showToolTipOnMenuItem = "showToolTipOnMenuItem"
         static let maxLengthOfToolTip = "maxLengthOfToolTipKey"
@@ -55,10 +57,5 @@ struct Preferences {
         static let pasteAndDeleteHistoryModifier = "kCPYBetapasteAndDeleteHistoryModifier"
 
         static let observerScreenshot = "kCPYBetaObserveScreenshot"
-    }
-
-    struct Update {
-        static let enableAutomaticCheck = "kCPYEnableAutomaticCheckKey"
-        static let checkInterval = "kCPYUpdateCheckIntervalKey"
     }
 }

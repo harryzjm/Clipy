@@ -11,12 +11,6 @@
 import Foundation
 import RxSwift
 
-/// Long-lived change signals. These replace Realm's auto-updating `Results` and the
-/// `NotificationToken`s that used to drive the menus.
-///
-/// Ported from `ServiceBox/ServiceBox+Signal.swift`: the initial value is delivered from inside
-/// the registering transaction, the view is registered with the tracker, and disposing
-/// deregisters it back on the service queue.
 extension ClipyBox {
 
     /// Emits the clipboard history window whenever it changes.

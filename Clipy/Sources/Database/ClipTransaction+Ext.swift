@@ -25,6 +25,15 @@ extension ClipServiceTransaction {
         try clipDb.fetchClips(ascending: ascending, limit: limit).map { $0.toClip }
     }
 
+    /// The newest `limit` clips matching `filter`, newest first, alongside the per-row hits the
+    /// menu highlights with. Reversing for display is the caller's job — see
+    /// `ClipDB.fetchClips(filter:limit:)`.
+    func fetchClips(filter: ClipFilter?, limit: Int) throws -> ClipSearchResult {
+        let result = try clipDb.fetchClips(filter: filter, limit: limit)
+        return ClipSearchResult(clips: result.clips.map { $0.toClip },
+                                matchedTerms: result.matchedTerms)
+    }
+
     func clipCount() throws -> Int {
         try clipDb.clipCount()
     }
@@ -45,16 +54,21 @@ extension ClipServiceTransaction {
         return thumbnailPaths
     }
 
-    /// Trims the history down to `maxHistorySize`, returning the thumbnail cache keys that are
-    /// now orphaned.
-    ///
-    /// Mirrors the previous Realm behaviour: find the `update_time` of the last clip that fits,
-    /// then delete everything strictly older than it.
+    /// Drops everything older than `updateTime`, returning the thumbnail cache keys that are
+    /// now orphaned. Retention is a time window, so this runs once at launch rather than on a
+    /// timer.
     @discardableResult
-    func deleteOverflowingClips(maxHistorySize: Int) throws -> [String] {
-        guard let threshold = try clipDb.overflowThreshold(maxHistorySize: maxHistorySize) else { return [] }
-        let thumbnailPaths = try clipDb.fetchThumbnailPaths(olderThan: threshold)
-        try clipDb.deleteClips(olderThan: threshold)
+    func deleteExpiredClips(olderThan updateTime: Int) throws -> [String] {
+        let thumbnailPaths = try clipDb.fetchThumbnailPaths(olderThan: updateTime)
+        try clipDb.deleteClips(olderThan: updateTime)
+        #if DEBUG
+        // The FTS index is mirrored by SQL triggers, and this is the path that cannot be checked
+        // from Swift: the delete is by predicate, so the keys of the dropped rows are never seen
+        // here. Assert the trigger did its half.
+        let clips = try clipDb.clipCount()
+        let indexed = try clipDb.ftsCount()
+        assert(clips == indexed, "clip_fts out of step after expiry: clip=\(clips) clip_fts=\(indexed)")
+        #endif
         return thumbnailPaths
     }
 

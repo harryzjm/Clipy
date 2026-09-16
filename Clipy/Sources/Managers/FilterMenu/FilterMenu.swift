@@ -29,33 +29,33 @@ class FilterMenu: NSMenu {
 
     override init(title: String) {
         config = FilterMenuConfig.current()
-        item = TextFieldMenuItem(title: title, action: nil)
+        let mode = config.matchMode
+        let limit = config.maxShowHistory
+        item = TextFieldMenuItem(title: mode.title, action: nil)
 
         super.init(title: title)
 
         addItem(item)
 
-        let ascending = !AppEnvironment.current.defaults.bool(forKey: Preferences.General.reorderClipsAfterPasting)
-        // `ClipService.clips` is a live, newest-first window over the whole retained history,
-        // and has a value already — so the first emission below is synchronous and the menu is
-        // fully built before it is popped up.
-        let clips = AppEnvironment.current.clipService.clips
-            .map { ascending ? $0.reversed() : $0 }
-
-        Observable
-            .combineLatest(clips, filterRelay.distinctUntilChanged())
-            .map { [weak self] clips, filter -> [NSMenuItem]? in
-                guard let self = self else { return nil }
-                // Filtered in memory rather than in SQL, so the user's `*`/`?` wildcards keep
-                // working and never reach the query as SQL wildcards.
-                let filtered = filter.isNotEmpty
-                    ? clips.filter { $0.title.searchRange(of: filter) != nil }
-                    : clips
-                return self.manageItems(filtered, with: filter)
+        filterRelay
+            .map { $0.trim }
+            .distinctUntilChanged()
+            .map { $0.isEmpty ? nil : ClipFilter(query: $0, mode: mode) }
+            .flatMapLatest { filter -> Observable<(ClipSearchResult, ClipFilter?)> in
+                AppEnvironment.current.box
+                    .clipTransaction { transaction in
+                        try transaction.fetchClips(filter: filter, limit: limit)
+                    }
+                    .map { ($0, filter) }
+                    .catchAndReturn((.empty, nil))
+            }
+            .observe(on: MainRunLoopScheduler.instance)
+            .map { [weak self] result, filter -> [NSMenuItem]? in
+                self?.manageItems(result.clips) { clip in
+                    filter?.marking(result.matchedTerms[clip.dataHash] ?? [])
+                }
             }
             .filterNil()
-            .catchAndReturn([])
-            .observe(on: ConcurrentMainScheduler.instance)
             .subscribe { [weak self]event in
                 guard let self = self, case .next(var new) = event else { return }
                 self.highlight(menuItem: nil)
@@ -91,33 +91,33 @@ class FilterMenu: NSMenu {
 
 // MARK: - NSMenuItem
 fileprivate extension FilterMenu {
-    func manageItems(_ clipResults: [CPYClip], with filter: String) -> [NSMenuItem] {
+    func manageItems(_ clipResults: [CPYClip], rowFilter: (CPYClip) -> ClipFilter?) -> [NSMenuItem] {
         var items: [NSMenuItem] = []
         let totalCount = min(clipResults.count, config.maxShowHistory)
         let remain = max(totalCount - config.placeInLine, 0)
         items += clipResults[0..<(totalCount - remain)]
             .enumerated()
             .map { obj in
-                return self.item(with: obj.element, index: obj.offset + 1, filter: filter, inline: true)
+                return self.item(with: obj.element, index: obj.offset + 1, rowFilter: rowFilter, inline: true)
             }
 
         let res = remain.quotientAndRemainder(dividingBy: config.placeInsideFolder)
         items += (0 ..< res.quotient).map { i -> NSMenuItem in
             let begin = config.placeInLine + config.placeInsideFolder * i
             let end = begin + self.config.placeInsideFolder
-            return item(begin: begin, end: end, filter: filter) { clipResults[safe: $0] }
+            return item(begin: begin, end: end, rowFilter: rowFilter) { clipResults[safe: $0] }
         }
 
         if res.remainder > 0 {
             let begin = config.placeInLine + config.placeInsideFolder * res.quotient
             let end = begin + res.remainder
 
-            items.append(item(begin: begin, end: end, filter: filter) { clipResults[safe: $0] })
+            items.append(item(begin: begin, end: end, rowFilter: rowFilter) { clipResults[safe: $0] })
         }
         return items
     }
 
-    func item(begin: Int, end: Int, filter: String, clipHandle: (Int) -> CPYClip?) -> NSMenuItem {
+    func item(begin: Int, end: Int, rowFilter: (CPYClip) -> ClipFilter?, clipHandle: (Int) -> CPYClip?) -> NSMenuItem {
         let font = NSFont.boldSystemFont(ofSize: config.menuFontSize)
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: NSColor.labelColor,
@@ -132,12 +132,12 @@ fileprivate extension FilterMenu {
 
         (begin ..< end).forEach { i in
             guard let clip = clipHandle(i) else { return }
-            subMenu.addItem(item(with: clip, index: i + 1, filter: filter, inline: false))
+            subMenu.addItem(item(with: clip, index: i + 1, rowFilter: rowFilter, inline: false))
         }
         return menuItem
     }
 
-    func item(with clip: CPYClip, index: Int, filter: String, inline: Bool) -> NSMenuItem {
+    func item(with clip: CPYClip, index: Int, rowFilter: (CPYClip) -> ClipFilter?, inline: Bool) -> NSMenuItem {
         let maxKeyEquivalent = 10
 
         let keyEquivalent: String = {
@@ -168,7 +168,7 @@ fileprivate extension FilterMenu {
             default: return clip.title
             }
         }()
-        let attributedTitle = title.trim(with: prefix, keyWord: filter, maxWidth: config.maxWidthOfMenuItem, fontSize: config.menuFontSize)
+        let attributedTitle = title.trim(with: prefix, filter: rowFilter(clip), maxWidth: config.maxWidthOfMenuItem, fontSize: config.menuFontSize)
         let menuItem = NSMenuItem(title: attributedTitle.string, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
         menuItem.attributedTitle = attributedTitle
         menuItem.representedObject = clip.dataHash
@@ -178,11 +178,12 @@ fileprivate extension FilterMenu {
             menuItem.toolTip = (originTitle as NSString).substring(to: min(originTitle.count, maxLengthOfToolTip))
         }
 
-        let isImage = !clip.isColorCode && config.isShowImage
-        let isColor = clip.isColorCode && config.isShowColorCode
+        let isImage = clip.clipType == .image && config.isShowImage
+        let isColor = clip.clipType == .color && config.isShowColorCode
         if clip.thumbnailPath.isNotEmpty && (isImage || isColor) {
             PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
-                menuItem?.image = object as? NSImage
+                guard let menuItem = menuItem, let image = object as? NSImage else { return }
+                MainRunLoopScheduler.perform { menuItem.image = image }
             }
         }
 
@@ -192,13 +193,16 @@ fileprivate extension FilterMenu {
 
 // MARK: - Extension
 fileprivate extension String {
-    func trim(with prefix: String, keyWord: String, maxWidth: CGFloat, fontSize: CGFloat) -> NSAttributedString {
+    func trim(with prefix: String, filter: ClipFilter?, maxWidth: CGFloat, fontSize: CGFloat) -> NSAttributedString {
         let font = NSFont.systemFont(ofSize: fontSize)
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: NSColor.labelColor,
             .font: font
         ]
 
+        // The one place a hit's appearance is decided. `highlightRanges(in:)` says *where* to
+        // mark and knows nothing about how; giving each match mode its own colour would be a
+        // switch on `filter?.mode` here and nothing below it.
         let keyAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: NSColor.red,
             .font: font
@@ -208,7 +212,7 @@ fileprivate extension String {
 
         let prefixWidth = prefix.sizeOf(attributes: attributes).width
         let att = NSMutableAttributedString(string: prefix, attributes: attributes)
-        let content = trim.truncateToSize(size: .init(width: maxWidth - prefixWidth, height: ceil(font.lineHeight * 1.2)), ellipsis: "...", keyWord: keyWord, attributes: attributes, keyWordAttributes: keyAttributes)
+        let content = trim.truncateToSize(size: .init(width: maxWidth - prefixWidth, height: ceil(font.lineHeight * 1.2)), ellipsis: "...", filter: filter, attributes: attributes, keyWordAttributes: keyAttributes)
         att.append(content)
         return att
     }

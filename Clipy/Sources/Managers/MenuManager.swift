@@ -99,7 +99,6 @@ extension MenuManager {
 // MARK: - Binding
 private extension MenuManager {
     func bind() {
-        // Snippet change signal, replacing the Realm notification tokens.
         AppEnvironment.current.box
             .observeSnippets()
             .observe(on: MainScheduler.instance)
@@ -121,9 +120,7 @@ private extension MenuManager {
         // Observe change preference settings
         let defaults = AppEnvironment.current.defaults
         Observable.merge(
-            defaults.rx.observe(Int.self, Preferences.General.reorderClipsAfterPasting, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Int.self, Preferences.General.maxShowHistorySize, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Int.self, Preferences.General.maxHistorySize, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Int.self, Preferences.General.maxWidthOfMenuItem, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Bool.self, Preferences.Menu.showIconInTheMenu, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
             defaults.rx.observe(Int.self, Preferences.Menu.numberOfItemsPlaceInline, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),

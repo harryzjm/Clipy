@@ -23,8 +23,10 @@ extension String {
                                  context: nil).size
     }
 
-    func truncateToSize(size: CGSize, ellipsis: String, keyWord: String, attributes: [NSAttributedString.Key: Any], keyWordAttributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString {
-        guard keyWord.isNotEmpty, let keyWordRange = searchRange(of: keyWord) else {
+    func truncateToSize(size: CGSize, ellipsis: String, filter: ClipFilter?, attributes: [NSAttributedString.Key: Any], keyWordAttributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString {
+        // The window is centred on the first hit; any others just get coloured if they land
+        // inside it.
+        guard let keyWordRange = filter?.highlightRanges(in: self).first else {
             return truncateToSize(size: size, ellipsis: ellipsis, attributes: attributes)
         }
 
@@ -47,8 +49,12 @@ extension String {
         if range.upperBound != self.endIndex {
             mAtt.append(.init(string: ellipsis, attributes: attributes))
         }
-        if let keyWordAttributes = keyWordAttributes, let range = mAtt.string.searchRange(of: keyWord) {
-            mAtt.addAttributes(keyWordAttributes, range: .init(range, in: mAtt.string))
+        if let keyWordAttributes = keyWordAttributes {
+            // Re-found against the truncated string, and every hit in it: a multi-word query
+            // marks each of its words that survived the window.
+            for range in filter?.highlightRanges(in: mAtt.string) ?? [] {
+                mAtt.addAttributes(keyWordAttributes, range: .init(range, in: mAtt.string))
+            }
         }
         return mAtt
     }

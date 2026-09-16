@@ -10,11 +10,6 @@
 
 import Foundation
 
-/// Compatibility shim over `ClipyBox`.
-///
-/// The Realm models were active records that opened their own Realm inside `merge()`, `remove()`
-/// and friends. Those method names are kept so the snippets editor reads the same, but the work
-/// now goes through the store's transaction API. The database layer itself stays free of this.
 extension CPYFolder {
 
     /// A new folder positioned after `folders`, which the caller already holds sorted by index.

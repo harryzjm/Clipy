@@ -117,14 +117,14 @@ class TextFieldContentView: NSView, NSTextFieldDelegate {
     }
 
     func updateVisibility() {
-        queryTF.isHidden = queryTF.stringValue.isEmpty
+        queryTF.isHidden = queryTF.stringValue.trim.isEmpty
     }
 
     func shouldPassthru(keyCode: UInt16) -> Bool {
         let table: [UInt16: String] =
             [115: "Home", 117: "Delete", 116: "PgUp", 119: "End",
              121: "PgDn", 123: "Left", 124: "Right", 125: "Down",
-             126: "Up", 49: "Space", 36: "Return", 53: "Esc",
+             126: "Up", 36: "Return", 53: "Esc",
              71: "Clear", 76: "Insert", 48: "Tab", 114: "Help",
              122: "F1", 120: "F2", 99: "F3", 118: "F4",
              96: "F5", 97: "F6", 98: "F7", 100: "F8",

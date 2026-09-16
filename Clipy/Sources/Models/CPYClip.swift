@@ -18,6 +18,12 @@ import Foundation
 /// signatures; it holds no live database connection.
 final class CPYClip {
 
+    enum ClipType: Int, Codable {
+        case text = 0
+        case image = 1
+        case color = 2
+    }
+
     // MARK: - Properties
     var dataPath = ""
     var title = ""
@@ -25,5 +31,5 @@ final class CPYClip {
     var primaryType = ""
     var updateTime = 0
     var thumbnailPath = ""
-    var isColorCode = false
+    var clipType: ClipType = .text
 }

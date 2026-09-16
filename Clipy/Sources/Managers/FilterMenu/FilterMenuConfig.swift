@@ -25,8 +25,9 @@ struct FilterMenuConfig {
 
     let placeInLine: Int
     let placeInsideFolder: Int
-    let maxHistory: Int
     let maxShowHistory: Int
+
+    let matchMode: FilterMatchMode
 
     let showIconInTheMenu: Bool
 
@@ -44,8 +45,8 @@ struct FilterMenuConfig {
             maxWidthOfMenuItem: CGFloat(defaults.float(forKey: Preferences.General.maxWidthOfMenuItem)),
             placeInLine: defaults.integer(forKey: Preferences.Menu.numberOfItemsPlaceInline),
             placeInsideFolder: defaults.integer(forKey: Preferences.Menu.numberOfItemsPlaceInsideFolder),
-            maxHistory: defaults.integer(forKey: Preferences.General.maxHistorySize),
             maxShowHistory: defaults.integer(forKey: Preferences.General.maxShowHistorySize),
+            matchMode: FilterMatchMode(rawValue: defaults.integer(forKey: Preferences.Menu.filterMatchMode)) ?? .like,
             showIconInTheMenu: defaults.bool(forKey: Preferences.Menu.showIconInTheMenu),
             menuFontSize: CGFloat(defaults.float(forKey: Preferences.General.menuFontSize)))
     }

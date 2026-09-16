@@ -114,22 +114,12 @@ extension SnippetServiceTransaction {
         try snippetDb.deleteSnippet(identifier: identifier)
     }
 
-    /// Removes a snippet *from a particular folder*, and only if it still belongs to it.
-    ///
-    /// The editor moves a snippet across folders by inserting into the destination and then
-    /// removing from the source. Realm's `List` made that a pair of link edits; with a
-    /// `folder_identifier` column the insert has already re-parented the row, so an unguarded
-    /// delete here would destroy the snippet that was just moved.
     func removeSnippet(identifier: String, fromFolder folderIdentifier: String) throws {
         guard let table = try snippetDb.fetchSnippetTable(identifier: identifier),
               table.folderIdentifier == folderIdentifier else { return }
         try snippetDb.deleteSnippet(identifier: identifier)
     }
 
-    /// Rewrites `snippet.index` from the array order, in one transaction.
-    ///
-    /// The Realm version opened a fresh Realm and committed one write per row, and bailed out of
-    /// the whole loop on the first missing row.
     func rearrangeSnippets(_ snippets: [CPYSnippet]) throws {
         let indexes = snippets.enumerated().map { (identifier: $0.element.identifier, index: $0.offset) }
         try snippetDb.updateSnippetIndexes(indexes)

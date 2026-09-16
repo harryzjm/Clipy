@@ -13,40 +13,23 @@ import SwiftUI
 /// Cocoa Bindings against the shared `NSUserDefaultsController`.
 ///
 /// The keys and their value semantics are unchanged, so the existing `defaults.rx.observe(...)`
-/// subscriptions in `MenuManager`, `FilterMenu` and `AppDelegate` keep firing as before.
+/// subscriptions in `MenuManager` and `AppDelegate` keep firing as before.
 struct GeneralPane: View {
 
     @AppStorage(Preferences.General.loginItem)
     private var loginItem = false
     @AppStorage(Preferences.General.inputPasteCommand)
     private var inputPasteCommand = true
-    @AppStorage(Preferences.General.maxHistorySize)
-    private var maxHistorySize = 100
+    @AppStorage(Preferences.General.maxHistoryDays)
+    private var maxHistoryDays = 30
     @AppStorage(Preferences.General.maxShowHistorySize)
     private var maxShowHistorySize = 25
-    @AppStorage(Preferences.General.reorderClipsAfterPasting)
-    private var sortOrder = SortOrder.lastUsed.rawValue
     @AppStorage(Preferences.General.statusTypeItem)
     private var statusTypeItem = MenuManager.StatusType.black.rawValue
     @AppStorage(Preferences.General.maxWidthOfMenuItem)
     private var maxWidthOfMenuItem = 260
     @AppStorage(Preferences.General.menuFontSize)
     private var menuFontSize = 14
-
-    /// The old popup bound `selectedIndex`, so the stored value is the row index.
-    /// `FilterMenu` reads it back as a Bool (`ascending = !bool`), so the order must not change.
-    private enum SortOrder: Int, CaseIterable, Identifiable {
-        case dateCreated = 0
-        case lastUsed = 1
-
-        var id: Self { self }
-        var title: String {
-            switch self {
-            case .dateCreated: return "Date Created"
-            case .lastUsed: return "Last Used"
-            }
-        }
-    }
 
     var body: some View {
         Form {
@@ -56,13 +39,10 @@ struct GeneralPane: View {
             }
 
             Section("Clipboard History") {
-                NumberRow("Max clipboard history size:", unit: "items",
-                          range: 1...9999, value: $maxHistorySize)
+                NumberRow("Keep clipboard history for:", unit: "days",
+                          range: 1...3650, value: $maxHistoryDays)
                 NumberRow("Max display clipboard size:", unit: "items",
                           range: 1...9999, value: $maxShowHistorySize)
-                Picker("Sort history order by:", selection: $sortOrder) {
-                    ForEach(SortOrder.allCases) { Text($0.title).tag($0.rawValue) }
-                }
             }
 
             Section("Appearance") {

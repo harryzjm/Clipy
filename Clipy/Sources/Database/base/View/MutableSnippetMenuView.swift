@@ -10,9 +10,6 @@
 
 import Foundation
 
-/// A live view of the whole snippet graph, shaped the way the snippet menu and the editor need it.
-///
-/// Replaces the Realm `NotificationToken` on `CPYFolder` that used to drive `MenuManager`.
 final class MutableSnippetMenuView {
 
     private(set) var folders: [CPYFolder]

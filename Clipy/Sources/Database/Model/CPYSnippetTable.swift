@@ -11,10 +11,6 @@
 import Foundation
 import WCDBSwift
 
-/// Storage representation of a snippet.
-///
-/// `folderIdentifier` replaces Realm's `List<CPYSnippet>` / `LinkingObjects` pair, and
-/// `index` (column `snippet_index`) is the single source of truth for ordering within a folder.
 struct CPYSnippetTable: TableCodable, Equatable {
 
     static let tableName = "snippet"

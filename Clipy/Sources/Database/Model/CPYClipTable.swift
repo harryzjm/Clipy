@@ -25,7 +25,7 @@ struct CPYClipTable: TableCodable, Equatable {
     var primaryType: String = ""
     var updateTime: Int = 0
     var thumbnailPath: String = ""
-    var isColorCode: Bool = false
+    var clipType: Int = CPYClip.ClipType.text.rawValue
 
     enum CodingKeys: String, CodingTableKey {
         typealias Root = CPYClipTable
@@ -36,7 +36,7 @@ struct CPYClipTable: TableCodable, Equatable {
         case primaryType = "primary_type"
         case updateTime = "update_time"
         case thumbnailPath = "thumbnail_path"
-        case isColorCode = "is_color_code"
+        case clipType = "clip_type"
 
         static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(.dataHash, isPrimary: true, isNotNull: true)
@@ -55,7 +55,7 @@ extension CPYClipTable {
         clip.primaryType = primaryType
         clip.updateTime = updateTime
         clip.thumbnailPath = thumbnailPath
-        clip.isColorCode = isColorCode
+        clip.clipType = CPYClip.ClipType(rawValue: clipType) ?? .text
         return clip
     }
 }
@@ -69,7 +69,7 @@ extension CPYClip {
         table.primaryType = primaryType
         table.updateTime = updateTime
         table.thumbnailPath = thumbnailPath
-        table.isColorCode = isColorCode
+        table.clipType = clipType.rawValue
         return table
     }
 }

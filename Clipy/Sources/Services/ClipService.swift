@@ -20,19 +20,6 @@ import RxOptional
 final class ClipService {
 
     // MARK: - Properties
-    /// The clipboard history window, newest first, kept live by the store's change signal.
-    ///
-    /// Held here rather than fetched per menu so that `FilterMenu` has its items synchronously at
-    /// init — the menu is popped up on the very next line and would otherwise flash empty.
-    let clips = BehaviorRelay<[CPYClip]>(value: [])
-
-    /// Whether the history holds anything. Menu validation reads this instead of counting rows,
-    /// because AppKit calls `validateMenuItem` constantly while a menu is open and the database
-    /// runs on a serial background queue.
-    var hasHistory: Bool {
-        !clips.value.isEmpty
-    }
-
     fileprivate var cachedChangeCount = BehaviorRelay<Int>(value: 0)
     fileprivate var storeTypes = [String: NSNumber]()
     fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .userInteractive)
@@ -62,20 +49,6 @@ final class ClipService {
             .drive(onNext: { [weak self] in
                 self?.storeTypes = $0
             })
-            .disposed(by: disposeBag)
-        // History window. Re-subscribes when the retention size changes so the window keeps
-        // covering everything the menu could show.
-        AppEnvironment.current.defaults.rx
-            .observe(Int.self, Preferences.General.maxHistorySize)
-            .filterNil()
-            .distinctUntilChanged()
-            .flatMapLatest { maxHistorySize -> Observable<[CPYClip]> in
-                AppEnvironment.current.box
-                    .observeClips(ascending: false, limit: max(maxHistorySize, 1))
-                    .catchAndReturn([])
-            }
-            .observe(on: MainScheduler.instance)
-            .bind(to: clips)
             .disposed(by: disposeBag)
     }
 
@@ -153,10 +126,11 @@ extension ClipService {
         if let thumbnailImage = data.thumbnailImage {
             PINCache.shared.setObjectAsync(thumbnailImage, forKey: "\(unixTime)", completion: nil)
             clip.thumbnailPath = "\(unixTime)"
+            clip.clipType = .image
         } else if let colorCodeImage = data.colorCodeImage {
             PINCache.shared.setObjectAsync(colorCodeImage, forKey: "\(unixTime)", completion: nil)
             clip.thumbnailPath = "\(unixTime)"
-            clip.isColorCode = true
+            clip.clipType = .color
         }
 
         if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
