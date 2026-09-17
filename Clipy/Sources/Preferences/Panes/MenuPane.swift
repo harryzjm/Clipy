@@ -40,40 +40,40 @@ struct MenuPane: View {
 
     var body: some View {
         Form {
-            Section("Layout") {
-                NumberRow("Number of items place inline:", unit: "items",
+            Section(L10n.Preferences.Menu.SectionHeader.layout) {
+                NumberRow(L10n.Preferences.Menu.UnitLabel.inlineItems, unit: L10n.Preferences.General.Unit.items,
                           range: 0...999, value: $numberOfItemsPlaceInline)
-                NumberRow("Number of items place inside a folder:", unit: "items",
+                NumberRow(L10n.Preferences.Menu.UnitLabel.folderItems, unit: L10n.Preferences.General.Unit.items,
                           range: 0...999, value: $numberOfItemsPlaceInsideFolder)
             }
 
-            Section("Menu Items") {
-                Toggle("Display icons in menu items", isOn: $showIconInTheMenu)
-                Toggle("Show color code preview", isOn: $showColorPreviewInTheMenu)
-                Toggle("Show alert panel before clear history", isOn: $showAlertBeforeClearHistory)
+            Section(L10n.Preferences.Menu.SectionHeader.menuItems) {
+                Toggle(L10n.Preferences.Menu.ToggleLabel.showIcon, isOn: $showIconInTheMenu)
+                Toggle(L10n.Preferences.Menu.ToggleLabel.showColorPreview, isOn: $showColorPreviewInTheMenu)
+                Toggle(L10n.Preferences.Menu.ToggleLabel.showAlertBeforeClear, isOn: $showAlertBeforeClearHistory)
 
-                Toggle("Add key equivalents to numeric keys", isOn: $addNumericKeyEquivalents)
-                Toggle("Mark menu items with numbers", isOn: $menuItemsAreMarkedWithNumbers)
+                Toggle(L10n.Preferences.Menu.ToggleLabel.addNumericKeys, isOn: $addNumericKeyEquivalents)
+                Toggle(L10n.Preferences.Menu.ToggleLabel.markWithNumbers, isOn: $menuItemsAreMarkedWithNumbers)
                     .disabled(!addNumericKeyEquivalents)
             }
 
-            Section("Filter") {
-                Picker("Match mode:", selection: $filterMatchMode) {
+            Section(L10n.Preferences.Menu.SectionHeader.filter) {
+                Picker(L10n.Preferences.Menu.PickerLabel.matchMode, selection: $filterMatchMode) {
                     ForEach(FilterMatchMode.allCases) { Text($0.title).tag($0.rawValue) }
                 }
                 .pickerStyle(.segmented)
             }
 
-            Section("Tool Tip") {
-                Toggle("Show tool tip on a menu item", isOn: $showToolTipOnMenuItem)
-                NumberRow("Max length of tool tip string:", unit: "chars",
+            Section(L10n.Preferences.Menu.SectionHeader.toolTip) {
+                Toggle(L10n.Preferences.Menu.ToggleLabel.showToolTip, isOn: $showToolTipOnMenuItem)
+                NumberRow(L10n.Preferences.Menu.UnitLabel.tooltipLength, unit: L10n.Preferences.Menu.Unit.chars,
                           range: 1...9999, value: $maxLengthOfToolTip)
                     .disabled(!showToolTipOnMenuItem)
             }
 
-            Section("Image") {
-                Toggle("Show Image", isOn: $showImageInTheMenu)
-                NumberRow("Length:", unit: "pixel",
+            Section(L10n.Preferences.Menu.SectionHeader.image) {
+                Toggle(L10n.Preferences.Menu.ToggleLabel.showImage, isOn: $showImageInTheMenu)
+                NumberRow(L10n.Preferences.Menu.UnitLabel.thumbnailLength, unit: L10n.Preferences.Menu.Unit.pixel,
                           range: 1...999, value: $thumbnailLength)
                     .disabled(!showImageInTheMenu)
             }

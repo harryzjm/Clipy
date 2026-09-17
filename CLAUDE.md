@@ -1,4 +1,4 @@
-Clipy is a macOS menu-bar clipboard manager (a fork of Clipy/Clipy). Single app target, no test target.
+Clipy is a macOS menu-bar clipboard manager (a fork of Clipy/Clipy). App target plus a `ClipyTests` unit test target hosted inside it.
 
 ## Commands
 
@@ -14,7 +14,11 @@ xcodebuild -workspace Clipy.xcworkspace -scheme Clipy -configuration Debug build
 
 - **Lint:** `swiftlint` (config `.swiftlint.yml`, scoped to `Clipy/Sources`). Note the Xcode `SwiftLint` build phase runs `swiftlint --fix` from the *system* PATH (`/opt/homebrew/bin`), so every build rewrites source files in place — expect a dirty tree after building. `bundle exec danger` lints via the Pods binary instead.
 - **Codegen:** the `SwiftGen` build phase runs `${PODS_ROOT}/SwiftGen/bin/swiftgen` against `swiftgen.yml` on every build, regenerating `Clipy/Generated/LocalizedStrings.swift` (from `Clipy/Resources/en.lproj/Localizable.strings`) and `Clipy/Generated/AssetsImages.swift` (from `Images.xcassets`). Edit the sources, never the generated files. 
-- **Tests:** there are none. `.swiftlint.yml` lists a `ClipyTests` directory and `fastlane test` runs `scan`, but no test target or directory exists — don't go looking for one, and don't report `fastlane test` as a passing check.
+- **Tests:** `ClipyTests` is a unit test bundle hosted inside `Clipy.app` (`TEST_HOST`/`BUNDLE_LOADER`), added via CocoaPods `inherit! :search_paths` rather than its own pod list — it gets the app's pods (RxSwift, WCDB.swift, MMKV, …) through search paths and links them at runtime through the host process, so `@testable import Clipy` and `import RxSwift` both work without re-embedding frameworks. Run with:
+  ```bash
+  xcodebuild -workspace Clipy.xcworkspace -scheme Clipy -configuration Debug -destination 'platform=macOS' test
+  ```
+  `fastlane test` (`scan`) also targets it now, though `scan_clipy` passes `skip_build: true` so a `build-for-testing` needs to happen first.
 - Deployment target is **macOS 14.0** (Podfile pins Pods to the same). The README's "macOS 10.15 / Xcode 12.3" line is stale.
 
 ## Architecture

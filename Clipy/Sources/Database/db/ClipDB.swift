@@ -53,7 +53,7 @@ final class ClipDB: DataStore {
 
     /// The tokenizer is registered globally inside WCDB, but still has to be attached to this
     /// database's handle — without it both creating and querying `clip_fts` fail with an unknown
-    /// tokenizer. Runs before `migrationList()`, which is what migration 2 needs.
+    /// tokenizer. Runs before `migrationList()`, which is what migration 1 needs.
     override func configCustomDatabase(_ db: Database) throws {
         db.add(tokenizer: BuiltinTokenizer.Verbatim)
         db.setAutoMergeFTS5Index(enable: true)
@@ -76,6 +76,11 @@ final class ClipDB: DataStore {
 /// The deciding case is expiry: `DataCleanService.cleanDatas()` deletes by predicate
 /// (`deleteClips(olderThan:)`), so the Swift side never sees the keys of the rows it dropped.
 /// Enforcing the mirror in the database instead means no delete path can bypass it.
+///
+/// Every statement below keys on rowid, holding `clip_fts.rowid == clip.rowid`. That is the
+/// whole point: rowid equality is the one constraint fts5 can plan for — a seek into its
+/// `%_content` table — while equality on any other column, `UNINDEXED` or not, degrades to a
+/// full scan of the shadow table and turns a bulk insert or expiry sweep into O(n²).
 private extension ClipDB {
 
     /// A `new.`/`old.` column reference. `Column.in(table:)` emits exactly `row.name` — no
@@ -84,51 +89,98 @@ private extension ClipDB {
         Column(named: name).in(table: row)
     }
 
-    /// `DELETE FROM clip_fts WHERE data_hash = <row>.data_hash`
-    static func purgeFts(matching hash: Column) -> StatementDelete {
+    /// `DELETE FROM clip_fts WHERE rowid = <row>.rowid`
+    static func purgeFts(rowOf row: String) -> StatementDelete {
         StatementDelete()
             .delete(from: CPYClipFtsTable.tableName)
-            .where(CPYClipFtsTable.Properties.dataHash == hash)
+            .where(Column.rowid() == clipColumn("rowid", of: row))
     }
 
-    /// `INSERT INTO clip_fts(title, data_hash, update_time) VALUES(new.title, new.data_hash, new.update_time)`
+    /// `DELETE FROM clip_fts WHERE rowid = (SELECT rowid FROM clip WHERE data_hash = new.data_hash)`
+    ///
+    /// The subquery resolves through `clip`'s `data_hash` primary key, translating the hash the
+    /// caller has into the rowid fts5 can seek on. It has to run BEFORE the insert, while the row
+    /// `INSERT OR REPLACE` is about to drop still exists — and it cannot shortcut through
+    /// `new.rowid`, which SQLite hardcodes to -1 inside a BEFORE trigger on an implicit-rowid
+    /// table.
+    static func purgeFtsConflicting() -> StatementDelete {
+        let conflicting = StatementSelect()
+            .select(Column.rowid())
+            .from(CPYClipTable.tableName)
+            .where(CPYClipTable.Properties.dataHash == clipColumn("data_hash", of: "new"))
+        return StatementDelete()
+            .delete(from: CPYClipFtsTable.tableName)
+            .where(Column.rowid() == WCDBSwift.Expression(with: conflicting))
+    }
+
+    /// `INSERT INTO clip_fts(rowid, title, data_hash) VALUES(new.rowid, new.title, new.data_hash)`
     static func indexFts() -> StatementInsert {
         StatementInsert()
             .insert(intoTable: CPYClipFtsTable.tableName)
-            .columns(CPYClipFtsTable.Properties.title,
-                     CPYClipFtsTable.Properties.dataHash,
-                     CPYClipFtsTable.Properties.updateTime)
-            .values(clipColumn("title", of: "new"),
-                    clipColumn("data_hash", of: "new"),
-                    clipColumn("update_time", of: "new"))
+            .columns(Column.rowid(),
+                     CPYClipFtsTable.Properties.title,
+                     CPYClipFtsTable.Properties.dataHash)
+            .values(clipColumn("rowid", of: "new"),
+                    clipColumn("title", of: "new"),
+                    clipColumn("data_hash", of: "new"))
     }
 
     static func createFtsTriggers(on db: Database) throws {
-        // The purge in front of the insert is not redundant. `insertClip` uses
-        // `INSERT OR REPLACE`, and SQLite only fires the AFTER DELETE trigger for the row that
-        // REPLACE drops when `recursive_triggers` is on — so re-copying the same content would
-        // otherwise leave the old FTS row behind. Clearing `new.data_hash` here first makes the
-        // set correct with that pragma either way, which is why neither `insertClip` nor any
-        // pragma has to change.
+        // `INSERT OR REPLACE` drops the conflicting row without firing AFTER DELETE — SQLite only
+        // does that with `recursive_triggers` on, and it is off. So re-copying the same content
+        // would strand the old FTS row. Clearing it here, ahead of the replace, is what keeps the
+        // mirror exact.
+        try db.exec(StatementCreateTrigger()
+            .create(trigger: "clip_fts_bi").ifNotExists()
+            .before().insert().on(table: CPYClipTable.tableName).forEachRow()
+            .execute(purgeFtsConflicting()))
+
         try db.exec(StatementCreateTrigger()
             .create(trigger: "clip_fts_ai").ifNotExists()
             .after().insert().on(table: CPYClipTable.tableName).forEachRow()
-            .execute(purgeFts(matching: clipColumn("data_hash", of: "new")))
             .execute(indexFts()))
 
         // Every delete goes through here: one clip, the whole history, and the expiry sweep.
         try db.exec(StatementCreateTrigger()
             .create(trigger: "clip_fts_ad").ifNotExists()
             .after().delete().on(table: CPYClipTable.tableName).forEachRow()
-            .execute(purgeFts(matching: clipColumn("data_hash", of: "old"))))
+            .execute(purgeFts(rowOf: "old")))
 
         // Nothing updates `clip` today — inserts are upserts. This is here so the index stays
         // honest if anything ever does.
         try db.exec(StatementCreateTrigger()
             .create(trigger: "clip_fts_au").ifNotExists()
             .after().update().on(table: CPYClipTable.tableName).forEachRow()
-            .execute(purgeFts(matching: clipColumn("data_hash", of: "old")))
+            .execute(purgeFts(rowOf: "old"))
             .execute(indexFts()))
+    }
+}
+
+// MARK: - FTS repair
+extension ClipDB {
+    /// Realigns the whole FTS mirror with `clip.rowid`.
+    ///
+    /// Anything that renumbers `clip`'s rowids has to be followed by this, or every later FTS
+    /// delete silently targets the wrong row. `VACUUM` is the one such operation that exists
+    /// today: `clip`'s primary key is TEXT, so the table has no INTEGER PRIMARY KEY for VACUUM to
+    /// preserve and it renumbers freely. `ClipServiceTransaction.vacuum()` pairs the two.
+    ///
+    /// Deliberately not fts5's own `'rebuild'` command — that re-tokenizes from `%_content` and
+    /// leaves the rowids exactly as they were, which is the thing being repaired.
+    ///
+    /// The caller owns the transaction: a failure partway through leaves the index empty.
+    func rebuildFtsIndex() throws {
+        try db.delete(fromTable: CPYClipFtsTable.tableName)
+        try db.exec(StatementInsert()
+            .insert(intoTable: CPYClipFtsTable.tableName)
+            .columns(Column.rowid(),
+                     CPYClipFtsTable.Properties.title,
+                     CPYClipFtsTable.Properties.dataHash)
+            .values(StatementSelect()
+                .select(Column.rowid(),
+                        CPYClipTable.Properties.title,
+                        CPYClipTable.Properties.dataHash)
+                .from(CPYClipTable.tableName)))
     }
 }
 
@@ -136,6 +188,10 @@ private extension ClipDB {
 extension ClipDB {
     /// Upsert. A repeated copy hits the same `data_hash` primary key and refreshes `update_time`,
     /// which is what moves the clip back to the top of the history menu.
+    ///
+    /// Must stay `INSERT OR REPLACE`. `insertOrIgnore` would break the FTS mirror: the BEFORE
+    /// INSERT trigger runs ahead of the conflict check and `OR IGNORE` does not roll its effect
+    /// back, so the index row would be dropped while the clip row lived on.
     func insertClip(_ clip: CPYClipTable) throws {
         try db.insertOrReplace(clip, intoTable: CPYClipTable.tableName)
         status.inserted.append(clip)
@@ -176,10 +232,10 @@ extension ClipDB {
 
     /// The only entry point for filtered history reads.
     ///
-    /// Always takes the newest `limit` rows (`update_time DESC`). Display order — the
-    /// "Sort history order by" preference — is the caller's business: folding it into the
-    /// `ORDER BY` would make `LIMIT` pick the *oldest* N rows instead of the newest N shown
-    /// back to front.
+    /// Always takes the newest `limit` rows. `.like`/`.glob` order by `update_time`; `.fts`
+    /// orders by rowid, which tracks the same recency — see `fetchFtsClips`. Either way the
+    /// point of the `ORDER BY` is to decide *which* rows survive the `LIMIT`, not how they are
+    /// displayed: ordering by anything else would make `LIMIT` pick the oldest N rows.
     ///
     /// Case sensitivity is SQLite's own: `LIKE` folds ASCII case, `GLOB` does not, and fts5
     /// folds it in the tokenizer.
@@ -245,10 +301,16 @@ private extension ClipDB {
     /// Two queries, because `highlight()` is an fts5 auxiliary function and only works inside a
     /// query against the FTS table itself.
     ///
-    /// That first query therefore has to order and limit on its own copy of `update_time` —
-    /// without it a broad match would pull every hit, titles included, into memory. The triggers
-    /// keep the two tables' `update_time` identical, so the second query's ordering agrees with
-    /// the one the hits were limited by and "the newest `limit` rows" still holds.
+    /// The first query orders by rowid, which fts5 plans itself (it reports the ordering as
+    /// consumed), so `LIMIT` stops the scan early instead of materialising and sorting every hit.
+    /// That stands on rowid tracking recency: `insertClip` uses `INSERT OR REPLACE`, so every
+    /// write — including a repeated copy moving back to the top — takes `max(rowid) + 1`.
+    /// Ordering by `update_time` instead would sort the whole match set, because an fts5 table
+    /// cannot index that column. The second query then orders by `update_time` off `clip`'s own
+    /// index, which agrees with the rowid ordering the hits were limited by.
+    ///
+    /// The second query carries no `LIMIT` and needs none: `matchedTerms` is built from the
+    /// first query's rows, so it holds at most `limit` entries.
     func fetchFtsClips(matching matchExpression: String, limit: Int) throws -> ClipTableSearchResult {
         // fts5 rejects `MATCH ''` as a syntax error, and a query of nothing but whitespace
         // reduces to exactly that.
@@ -261,7 +323,7 @@ private extension ClipDB {
         let hits = try db.getRows(on: [CPYClipFtsTable.Properties.dataHash, highlighted],
                                   fromTable: CPYClipFtsTable.tableName,
                                   where: CPYClipFtsTable.Properties.title.match(matchExpression),
-                                  orderBy: [CPYClipFtsTable.Properties.updateTime.order(.descending)],
+                                  orderBy: [Column.rowid().order(.descending)],
                                   limit: limit)
 
         var matchedTerms: [String: [String]] = [:]

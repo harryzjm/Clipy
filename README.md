@@ -32,16 +32,8 @@ __Distribution Site__ : <https://clipy-app.com>
 1. May be [github.com/Clipy/Clipy](https://github.com/Clipy/Clipy) is abandoned?
 2. Add search function
 3. Support dark mode
-4. Support '*' and '?' search
+4. Support Search Mode (Like, Glob, FTS)
 5. Update third-party libraries
-
-| Char | Count | 
-| :----- | :---- | 
-| * | 0 or More |
-| ? | 1 | 
-
-> At first time, you launch this app, may be had some UI bug. You should relaunch and the bug fix, it may be a bug, but I don`t know why. If you know, please tell me.  
-> Now, this app has a bug, may be cause  arrow keys in the menu is useless. But I don't found how to solve this problem, so I add restart app item(maybe you can add shortcut), and everything is ok, I will fix this bug in next time.
 
 ### Translate old snippets  
 ```shell

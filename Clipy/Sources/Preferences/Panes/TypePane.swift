@@ -15,7 +15,7 @@ struct TypePane: View {
 
     var body: some View {
         Form {
-            Section("Store the following clipboard types") {
+            Section(L10n.Preferences.TypePane.SectionHeader.storeTypes) {
                 ForEach(store.types, id: \.self) { type in
                     Toggle(store.title(for: type), isOn: store.binding(for: type))
                 }

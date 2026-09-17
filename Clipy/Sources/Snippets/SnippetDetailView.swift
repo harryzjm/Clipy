@@ -24,9 +24,9 @@ struct SnippetDetailView: View {
                 // `textView.undoManager?.removeAllActions()` achieved on every selection change.
                 .id(identifier)
         case nil:
-            ContentUnavailableView("No Selection",
+            ContentUnavailableView(L10n.Snippets.Detail.NoSelection.title,
                                    systemImage: "text.alignleft",
-                                   description: Text("Select a folder or a snippet to edit."))
+                                   description: Text(L10n.Snippets.Detail.NoSelection.description))
         }
     }
 }
@@ -45,20 +45,20 @@ private struct FolderSettingsView: View {
     var body: some View {
         Form {
             Section {
-                LabeledContent("Title") {
-                    TextField("Title", text: store.titleBinding(for: folderIdentifier))
+                LabeledContent(L10n.Snippets.Detail.Folder.titleLabel) {
+                    TextField(L10n.Snippets.Detail.Folder.titleLabel, text: store.titleBinding(for: folderIdentifier))
                         .labelsHidden()
                         .textFieldStyle(.roundedBorder)
                         .frame(maxWidth: 260)
                 }
-                LabeledContent("Shortcut") {
+                LabeledContent(L10n.Snippets.Detail.Folder.shortcutLabel) {
                     ShortcutRecorder(keyCombo: store.keyCombo(forFolder: folderIdentifier)) { keyCombo in
                         store.setKeyCombo(keyCombo, forFolder: folderIdentifier)
                     }
                     .frame(width: 170, height: 26)
                 }
             } header: {
-                Label("Folder", systemImage: "folder.fill")
+                Label(L10n.Snippets.Detail.Folder.title, systemImage: "folder.fill")
                     .foregroundStyle(SwiftUI.Color(nsColor: Asset.Color.clipy.color))
             }
         }

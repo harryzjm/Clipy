@@ -20,6 +20,13 @@ target 'Clipy' do
 
   pod 'SwiftLint'
   pod 'SwiftGen'
+
+  target 'ClipyTests' do
+    # Search paths only: ClipyTests is hosted inside Clipy.app (TEST_HOST), so the
+    # pods it links against are already loaded in-process there. Re-embedding them
+    # here would just duplicate symbols already provided by the host.
+    inherit! :search_paths
+  end
 end
 
 post_install do |installer|

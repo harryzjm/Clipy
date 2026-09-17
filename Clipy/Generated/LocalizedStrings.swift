@@ -77,10 +77,226 @@ internal enum L10n {
     internal static let shortcuts = L10n.tr("Localizable", "preferences.shortcuts", fallback: "Shortcuts")
     /// Type
     internal static let type = L10n.tr("Localizable", "preferences.type", fallback: "Type")
+    internal enum Beta {
+      internal enum ActionLabel {
+        /// Delete from history
+        internal static let deleteHistory = L10n.tr("Localizable", "preferences.beta.actionLabel.deleteHistory", fallback: "Delete from history")
+        /// Paste and delete from history
+        internal static let pasteAndDelete = L10n.tr("Localizable", "preferences.beta.actionLabel.pasteAndDelete", fallback: "Paste and delete from history")
+        /// Paste as PlainText
+        internal static let pastePlainText = L10n.tr("Localizable", "preferences.beta.actionLabel.pastePlainText", fallback: "Paste as PlainText")
+      }
+      internal enum Description {
+        /// Beta settings might be moved to a different pane in future versions.
+        internal static let betaSettings = L10n.tr("Localizable", "preferences.beta.description.betaSettings", fallback: "Beta settings might be moved to a different pane in future versions.")
+      }
+      internal enum Label {
+        /// Version
+        internal static let version = L10n.tr("Localizable", "preferences.beta.label.version", fallback: "Version")
+      }
+      internal enum ModifierKey {
+        /// Alt
+        internal static let alt = L10n.tr("Localizable", "preferences.beta.modifierKey.alt", fallback: "Alt")
+        /// Command
+        internal static let command = L10n.tr("Localizable", "preferences.beta.modifierKey.command", fallback: "Command")
+        /// Control
+        internal static let control = L10n.tr("Localizable", "preferences.beta.modifierKey.control", fallback: "Control")
+        /// Shift
+        internal static let shift = L10n.tr("Localizable", "preferences.beta.modifierKey.shift", fallback: "Shift")
+      }
+      internal enum SectionHeader {
+        /// Preferences – Beta pane
+        internal static let action = L10n.tr("Localizable", "preferences.beta.sectionHeader.action", fallback: "Action")
+        /// Screenshot
+        internal static let screenshot = L10n.tr("Localizable", "preferences.beta.sectionHeader.screenshot", fallback: "Screenshot")
+      }
+      internal enum ToggleLabel {
+        /// Save screenshots in history
+        internal static let saveScreenshots = L10n.tr("Localizable", "preferences.beta.toggleLabel.saveScreenshots", fallback: "Save screenshots in history")
+      }
+    }
+    internal enum ClipboardType {
+      /// Plain Text
+      internal static let plainText = L10n.tr("Localizable", "preferences.clipboardType.plainText", fallback: "Plain Text")
+      /// PNG Image
+      internal static let png = L10n.tr("Localizable", "preferences.clipboardType.png", fallback: "PNG Image")
+      /// Rich Text Format (RTF)
+      internal static let richText = L10n.tr("Localizable", "preferences.clipboardType.richText", fallback: "Rich Text Format (RTF)")
+      /// Rich Text Format Directory (RTFD)
+      internal static let richTextDir = L10n.tr("Localizable", "preferences.clipboardType.richTextDir", fallback: "Rich Text Format Directory (RTFD)")
+      /// TIFF Image
+      internal static let tiff = L10n.tr("Localizable", "preferences.clipboardType.tiff", fallback: "TIFF Image")
+    }
+    internal enum ExcludedApps {
+      internal enum ButtonLabel {
+        /// Remove
+        internal static let remove = L10n.tr("Localizable", "preferences.excludedApps.buttonLabel.remove", fallback: "Remove")
+      }
+      internal enum Label {
+        /// Preferences – Excluded Apps pane
+        internal static let header = L10n.tr("Localizable", "preferences.excludedApps.label.header", fallback: "Exclude these applications:")
+      }
+    }
+    internal enum General {
+      internal enum PickerLabel {
+        /// Status Bar icon style:
+        internal static let statusBarIconStyle = L10n.tr("Localizable", "preferences.general.pickerLabel.statusBarIconStyle", fallback: "Status Bar icon style:")
+      }
+      internal enum SectionHeader {
+        /// Appearance
+        internal static let appearance = L10n.tr("Localizable", "preferences.general.sectionHeader.appearance", fallback: "Appearance")
+        /// Preferences – General pane
+        internal static let behavior = L10n.tr("Localizable", "preferences.general.sectionHeader.behavior", fallback: "Behavior")
+        /// Clipboard History
+        internal static let clipboardHistory = L10n.tr("Localizable", "preferences.general.sectionHeader.clipboardHistory", fallback: "Clipboard History")
+      }
+      internal enum StatusType {
+        /// Black
+        internal static let black = L10n.tr("Localizable", "preferences.general.statusType.black", fallback: "Black")
+        /// White
+        internal static let white = L10n.tr("Localizable", "preferences.general.statusType.white", fallback: "White")
+      }
+      internal enum ToggleLabel {
+        /// Input "⌘ + V" after menu item selection
+        internal static let inputPasteCommand = L10n.tr("Localizable", "preferences.general.toggleLabel.inputPasteCommand", fallback: "Input \"⌘ + V\" after menu item selection")
+        /// Launch on Login
+        internal static let launchOnLogin = L10n.tr("Localizable", "preferences.general.toggleLabel.launchOnLogin", fallback: "Launch on Login")
+      }
+      internal enum Unit {
+        /// days
+        internal static let days = L10n.tr("Localizable", "preferences.general.unit.days", fallback: "days")
+        /// items
+        internal static let items = L10n.tr("Localizable", "preferences.general.unit.items", fallback: "items")
+        /// px
+        internal static let px = L10n.tr("Localizable", "preferences.general.unit.px", fallback: "px")
+      }
+      internal enum UnitLabel {
+        /// Keep clipboard history for:
+        internal static let keepFor = L10n.tr("Localizable", "preferences.general.unitLabel.keepFor", fallback: "Keep clipboard history for:")
+        /// Max display clipboard size:
+        internal static let maxDisplaySize = L10n.tr("Localizable", "preferences.general.unitLabel.maxDisplaySize", fallback: "Max display clipboard size:")
+        /// Max width of menu item:
+        internal static let maxWidth = L10n.tr("Localizable", "preferences.general.unitLabel.maxWidth", fallback: "Max width of menu item:")
+        /// The menu icon size
+        internal static let menuIconSize = L10n.tr("Localizable", "preferences.general.unitLabel.menuIconSize", fallback: "The menu icon size")
+      }
+    }
+    internal enum Menu {
+      internal enum PickerLabel {
+        /// Match mode:
+        internal static let matchMode = L10n.tr("Localizable", "preferences.menu.pickerLabel.matchMode", fallback: "Match mode:")
+      }
+      internal enum SectionHeader {
+        /// Filter
+        internal static let filter = L10n.tr("Localizable", "preferences.menu.sectionHeader.filter", fallback: "Filter")
+        /// Image
+        internal static let image = L10n.tr("Localizable", "preferences.menu.sectionHeader.image", fallback: "Image")
+        /// Preferences – Menu pane
+        internal static let layout = L10n.tr("Localizable", "preferences.menu.sectionHeader.layout", fallback: "Layout")
+        /// Menu Items
+        internal static let menuItems = L10n.tr("Localizable", "preferences.menu.sectionHeader.menuItems", fallback: "Menu Items")
+        /// Tool Tip
+        internal static let toolTip = L10n.tr("Localizable", "preferences.menu.sectionHeader.toolTip", fallback: "Tool Tip")
+      }
+      internal enum ToggleLabel {
+        /// Add key equivalents to numeric keys
+        internal static let addNumericKeys = L10n.tr("Localizable", "preferences.menu.toggleLabel.addNumericKeys", fallback: "Add key equivalents to numeric keys")
+        /// Mark menu items with numbers
+        internal static let markWithNumbers = L10n.tr("Localizable", "preferences.menu.toggleLabel.markWithNumbers", fallback: "Mark menu items with numbers")
+        /// Show alert panel before clear history
+        internal static let showAlertBeforeClear = L10n.tr("Localizable", "preferences.menu.toggleLabel.showAlertBeforeClear", fallback: "Show alert panel before clear history")
+        /// Show color code preview
+        internal static let showColorPreview = L10n.tr("Localizable", "preferences.menu.toggleLabel.showColorPreview", fallback: "Show color code preview")
+        /// Display icons in menu items
+        internal static let showIcon = L10n.tr("Localizable", "preferences.menu.toggleLabel.showIcon", fallback: "Display icons in menu items")
+        /// Show Image
+        internal static let showImage = L10n.tr("Localizable", "preferences.menu.toggleLabel.showImage", fallback: "Show Image")
+        /// Show tool tip on a menu item
+        internal static let showToolTip = L10n.tr("Localizable", "preferences.menu.toggleLabel.showToolTip", fallback: "Show tool tip on a menu item")
+      }
+      internal enum Unit {
+        /// chars
+        internal static let chars = L10n.tr("Localizable", "preferences.menu.unit.chars", fallback: "chars")
+        /// pixel
+        internal static let pixel = L10n.tr("Localizable", "preferences.menu.unit.pixel", fallback: "pixel")
+      }
+      internal enum UnitLabel {
+        /// Number of items place inside a folder:
+        internal static let folderItems = L10n.tr("Localizable", "preferences.menu.unitLabel.folderItems", fallback: "Number of items place inside a folder:")
+        /// Number of items place inline:
+        internal static let inlineItems = L10n.tr("Localizable", "preferences.menu.unitLabel.inlineItems", fallback: "Number of items place inline:")
+        /// Length:
+        internal static let thumbnailLength = L10n.tr("Localizable", "preferences.menu.unitLabel.thumbnailLength", fallback: "Length:")
+        /// Max length of tool tip string:
+        internal static let tooltipLength = L10n.tr("Localizable", "preferences.menu.unitLabel.tooltipLength", fallback: "Max length of tool tip string:")
+      }
+    }
+    internal enum Shortcuts {
+      internal enum RecorderLabel {
+        /// Preferences – Shortcuts pane
+        internal static let history = L10n.tr("Localizable", "preferences.shortcuts.recorderLabel.history", fallback: "History:")
+        /// Restart:
+        internal static let restart = L10n.tr("Localizable", "preferences.shortcuts.recorderLabel.restart", fallback: "Restart:")
+        /// Snippets:
+        internal static let snippets = L10n.tr("Localizable", "preferences.shortcuts.recorderLabel.snippets", fallback: "Snippets:")
+      }
+    }
+    internal enum TypePane {
+      internal enum SectionHeader {
+        /// Preferences – Type pane
+        internal static let storeTypes = L10n.tr("Localizable", "preferences.typePane.sectionHeader.storeTypes", fallback: "Store the following clipboard types")
+      }
+    }
   }
   internal enum Snippets {
-    /// Snippets editor
+    /// Snippets – editor content
     internal static let emptyContentPlaceholder = L10n.tr("Localizable", "snippets.emptyContentPlaceholder", fallback: "Please fill in the contents of the snippet")
+    internal enum Detail {
+      internal enum Folder {
+        /// Shortcut
+        internal static let shortcutLabel = L10n.tr("Localizable", "snippets.detail.folder.shortcutLabel", fallback: "Shortcut")
+        /// Folder
+        internal static let title = L10n.tr("Localizable", "snippets.detail.folder.title", fallback: "Folder")
+        /// Title
+        internal static let titleLabel = L10n.tr("Localizable", "snippets.detail.folder.titleLabel", fallback: "Title")
+      }
+      internal enum NoSelection {
+        /// Select a folder or a snippet to edit.
+        internal static let description = L10n.tr("Localizable", "snippets.detail.noSelection.description", fallback: "Select a folder or a snippet to edit.")
+        /// Snippets – detail view
+        internal static let title = L10n.tr("Localizable", "snippets.detail.noSelection.title", fallback: "No Selection")
+      }
+    }
+    internal enum Editor {
+      /// Snippets – editor toolbar
+      internal static let title = L10n.tr("Localizable", "snippets.editor.title", fallback: "Snippet Editor")
+      internal enum Toolbar {
+        /// Add Folder
+        internal static let addFolder = L10n.tr("Localizable", "snippets.editor.toolbar.addFolder", fallback: "Add Folder")
+        /// Add Snippet
+        internal static let addSnippet = L10n.tr("Localizable", "snippets.editor.toolbar.addSnippet", fallback: "Add Snippet")
+        /// Enable/Disable
+        internal static let enableDisable = L10n.tr("Localizable", "snippets.editor.toolbar.enableDisable", fallback: "Enable/Disable")
+        /// Export
+        internal static let export = L10n.tr("Localizable", "snippets.editor.toolbar.export", fallback: "Export")
+        /// Import
+        internal static let `import` = L10n.tr("Localizable", "snippets.editor.toolbar.import", fallback: "Import")
+      }
+    }
+    internal enum Sidebar {
+      internal enum ContextMenu {
+        /// Delete
+        internal static let delete = L10n.tr("Localizable", "snippets.sidebar.contextMenu.delete", fallback: "Delete")
+        /// Disable
+        internal static let disable = L10n.tr("Localizable", "snippets.sidebar.contextMenu.disable", fallback: "Disable")
+        /// Enable
+        internal static let enable = L10n.tr("Localizable", "snippets.sidebar.contextMenu.enable", fallback: "Enable")
+        /// Move to Folder
+        internal static let moveToFolder = L10n.tr("Localizable", "snippets.sidebar.contextMenu.moveToFolder", fallback: "Move to Folder")
+        /// Snippets – sidebar context menu
+        internal static let rename = L10n.tr("Localizable", "snippets.sidebar.contextMenu.rename", fallback: "Rename")
+      }
+    }
   }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length

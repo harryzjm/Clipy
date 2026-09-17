@@ -35,7 +35,7 @@ final class SnippetsEditorWindowController: NSWindowController {
                               styleMask: [.titled, .closable, .miniaturizable, .resizable],
                               backing: .buffered,
                               defer: false)
-        window.title = "Snippet Editor"
+        window.title = L10n.Snippets.Editor.title
         window.minSize = NSSize(width: 800, height: 600)
         window.collectionBehavior = .canJoinAllSpaces
         window.titlebarAppearsTransparent = true

@@ -33,19 +33,19 @@ struct GeneralPane: View {
 
     var body: some View {
         Form {
-            Section("Behavior") {
-                Toggle("Launch on Login", isOn: $loginItem)
-                Toggle("Input \"⌘ + V\" after menu item selection", isOn: $inputPasteCommand)
+            Section(L10n.Preferences.General.SectionHeader.behavior) {
+                Toggle(L10n.Preferences.General.ToggleLabel.launchOnLogin, isOn: $loginItem)
+                Toggle(L10n.Preferences.General.ToggleLabel.inputPasteCommand, isOn: $inputPasteCommand)
             }
 
-            Section("Clipboard History") {
-                NumberRow("Keep clipboard history for:", unit: "days",
+            Section(L10n.Preferences.General.SectionHeader.clipboardHistory) {
+                NumberRow(L10n.Preferences.General.UnitLabel.keepFor, unit: L10n.Preferences.General.Unit.days,
                           range: 1...3650, value: $maxHistoryDays)
-                NumberRow("Max display clipboard size:", unit: "items",
+                NumberRow(L10n.Preferences.General.UnitLabel.maxDisplaySize, unit: L10n.Preferences.General.Unit.items,
                           range: 1...9999, value: $maxShowHistorySize)
             }
 
-            Section("Appearance") {
+            Section(L10n.Preferences.General.SectionHeader.appearance) {
                 // The old popup bound `selectedTag` with tags 1 (black) and 2 (white), while
                 // `MenuManager.StatusType` is 0 = black, 1 = white — so picking "black" stored 1
                 // and produced the white icon, and picking "white" stored 2, fell through
@@ -53,14 +53,14 @@ struct GeneralPane: View {
                 // match the icon; already-stored 0/1 values keep rendering exactly as they do now.
                 // The xib's untagged "None" entry stored 0 and also resolved to black, so it never
                 // hid the icon — it is dropped rather than carried over as a lie.
-                Picker("Status Bar icon style:", selection: $statusTypeItem) {
+                Picker(L10n.Preferences.General.PickerLabel.statusBarIconStyle, selection: $statusTypeItem) {
                     ForEach(MenuManager.StatusType.allCases) { type in
                         Text(type.title).tag(type.rawValue)
                     }
                 }
-                NumberRow("Max width of menu item:", unit: "px",
+                NumberRow(L10n.Preferences.General.UnitLabel.maxWidth, unit: L10n.Preferences.General.Unit.px,
                           range: 1...9999, value: $maxWidthOfMenuItem)
-                NumberRow("The menu icon size", unit: "px",
+                NumberRow(L10n.Preferences.General.UnitLabel.menuIconSize, unit: L10n.Preferences.General.Unit.px,
                           range: 1...100, value: $menuFontSize)
             }
         }
@@ -74,8 +74,8 @@ extension MenuManager.StatusType: CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .black: return "Black"
-        case .white: return "White"
+        case .black: return L10n.Preferences.General.StatusType.black
+        case .white: return L10n.Preferences.General.StatusType.white
         }
     }
 }

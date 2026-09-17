@@ -7,12 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		10E7EA1CFEB63B8DB6E402A9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA99C45A858705CD92A2D11 /* Cocoa.framework */; };
+		641B1194322A0370A2EC81A9 /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BF75291AF5FA2517626BCD3 /* Pods_ClipyTests.framework */; };
+		746DC3493B1D5C2D8A44E59A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E0EC8D4A192DBBCF30E3326 /* XCTest.framework */; };
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
 		FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E221B35DFC800C06102 /* Foundation.framework */; };
 		FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E241B35DFD000C06102 /* AppKit.framework */; };
 		FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E261B35DFD300C06102 /* Carbon.framework */; };
 		FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E281B35DFDA00C06102 /* Cocoa.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AAC163C64E37D3ADBAD7EBE9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FAC43DBE1B35D8B100C06102 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FAC43DC51B35D8B100C06102;
+			remoteInfo = Clipy;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		FAC43E1D1B35DF4A00C06102 /* Embed Frameworks */ = {
@@ -28,7 +41,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0EA99C45A858705CD92A2D11 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		15C6F0EB6E0672C855F4FD6C /* Pods-ClipyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.release.xcconfig"; sourceTree = "<group>"; };
+		1E0EC8D4A192DBBCF30E3326 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/System/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		23F3435C2EAA79EBA9AAFF6D /* Pods-ClipyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.debug.xcconfig"; sourceTree = "<group>"; };
 		31064F137CFB046737D1709D /* Pods-Clipy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.debug.xcconfig"; sourceTree = "<group>"; };
+		4BF75291AF5FA2517626BCD3 /* Pods_ClipyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClipyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6CACAEA01119349A7BC098E1 /* ClipyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClipyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
 		FAC43DC61B35D8B100C06102 /* Clipy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipy.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,9 +77,24 @@
 			path = Clipy;
 			sourceTree = "<group>";
 		};
+		9272497CF54856CD5A169DA3 /* ClipyTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ClipyTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6E41E58D2D2756E84D192A43 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10E7EA1CFEB63B8DB6E402A9 /* Cocoa.framework in Frameworks */,
+				746DC3493B1D5C2D8A44E59A /* XCTest.framework in Frameworks */,
+				641B1194322A0370A2EC81A9 /* Pods_ClipyTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FAC43DC31B35D8B100C06102 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -85,8 +119,19 @@
 				FAC43E241B35DFD000C06102 /* AppKit.framework */,
 				FAC43E221B35DFC800C06102 /* Foundation.framework */,
 				73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */,
+				B182B637F1947D8397EDCB2E /* OS X */,
+				4BF75291AF5FA2517626BCD3 /* Pods_ClipyTests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B182B637F1947D8397EDCB2E /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				0EA99C45A858705CD92A2D11 /* Cocoa.framework */,
+				1E0EC8D4A192DBBCF30E3326 /* XCTest.framework */,
+			);
+			name = "OS X";
 			sourceTree = "<group>";
 		};
 		D308B3D847EEAF20B17182CE /* Pods */ = {
@@ -94,6 +139,8 @@
 			children = (
 				31064F137CFB046737D1709D /* Pods-Clipy.debug.xcconfig */,
 				9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */,
+				15C6F0EB6E0672C855F4FD6C /* Pods-ClipyTests.release.xcconfig */,
+				23F3435C2EAA79EBA9AAFF6D /* Pods-ClipyTests.debug.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -105,6 +152,7 @@
 				FAC43DC71B35D8B100C06102 /* Products */,
 				2CB0F71AAC48A392535FD3B0 /* Frameworks */,
 				D308B3D847EEAF20B17182CE /* Pods */,
+				9272497CF54856CD5A169DA3 /* ClipyTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -112,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				FAC43DC61B35D8B100C06102 /* Clipy.app */,
+				6CACAEA01119349A7BC098E1 /* ClipyTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -119,6 +168,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C8A1DB951369B22C717A139D /* ClipyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2182C7163D063458F2ED0C5 /* Build configuration list for PBXNativeTarget "ClipyTests" */;
+			buildPhases = (
+				99B98BCEC96E0832238744F2 /* [CP] Check Pods Manifest.lock */,
+				83B547FBC1BF8CB82D6A2F84 /* Sources */,
+				6E41E58D2D2756E84D192A43 /* Frameworks */,
+				17F3D9541E8C99E726727562 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CBADF6A9F5644FFF56452B0C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				9272497CF54856CD5A169DA3 /* ClipyTests */,
+			);
+			name = ClipyTests;
+			productName = ClipyTests;
+			productReference = 6CACAEA01119349A7BC098E1 /* ClipyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		FAC43DC51B35D8B100C06102 /* Clipy */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FAC43DE21B35D8B100C06102 /* Build configuration list for PBXNativeTarget "Clipy" */;
@@ -140,8 +211,6 @@
 				56E279E55E884AB58470C4F0 /* Clipy */,
 			);
 			name = Clipy;
-			packageProductDependencies = (
-			);
 			productName = Clipy;
 			productReference = FAC43DC61B35D8B100C06102 /* Clipy.app */;
 			productType = "com.apple.product-type.application";
@@ -158,6 +227,10 @@
 				LastUpgradeCheck = 2700;
 				ORGANIZATIONNAME = "Clipy Project";
 				TargetAttributes = {
+					C8A1DB951369B22C717A139D = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = FAC43DC51B35D8B100C06102;
+					};
 					FAC43DC51B35D8B100C06102 = {
 						CreatedOnToolsVersion = 6.3.2;
 						LastSwiftMigration = 1140;
@@ -172,19 +245,25 @@
 				Base,
 			);
 			mainGroup = FAC43DBD1B35D8B100C06102;
-			packageReferences = (
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				FAC43DC51B35D8B100C06102 /* Clipy */,
+				C8A1DB951369B22C717A139D /* ClipyTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		17F3D9541E8C99E726727562 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FAC43DC41B35D8B100C06102 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -234,6 +313,28 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		99B98BCEC96E0832238744F2 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ClipyTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		FA10897F20EC24F700A3FEFC /* SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -265,6 +366,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		83B547FBC1BF8CB82D6A2F84 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FAC43DC21B35D8B100C06102 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -274,7 +382,72 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		CBADF6A9F5644FFF56452B0C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Clipy;
+			target = FAC43DC51B35D8B100C06102 /* Clipy */;
+			targetProxy = AAC163C64E37D3ADBAD7EBE9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		C93D0B77CA2D78CEC739C765 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 23F3435C2EAA79EBA9AAFF6D /* Pods-ClipyTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = BSF5Y7PYM8;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.ClipyTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clipy.app/Contents/MacOS/Clipy";
+			};
+			name = Debug;
+		};
+		D5AC99C2FE9473F6B89B3BED /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 15C6F0EB6E0672C855F4FD6C /* Pods-ClipyTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.ClipyTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clipy.app/Contents/MacOS/Clipy";
+			};
+			name = Release;
+		};
 		FAC43DE01B35D8B100C06102 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -401,7 +574,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 10;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
@@ -417,7 +590,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.4.1;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy.debug";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -436,7 +609,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 10;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -449,7 +622,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.4.1;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -462,6 +635,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C2182C7163D063458F2ED0C5 /* Build configuration list for PBXNativeTarget "ClipyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5AC99C2FE9473F6B89B3BED /* Release */,
+				C93D0B77CA2D78CEC739C765 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		FAC43DC11B35D8B100C06102 /* Build configuration list for PBXProject "Clipy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

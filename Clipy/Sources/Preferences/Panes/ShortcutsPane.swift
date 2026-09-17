@@ -20,13 +20,13 @@ struct ShortcutsPane: View {
     var body: some View {
         Form {
             Section(L10n.Common.menu) {
-                recorder("History:", combo: $historyKeyCombo) { combo in
+                recorder(L10n.Preferences.Shortcuts.RecorderLabel.history, combo: $historyKeyCombo) { combo in
                     AppEnvironment.current.hotKeyService.change(with: .history, keyCombo: combo)
                 }
-                recorder("Snippets:", combo: $snippetKeyCombo) { combo in
+                recorder(L10n.Preferences.Shortcuts.RecorderLabel.snippets, combo: $snippetKeyCombo) { combo in
                     AppEnvironment.current.hotKeyService.change(with: .snippet, keyCombo: combo)
                 }
-                recorder("Restart:", combo: $restartKeyCombo) { combo in
+                recorder(L10n.Preferences.Shortcuts.RecorderLabel.restart, combo: $restartKeyCombo) { combo in
                     AppEnvironment.current.hotKeyService.changeRestartKeyCombo(combo)
                 }
             }

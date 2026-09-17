@@ -40,15 +40,15 @@ struct SnippetsEditorView: View {
     private var toolbar: some ToolbarContent {
         ToolbarItemGroup {
             Button { store.addSnippet() } label: {
-                Label("Add Snippet", systemImage: "note.text.badge.plus")
+                Label(L10n.Snippets.Editor.Toolbar.addSnippet, systemImage: "note.text.badge.plus")
             }
-            .help("Add Snippet")
+            .help(L10n.Snippets.Editor.Toolbar.addSnippet)
             .disabled(store.enclosingFolderIdentifier == nil)
 
             Button { store.addFolder() } label: {
-                Label("Add Folder", systemImage: "folder.badge.plus")
+                Label(L10n.Snippets.Editor.Toolbar.addFolder, systemImage: "folder.badge.plus")
             }
-            .help("Add Folder")
+            .help(L10n.Snippets.Editor.Toolbar.addFolder)
 
             Button { store.isDeleteConfirmationPresented = true } label: {
                 Label(L10n.Common.deleteItem, systemImage: "trash")
@@ -57,21 +57,21 @@ struct SnippetsEditorView: View {
             .disabled(store.selection == nil)
 
             Button { store.toggleEnabled() } label: {
-                Label("Enable/Disable",
+                Label(L10n.Snippets.Editor.Toolbar.enableDisable,
                       systemImage: store.isSelectionEnabled == false ? "circle.slash" : "checkmark.circle")
             }
-            .help("Enable/Disable")
+            .help(L10n.Snippets.Editor.Toolbar.enableDisable)
             .disabled(store.selection == nil)
 
             Button { store.importSnippets() } label: {
-                Label("Import", systemImage: "square.and.arrow.down")
+                Label(L10n.Snippets.Editor.Toolbar.`import`, systemImage: "square.and.arrow.down")
             }
-            .help("Import")
+            .help(L10n.Snippets.Editor.Toolbar.`import`)
 
             Button { store.exportSnippets() } label: {
-                Label("Export", systemImage: "square.and.arrow.up")
+                Label(L10n.Snippets.Editor.Toolbar.export, systemImage: "square.and.arrow.up")
             }
-            .help("Export")
+            .help(L10n.Snippets.Editor.Toolbar.export)
         }
     }
 }

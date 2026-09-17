@@ -17,7 +17,7 @@ struct ExcludeAppPane: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Exclude these applications:")
+            Text(L10n.Preferences.ExcludedApps.Label.header)
                 .font(.headline)
 
             List(store.applications, selection: $selection) { app in
@@ -38,7 +38,7 @@ struct ExcludeAppPane: View {
                     store.delete(identifiers: selection)
                     selection.removeAll()
                 } label: {
-                    Label("Remove", systemImage: "minus")
+                    Label(L10n.Preferences.ExcludedApps.ButtonLabel.remove, systemImage: "minus")
                 }
                 .disabled(selection.isEmpty)
             }

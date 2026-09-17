@@ -30,11 +30,11 @@ final class StoreTypesStore {
 
     func title(for type: String) -> String {
         switch type {
-        case "String": return "Plain Text"
-        case "RTF": return "Rich Text Format (RTF)"
-        case "RTFD": return "Rich Text Format Directory (RTFD)"
-        case "PNG": return "PNG Image"
-        case "TIFF": return "TIFF Image"
+        case "String": return L10n.Preferences.ClipboardType.plainText
+        case "RTF": return L10n.Preferences.ClipboardType.richText
+        case "RTFD": return L10n.Preferences.ClipboardType.richTextDir
+        case "PNG": return L10n.Preferences.ClipboardType.png
+        case "TIFF": return L10n.Preferences.ClipboardType.tiff
         default: return type
         }
     }

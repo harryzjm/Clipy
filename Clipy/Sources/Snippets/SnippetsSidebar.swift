@@ -107,13 +107,13 @@ private struct SnippetsSidebarRow: View {
 
     @ViewBuilder
     private var menu: some View {
-        Button("Rename") { beginRename() }
-        Button(isEnabled ? "Disable" : "Enable") {
+        Button(L10n.Snippets.Sidebar.ContextMenu.rename) { beginRename() }
+        Button(isEnabled ? L10n.Snippets.Sidebar.ContextMenu.disable : L10n.Snippets.Sidebar.ContextMenu.enable) {
             store.selection = selection
             store.toggleEnabled()
         }
         if let snippetIdentifier = selection.snippetIdentifier, otherFolders.isEmpty == false {
-            Menu("Move to Folder") {
+            Menu(L10n.Snippets.Sidebar.ContextMenu.moveToFolder) {
                 ForEach(otherFolders) { folder in
                     Button(folder.title) {
                         store.moveSnippet(snippetIdentifier, toFolder: folder.id)
@@ -122,7 +122,7 @@ private struct SnippetsSidebarRow: View {
             }
         }
         Divider()
-        Button("Delete", role: .destructive) {
+        Button(L10n.Snippets.Sidebar.ContextMenu.delete, role: .destructive) {
             store.selection = selection
             store.isDeleteConfirmationPresented = true
         }

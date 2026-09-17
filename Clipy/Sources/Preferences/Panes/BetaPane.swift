@@ -34,32 +34,32 @@ struct BetaPane: View {
         var id: Self { self }
         var title: String {
             switch self {
-            case .command: return "Command"
-            case .shift: return "Shift"
-            case .control: return "Control"
-            case .option: return "Alt"
+            case .command: return L10n.Preferences.Beta.ModifierKey.command
+            case .shift: return L10n.Preferences.Beta.ModifierKey.shift
+            case .control: return L10n.Preferences.Beta.ModifierKey.control
+            case .option: return L10n.Preferences.Beta.ModifierKey.alt
             }
         }
     }
 
     var body: some View {
         Form {
-            Section("Action") {
-                modifierRow("Paste as PlainText",
+            Section(L10n.Preferences.Beta.SectionHeader.action) {
+                modifierRow(L10n.Preferences.Beta.ActionLabel.pastePlainText,
                             isOn: $pastePlainText, modifier: $pastePlainTextModifier)
-                modifierRow("Delete from history",
+                modifierRow(L10n.Preferences.Beta.ActionLabel.deleteHistory,
                             isOn: $deleteHistory, modifier: $deleteHistoryModifier)
-                modifierRow("Paste and delete from history",
+                modifierRow(L10n.Preferences.Beta.ActionLabel.pasteAndDelete,
                             isOn: $pasteAndDeleteHistory, modifier: $pasteAndDeleteHistoryModifier)
             }
 
-            Section("Screenshot") {
-                Toggle("Save screenshots in history", isOn: $observeScreenshot)
+            Section(L10n.Preferences.Beta.SectionHeader.screenshot) {
+                Toggle(L10n.Preferences.Beta.ToggleLabel.saveScreenshots, isOn: $observeScreenshot)
             }
 
             Section {
-                LabeledContent("Version", value: Bundle.main.appVersion ?? "")
-                Text("Beta settings might be moved to a different pane in future versions.")
+                LabeledContent(L10n.Preferences.Beta.Label.version, value: Bundle.main.appVersion ?? "")
+                Text(L10n.Preferences.Beta.Description.betaSettings)
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }

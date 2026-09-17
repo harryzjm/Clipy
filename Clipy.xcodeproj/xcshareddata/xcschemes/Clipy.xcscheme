@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FAC43DD71B35D8B100C06102"
+               BlueprintIdentifier = "C8A1DB951369B22C717A139D"
                BuildableName = "ClipyTests.xctest"
                BlueprintName = "ClipyTests"
                ReferencedContainer = "container:Clipy.xcodeproj">
@@ -55,7 +55,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FAC43DD71B35D8B100C06102"
+               BlueprintIdentifier = "C8A1DB951369B22C717A139D"
                BuildableName = "ClipyTests.xctest"
                BlueprintName = "ClipyTests"
                ReferencedContainer = "container:Clipy.xcodeproj">

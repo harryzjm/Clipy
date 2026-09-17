@@ -14,12 +14,16 @@ import WCDBSwift
 /// Full-text index over `CPYClipTable.title`, used by `FilterMatchMode.fts`.
 ///
 /// A shadow of `clip`, not a source of truth: SQL triggers on `clip` keep it in step (see
-/// `ClipDB.migrationList()`). `data_hash` joins a hit back to its row; `update_time` is
-/// duplicated so the FTS query can order and limit on its own — `highlight()` only works in a
-/// query against the FTS table itself, so that query cannot borrow `clip`'s ordering.
+/// `ClipDB.createFtsTriggers`). Every row's rowid is pinned to its clip's rowid, because rowid
+/// is the only key fts5 can seek on — an equality test against any other column falls back to a
+/// full scan of the shadow table. `data_hash` rides along as payload so a hit can be joined back
+/// to its `clip` row.
 ///
-/// Not an external-content table (`content=`): `insertClip` uses `INSERT OR REPLACE`, which
-/// gives a repeated copy a fresh implicit rowid, and external content is keyed by rowid.
+/// Not an external-content table (`content=`): that form keys the index by the content table's
+/// rowid *implicitly*, and `insertClip` uses `INSERT OR REPLACE`, which hands a repeated copy a
+/// fresh rowid without firing AFTER DELETE for the row it dropped. Writing the rowid explicitly
+/// and clearing the stale row in a BEFORE INSERT trigger keeps the mirror honest without taking
+/// on that constraint.
 struct CPYClipFtsTable: TableCodable {
 
     static let tableName = "clip_fts"
@@ -29,7 +33,6 @@ struct CPYClipFtsTable: TableCodable {
     /// would silently highlight `data_hash` instead.
     var title: String = ""
     var dataHash: String = ""
-    var updateTime: Int = 0
 
     /// Column number of `title`, for `highlight()`.
     static let titleColumnIndex = 0
@@ -39,13 +42,11 @@ struct CPYClipFtsTable: TableCodable {
 
         case title
         case dataHash = "data_hash"
-        case updateTime = "update_time"
 
         static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindVirtualTable(withModule: .FTS5, and: BuiltinTokenizer.Verbatim)
-            // Only `title` is searchable; the other two are payload the query reads back.
+            // Only `title` is searchable; `data_hash` is payload the query reads back.
             BindColumnConstraint(.dataHash, isNotIndexed: true)
-            BindColumnConstraint(.updateTime, isNotIndexed: true)
         }
     }
 }

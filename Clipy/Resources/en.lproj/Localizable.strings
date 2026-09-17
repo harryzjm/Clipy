@@ -23,6 +23,29 @@
 "excludedApps.addButton" = "Add";
 
 /* Snippets editor */
+/* Snippets – detail view */
+"snippets.detail.noSelection.title" = "No Selection";
+"snippets.detail.noSelection.description" = "Select a folder or a snippet to edit.";
+"snippets.detail.folder.title" = "Folder";
+"snippets.detail.folder.titleLabel" = "Title";
+"snippets.detail.folder.shortcutLabel" = "Shortcut";
+
+/* Snippets – editor toolbar */
+"snippets.editor.title" = "Snippet Editor";
+"snippets.editor.toolbar.addSnippet" = "Add Snippet";
+"snippets.editor.toolbar.addFolder" = "Add Folder";
+"snippets.editor.toolbar.enableDisable" = "Enable/Disable";
+"snippets.editor.toolbar.import" = "Import";
+"snippets.editor.toolbar.export" = "Export";
+
+/* Snippets – sidebar context menu */
+"snippets.sidebar.contextMenu.rename" = "Rename";
+"snippets.sidebar.contextMenu.enable" = "Enable";
+"snippets.sidebar.contextMenu.disable" = "Disable";
+"snippets.sidebar.contextMenu.moveToFolder" = "Move to Folder";
+"snippets.sidebar.contextMenu.delete" = "Delete";
+
+/* Snippets – editor content */
 "snippets.emptyContentPlaceholder" = "Please fill in the contents of the snippet";
 
 /* Alert – clear clipboard history */
@@ -41,3 +64,72 @@
 
 /* Alert – delete snippet / folder */
 "alert.deleteSnippet.message" = "Are you sure want to delete this item?";
+
+/* Preferences – General pane */
+"preferences.general.sectionHeader.behavior" = "Behavior";
+"preferences.general.toggleLabel.launchOnLogin" = "Launch on Login";
+"preferences.general.toggleLabel.inputPasteCommand" = "Input \"⌘ + V\" after menu item selection";
+"preferences.general.sectionHeader.clipboardHistory" = "Clipboard History";
+"preferences.general.unitLabel.keepFor" = "Keep clipboard history for:";
+"preferences.general.unit.days" = "days";
+"preferences.general.unitLabel.maxDisplaySize" = "Max display clipboard size:";
+"preferences.general.unit.items" = "items";
+"preferences.general.sectionHeader.appearance" = "Appearance";
+"preferences.general.pickerLabel.statusBarIconStyle" = "Status Bar icon style:";
+"preferences.general.statusType.black" = "Black";
+"preferences.general.statusType.white" = "White";
+"preferences.general.unitLabel.maxWidth" = "Max width of menu item:";
+"preferences.general.unit.px" = "px";
+"preferences.general.unitLabel.menuIconSize" = "The menu icon size";
+
+/* Preferences – Menu pane */
+"preferences.menu.sectionHeader.layout" = "Layout";
+"preferences.menu.unitLabel.inlineItems" = "Number of items place inline:";
+"preferences.menu.unitLabel.folderItems" = "Number of items place inside a folder:";
+"preferences.menu.sectionHeader.menuItems" = "Menu Items";
+"preferences.menu.toggleLabel.showIcon" = "Display icons in menu items";
+"preferences.menu.toggleLabel.showColorPreview" = "Show color code preview";
+"preferences.menu.toggleLabel.showAlertBeforeClear" = "Show alert panel before clear history";
+"preferences.menu.toggleLabel.addNumericKeys" = "Add key equivalents to numeric keys";
+"preferences.menu.toggleLabel.markWithNumbers" = "Mark menu items with numbers";
+"preferences.menu.sectionHeader.filter" = "Filter";
+"preferences.menu.pickerLabel.matchMode" = "Match mode:";
+"preferences.menu.sectionHeader.toolTip" = "Tool Tip";
+"preferences.menu.toggleLabel.showToolTip" = "Show tool tip on a menu item";
+"preferences.menu.unitLabel.tooltipLength" = "Max length of tool tip string:";
+"preferences.menu.unit.chars" = "chars";
+"preferences.menu.sectionHeader.image" = "Image";
+"preferences.menu.toggleLabel.showImage" = "Show Image";
+"preferences.menu.unitLabel.thumbnailLength" = "Length:";
+"preferences.menu.unit.pixel" = "pixel";
+
+/* Preferences – Type pane */
+"preferences.typePane.sectionHeader.storeTypes" = "Store the following clipboard types";
+"preferences.clipboardType.plainText" = "Plain Text";
+"preferences.clipboardType.richText" = "Rich Text Format (RTF)";
+"preferences.clipboardType.richTextDir" = "Rich Text Format Directory (RTFD)";
+"preferences.clipboardType.png" = "PNG Image";
+"preferences.clipboardType.tiff" = "TIFF Image";
+
+/* Preferences – Excluded Apps pane */
+"preferences.excludedApps.label.header" = "Exclude these applications:";
+"preferences.excludedApps.buttonLabel.remove" = "Remove";
+
+/* Preferences – Shortcuts pane */
+"preferences.shortcuts.recorderLabel.history" = "History:";
+"preferences.shortcuts.recorderLabel.snippets" = "Snippets:";
+"preferences.shortcuts.recorderLabel.restart" = "Restart:";
+
+/* Preferences – Beta pane */
+"preferences.beta.sectionHeader.action" = "Action";
+"preferences.beta.actionLabel.pastePlainText" = "Paste as PlainText";
+"preferences.beta.actionLabel.deleteHistory" = "Delete from history";
+"preferences.beta.actionLabel.pasteAndDelete" = "Paste and delete from history";
+"preferences.beta.sectionHeader.screenshot" = "Screenshot";
+"preferences.beta.toggleLabel.saveScreenshots" = "Save screenshots in history";
+"preferences.beta.label.version" = "Version";
+"preferences.beta.description.betaSettings" = "Beta settings might be moved to a different pane in future versions.";
+"preferences.beta.modifierKey.command" = "Command";
+"preferences.beta.modifierKey.shift" = "Shift";
+"preferences.beta.modifierKey.control" = "Control";
+"preferences.beta.modifierKey.alt" = "Alt";

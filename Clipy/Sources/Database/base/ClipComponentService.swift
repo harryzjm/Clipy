@@ -57,8 +57,28 @@ struct ClipServiceTransaction: Transaction {
         try clipDb.rollback()
     }
 
+    /// `VACUUM`, then realign the FTS mirror.
+    ///
+    /// The two belong together: `clip_fts` is keyed by `clip.rowid`, and VACUUM renumbers those
+    /// rowids (`clip`'s primary key is TEXT, so there is no INTEGER PRIMARY KEY for it to
+    /// preserve). Left unrepaired, every later FTS delete would target the wrong row.
+    ///
+    /// Call this with `ignoreTransaction: true` — SQLite refuses to VACUUM inside a transaction:
+    ///
+    ///     box.clipTransaction(ignoreTransaction: true) { try $0.vacuum() }
+    ///
+    /// The rebuild takes its own transaction so a failure partway cannot leave the index empty.
     func vacuum() throws {
         try clipDb.vacuum()
+
+        try clipDb.begin()
+        do {
+            try clipDb.rebuildFtsIndex()
+            try clipDb.commit()
+        } catch {
+            try clipDb.rollback()
+            throw error
+        }
     }
 
     /// Publishes the transaction's deltas to the live views before the commit lands.
