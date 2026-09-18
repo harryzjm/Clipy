@@ -1,5 +1,5 @@
 // 
-//  CPYClipData+FileType.swift
+//  TypeContent+FileType.swift
 //
 //  Clipy
 //  GitHub: https://github.com/clipy
@@ -13,7 +13,7 @@
 import Foundation
 import Cocoa
 
-extension CPYClipData {
+extension TypeContent {
     enum FileType: CaseIterable {
         case folder
         case txt
@@ -33,7 +33,7 @@ extension CPYClipData {
         init(_ ext: String?) {
             if let ext = ext, ext.isNotEmpty {
                 let ext = ext.lowercased()
-                self = FileType.allCases.lazy.first { type in
+                self = FileType.allCases.first { type in
                     type.ext.contains(ext)
                 } ?? .unknow
             } else {

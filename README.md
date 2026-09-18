@@ -30,10 +30,11 @@ __Distribution Site__ : <https://clipy-app.com>
 
 ### Why have this fork
 1. May be [github.com/Clipy/Clipy](https://github.com/Clipy/Clipy) is abandoned?
-2. Add search function
-3. Support dark mode
-4. Support Search Mode (Like, Glob, FTS)
-5. Update third-party libraries
+2. Add encryption and save the main key into keychain
+3. Add search function
+4. Support dark mode
+5. Support Search Mode (Like, Glob, FTS)
+6. Update third-party libraries
 
 ### Translate old snippets  
 ```shell

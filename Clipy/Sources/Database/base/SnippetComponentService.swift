@@ -18,15 +18,13 @@ final class SnippetComponentService: ComponentService {
     weak var box: ClipyBox!
 
     lazy fileprivate(set) var snippetDb: SnippetDB = {
-        .init(rootPath: box.path, name: "snippet.db", store: box.store)
+        .init(rootPath: box.path, name: "snippet.db", secretCode: box.secretCode, store: box.store, recovery: box.recovery)
     }()
 
     let inter = ComponentServiceInternal()
     let queue = LQueue(label: "com.clipy.box.snippet")
     let observeScheduler: ImmediateSchedulerType = SerialDispatchQueueScheduler(qos: .default,
                                                                                internalSerialQueueName: "com.clipy.box.snippet.observe")
-
-    let viewTracker = SnippetViewTracker()
 }
 
 struct SnippetServiceTransaction: Transaction {
@@ -55,14 +53,5 @@ struct SnippetServiceTransaction: Transaction {
 
     func vacuum() throws {
         try snippetDb.vacuum()
-    }
-
-    /// Publishes the transaction's deltas to the live views before the commit lands.
-    func beforeCommit() throws {
-        let change = SnippetChangeSet(status: snippetDb.status)
-        if !change.isEmpty {
-            service.viewTracker.updateViews(currentTransaction: self, change: change)
-        }
-        snippetDb.status.clean()
     }
 }

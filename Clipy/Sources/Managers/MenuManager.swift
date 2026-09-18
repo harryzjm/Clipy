@@ -16,7 +16,6 @@ import RxSwift
 import RxOptional
 
 final class MenuManager: NSObject {
-    fileprivate var snippetMenu: NSMenu?
     fileprivate lazy var configMenu: NSMenu = {
         let v = NSMenu(title: Constants.Menu.config)
         v.addItem(.init(title: L10n.Common.clearHistory, action: #selector(AppDelegate.clearAllHistory)))
@@ -30,15 +29,12 @@ final class MenuManager: NSObject {
 
     // StatusMenu
     fileprivate var statusItem: NSStatusItem?
-    // Icon Cache
-    fileprivate let folderIcon = Asset.Common.iconFolder.image
-    fileprivate let snippetIcon = Asset.Common.iconText.image
     // Other
     fileprivate let disposeBag = DisposeBag()
-    fileprivate let kMaxKeyEquivalents = 10
-    fileprivate let shortenSymbol = "..."
-    // Latest snapshot from the snippet change signal, used to build the snippet menu.
-    fileprivate var folders = [CPYFolder]()
+    fileprivate let box: ClipyBox
+
+    fileprivate let snippetPopUp = SerialDisposable()
+    fileprivate var isPresentingMenu = false
 
     // MARK: - Enum Values
     enum StatusType: Int {
@@ -46,12 +42,9 @@ final class MenuManager: NSObject {
     }
 
     // MARK: - Initialize
-    override init() {
+    init(box: ClipyBox) {
+        self.box = box
         super.init()
-        folderIcon.isTemplate = true
-        folderIcon.size = NSSize(width: 15, height: 13)
-        snippetIcon.isTemplate = true
-        snippetIcon.size = NSSize(width: 12, height: 13)
     }
 
     func setup() {
@@ -63,51 +56,46 @@ final class MenuManager: NSObject {
 // MARK: - Popup Menu
 extension MenuManager {
     func popUpMenu(_ type: MenuType) {
-        let current = statusItem?.button?.window?.frame.origin
-        let pt = current.flatMap { pt -> CGPoint in
-            let mouse = NSEvent.mouseLocation
-            return NSPoint(x: mouse.x - pt.x, y: pt.y - mouse.y)
-        } ?? .zero
-
         switch type {
         case .history:
-            FilterMenu(title: L10n.Menu.historyTitle).popUp(positioning: nil, at: pt, in: statusItem?.button)
+            present(FilterMenu(title: L10n.Menu.historyTitle, box: box))
         case .snippet:
-            snippetMenu?.popUp(positioning: nil, at: pt, in: statusItem?.button)
+            snippetPopUp.disposable = SnippetMenu.build(box: box)
+                .subscribe(onNext: { [weak self] menu in
+                    self?.present(menu)
+                }, onError: { error in
+                    lError("Cannot fetch snippet folders", error)
+                })
         }
     }
 
     func popUpSnippetFolder(_ folder: CPYFolder) {
-        let folderMenu = NSMenu(title: folder.title)
-        // Folder title
-        let labelItem = NSMenuItem(title: folder.title, action: nil)
-        labelItem.isEnabled = false
-        folderMenu.addItem(labelItem)
-        // Snippets
-        var index = firstIndexOfMenuItems()
-        folder.snippets
-            .filter { $0.enable }
-            .forEach { snippet in
-                let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
-                folderMenu.addItem(subMenuItem)
-                index += 1
-            }
-        folderMenu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        SnippetMenu(folder: folder).popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+    }
+}
+
+// MARK: - Presenting
+private extension MenuManager {
+    func present(_ menu: NSMenu) {
+        guard !isPresentingMenu else { return }
+        isPresentingMenu = true
+        // `popUp` is synchronous: it runs the menu's tracking loop and returns once dismissed.
+        defer { isPresentingMenu = false }
+        menu.popUp(positioning: nil, at: popUpLocation(), in: statusItem?.button)
+    }
+
+    /// The mouse, in the status item button's coordinate space. Both reads are main thread only,
+    /// which is why this happens here rather than before the snippet read.
+    func popUpLocation() -> CGPoint {
+        guard let origin = statusItem?.button?.window?.frame.origin else { return .zero }
+        let mouse = NSEvent.mouseLocation
+        return NSPoint(x: mouse.x - origin.x, y: origin.y - mouse.y)
     }
 }
 
 // MARK: - Binding
 private extension MenuManager {
     func bind() {
-        AppEnvironment.current.box
-            .observeSnippets()
-            .observe(on: MainScheduler.instance)
-            .catchAndReturn([])
-            .subscribe(onNext: { [weak self] folders in
-                self?.folders = folders
-                self?.createClipMenu()
-            })
-            .disposed(by: disposeBag)
         // Menu icon
         AppEnvironment.current.defaults.rx.observe(Int.self, Preferences.General.statusTypeItem, retainSelf: false)
             .filterNil()
@@ -116,138 +104,6 @@ private extension MenuManager {
                 self?.changeStatusItem(StatusType(rawValue: key) ?? .black)
             })
             .disposed(by: disposeBag)
-
-        // Observe change preference settings
-        let defaults = AppEnvironment.current.defaults
-        Observable.merge(
-            defaults.rx.observe(Int.self, Preferences.General.maxShowHistorySize, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Int.self, Preferences.General.maxWidthOfMenuItem, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Bool.self, Preferences.Menu.showIconInTheMenu, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Int.self, Preferences.Menu.numberOfItemsPlaceInline, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Int.self, Preferences.Menu.numberOfItemsPlaceInsideFolder, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Bool.self, Preferences.Menu.menuItemsAreMarkedWithNumbers, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Bool.self, Preferences.Menu.showToolTipOnMenuItem, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Bool.self, Preferences.Menu.showImageInTheMenu, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Bool.self, Preferences.Menu.addNumericKeyEquivalents, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Int.self, Preferences.Menu.maxLengthOfToolTip, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged(),
-            defaults.rx.observe(Bool.self, Preferences.Menu.showColorPreviewInTheMenu, options: [.new], retainSelf: false).filterNil().mapVoidDistinctUntilChanged())
-            .skip(1)
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .asDriver(onErrorDriveWith: .empty())
-            .drive(onNext: { [weak self] in
-                self?.createClipMenu()
-            })
-            .disposed(by: disposeBag)
-    }
-}
-
-// MARK: - Menus
-private extension MenuManager {
-     func createClipMenu() {
-        snippetMenu = NSMenu(title: Constants.Menu.snippet)
-
-        addSnippetItems(snippetMenu!, separateMenu: false)
-    }
-
-    func menuItemTitle(_ title: String, listNumber: NSInteger, isMarkWithNumber: Bool) -> String {
-        return (isMarkWithNumber) ? "\(listNumber). \(title)" : title
-    }
-
-    func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
-        var count = count
-        if start == 0 {
-            count -= 1
-        }
-        var lastNumber = count + numberOfItems
-        if end < lastNumber {
-            lastNumber = end
-        }
-        let menuItemTitle = "\(count + 1) - \(lastNumber)"
-        return makeSubmenuItem(menuItemTitle)
-    }
-
-    func makeSubmenuItem(_ title: String) -> NSMenuItem {
-        let subMenu = NSMenu(title: "")
-        let subMenuItem = NSMenuItem(title: title, action: nil)
-        subMenuItem.submenu = subMenu
-        subMenuItem.image = (AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showIconInTheMenu)) ? folderIcon : nil
-        return subMenuItem
-    }
-
-    func trimTitle(_ title: String?) -> String {
-        if title == nil { return "" }
-        let theString = title!.trimmingCharacters(in: .whitespacesAndNewlines) as NSString
-
-        let aRange = NSRange(location: 0, length: 0)
-        var lineStart = 0, lineEnd = 0, contentsEnd = 0
-        theString.getLineStart(&lineStart, end: &lineEnd, contentsEnd: &contentsEnd, for: aRange)
-
-        var titleString = (lineEnd == theString.length) ? theString as String : theString.substring(to: contentsEnd)
-
-        var maxMenuItemTitleLength = 20
-        if maxMenuItemTitleLength < shortenSymbol.count {
-            maxMenuItemTitleLength = shortenSymbol.count
-        }
-
-        if titleString.utf16.count > maxMenuItemTitleLength {
-            titleString = (titleString as NSString).substring(to: maxMenuItemTitleLength - shortenSymbol.count) + shortenSymbol
-        }
-
-        return titleString as String
-    }
-}
-
-// MARK: - Snippets
-private extension MenuManager {
-    func addSnippetItems(_ menu: NSMenu, separateMenu: Bool) {
-        let folderResults = folders
-        guard !folderResults.isEmpty else { return }
-        if separateMenu {
-            menu.addItem(NSMenuItem.separator())
-        }
-
-        // Snippet title
-        let labelItem = NSMenuItem(title: L10n.Menu.snippetHeader, action: nil)
-        labelItem.isEnabled = false
-        menu.addItem(labelItem)
-
-        var subMenuIndex = menu.numberOfItems - 1
-        let firstIndex = firstIndexOfMenuItems()
-
-        folderResults
-            .filter { $0.enable }
-            .forEach { folder in
-                let folderTitle = folder.title
-                let subMenuItem = makeSubmenuItem(folderTitle)
-                menu.addItem(subMenuItem)
-                subMenuIndex += 1
-
-                var i = firstIndex
-                folder.snippets
-                    .filter { $0.enable }
-                    .forEach { snippet in
-                        let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)
-                        if let subMenu = menu.item(at: subMenuIndex)?.submenu {
-                            subMenu.addItem(subMenuItem)
-                            i += 1
-                        }
-                    }
-            }
-    }
-
-    func makeSnippetMenuItem(_ snippet: CPYSnippet, listNumber: Int) -> NSMenuItem {
-        let isMarkWithNumber = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.menuItemsAreMarkedWithNumbers)
-        let isShowIcon = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showIconInTheMenu)
-
-        let title = trimTitle(snippet.title)
-        let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-
-        let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
-        menuItem.representedObject = snippet.identifier
-        menuItem.toolTip = snippet.content
-        menuItem.image = (isShowIcon) ? snippetIcon : nil
-
-        return menuItem
     }
 }
 
@@ -278,12 +134,5 @@ private extension MenuManager {
             NSStatusBar.system.removeStatusItem(item)
             statusItem = nil
         }
-    }
-}
-
-// MARK: - Settings
-private extension MenuManager {
-    func firstIndexOfMenuItems() -> NSInteger {
-        return  1
     }
 }

@@ -13,13 +13,13 @@ import Foundation
 /// Compatibility shim over `ClipyBox`. See `CPYFolder+Store.swift`.
 extension CPYSnippet {
 
-    func merge() {
+    func merge(in box: ClipyBox) {
         let table = toTable
-        AppEnvironment.current.box.snippetTransaction { try $0.snippetDb.upsertSnippet(table) }.run()
+        box.snippetTransaction { try $0.snippetDb.upsertSnippet(table) }.run()
     }
 
-    func remove() {
+    func remove(in box: ClipyBox) {
         let identifier = self.identifier
-        AppEnvironment.current.box.snippetTransaction { try $0.removeSnippet(identifier: identifier) }.run()
+        box.snippetTransaction { try $0.removeSnippet(identifier: identifier) }.run()
     }
 }

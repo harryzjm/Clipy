@@ -65,6 +65,10 @@ final class ClipDB: DataStore {
                 try db.create(table: CPYClipTable.tableName, of: CPYClipTable.self)
                 try db.create(virtualTable: CPYClipFtsTable.tableName, of: CPYClipFtsTable.self)
                 try ClipDB.createFtsTriggers(on: db)
+            },
+            .init(version: 2) { db in
+                try db.create(table: CPYClipContentTable.tableName, of: CPYClipContentTable.self)
+                try ClipDB.createContentTrigger(on: db)
             }
         ]
     }
@@ -85,15 +89,25 @@ private extension ClipDB {
 
     /// A `new.`/`old.` column reference. `Column.in(table:)` emits exactly `row.name` — no
     /// schema, no quoting — which is the form a trigger body needs.
-    static func clipColumn(_ name: String, of row: String) -> Column {
-        Column(named: name).in(table: row)
+    ///
+    /// Takes the `CodingKeys` case rather than a name, so a trigger can only ever reference a
+    /// column WCDB actually declares: renaming a case is a compile error here instead of a
+    /// trigger that fails at migration time against a column that no longer exists.
+    static func clipColumn(_ key: CPYClipTable.CodingKeys, of row: String) -> Column {
+        Column(named: key.rawValue).in(table: row)
+    }
+
+    /// `<row>.rowid`. Spelled separately because rowid is SQLite's implicit column — no model
+    /// declares it, so there is no `CodingKeys` case to name it with.
+    static func clipRowid(of row: String) -> Column {
+        Column.rowid().in(table: row)
     }
 
     /// `DELETE FROM clip_fts WHERE rowid = <row>.rowid`
     static func purgeFts(rowOf row: String) -> StatementDelete {
         StatementDelete()
             .delete(from: CPYClipFtsTable.tableName)
-            .where(Column.rowid() == clipColumn("rowid", of: row))
+            .where(Column.rowid() == clipRowid(of: row))
     }
 
     /// `DELETE FROM clip_fts WHERE rowid = (SELECT rowid FROM clip WHERE data_hash = new.data_hash)`
@@ -107,7 +121,7 @@ private extension ClipDB {
         let conflicting = StatementSelect()
             .select(Column.rowid())
             .from(CPYClipTable.tableName)
-            .where(CPYClipTable.Properties.dataHash == clipColumn("data_hash", of: "new"))
+            .where(CPYClipTable.Properties.dataHash == clipColumn(.dataHash, of: "new"))
         return StatementDelete()
             .delete(from: CPYClipFtsTable.tableName)
             .where(Column.rowid() == WCDBSwift.Expression(with: conflicting))
@@ -120,9 +134,34 @@ private extension ClipDB {
             .columns(Column.rowid(),
                      CPYClipFtsTable.Properties.title,
                      CPYClipFtsTable.Properties.dataHash)
-            .values(clipColumn("rowid", of: "new"),
-                    clipColumn("title", of: "new"),
-                    clipColumn("data_hash", of: "new"))
+            .values(clipRowid(of: "new"),
+                    clipColumn(.title, of: "new"),
+                    clipColumn(.dataHash, of: "new"))
+    }
+
+    /// `DELETE FROM clip_content WHERE data_hash = <row>.data_hash`
+    ///
+    /// Keyed on `clip_content`'s own primary key, so this is an index seek rather than the rowid
+    /// dance `clip_fts` needs.
+    static func purgeContent(rowOf row: String) -> StatementDelete {
+        StatementDelete()
+            .delete(from: CPYClipContentTable.tableName)
+            .where(CPYClipContentTable.Properties.dataHash == clipColumn(.dataHash, of: row))
+    }
+
+    /// Drops a clip's inline payload along with the clip.
+    ///
+    /// Same reasoning as the FTS triggers: expiry deletes by predicate
+    /// (`deleteClips(olderThan:)`), so Swift never learns which hashes went. Enforcing it in the
+    /// database means no delete path can bypass it.
+    ///
+    /// `INSERT OR REPLACE` does not fire AFTER DELETE for the row it drops, so a repeated copy
+    /// keeps its payload row — which is correct, because `setContent` rewrites it right after.
+    static func createContentTrigger(on db: Database) throws {
+        try db.exec(StatementCreateTrigger()
+            .create(trigger: "clip_content_ad").ifNotExists()
+            .after().delete().on(table: CPYClipTable.tableName).forEachRow()
+            .execute(purgeContent(rowOf: "old")))
     }
 
     static func createFtsTriggers(on db: Database) throws {
@@ -197,6 +236,22 @@ extension ClipDB {
         status.inserted.append(clip)
     }
 
+    /// Writes, replaces, or clears a clip's inline payload.
+    ///
+    /// A nil `content` *deletes* the row rather than doing nothing: the payload then lives in the
+    /// file at `dataPath`, and a stale inline row would be preferred over it on read. A freshly
+    /// captured clip carries `content` whichever way it is stored, so `insertClip` is what decides
+    /// which of the two this gets.
+    func setContent(_ content: Data?, forDataHash dataHash: String) throws {
+        guard let content = content else {
+            try db.delete(fromTable: CPYClipContentTable.tableName,
+                          where: CPYClipContentTable.Properties.dataHash == dataHash)
+            return
+        }
+        try db.insertOrReplace(CPYClipContentTable(dataHash: dataHash, content: content),
+                               intoTable: CPYClipContentTable.tableName)
+    }
+
     func deleteClip(dataHash: String) throws {
         try db.delete(fromTable: CPYClipTable.tableName,
                       where: CPYClipTable.Properties.dataHash == dataHash)
@@ -211,6 +266,10 @@ extension ClipDB {
 
     func deleteAllClips() throws {
         try db.delete(fromTable: CPYClipTable.tableName)
+        // Explicit rather than left to `clip_content_ad`: a `DELETE` with no `WHERE` is the shape
+        // SQLite's truncate optimization targets, and that path skips the per-row delete loop.
+        // One extra statement is cheaper than depending on exactly when SQLite disables it.
+        try db.delete(fromTable: CPYClipContentTable.tableName)
         status.deleted.append(.all)
     }
 }
@@ -220,6 +279,17 @@ extension ClipDB {
     func fetchClip(dataHash: String) throws -> CPYClipTable? {
         try db.getObject(fromTable: CPYClipTable.tableName,
                          where: CPYClipTable.Properties.dataHash == dataHash)
+    }
+
+    /// The inline payload, or nil when this clip's payload is in a file instead.
+    ///
+    /// Fetches the whole row rather than the single column: WCDB decodes a missing value into an
+    /// empty `Data`, which would be indistinguishable from a row that exists and is empty.
+    func fetchContent(dataHash: String) throws -> Data? {
+        let row: CPYClipContentTable? = try db.getObject(
+            fromTable: CPYClipContentTable.tableName,
+            where: CPYClipContentTable.Properties.dataHash == dataHash)
+        return row?.content
     }
 
     func fetchClips(ascending: Bool, limit: Int?) throws -> [CPYClipTable] {
@@ -264,11 +334,11 @@ extension ClipDB {
 
     /// Non-empty thumbnail cache keys, optionally restricted to clips older than `updateTime`.
     func fetchThumbnailPaths(olderThan updateTime: Int? = nil) throws -> [String] {
-        var condition = CPYClipTable.Properties.thumbnailPath != ""
+        var condition = CPYClipTable.Properties.thumbnailKey != ""
         if let updateTime = updateTime {
             condition = condition && CPYClipTable.Properties.updateTime < updateTime
         }
-        return try db.getColumn(on: CPYClipTable.Properties.thumbnailPath,
+        return try db.getColumn(on: CPYClipTable.Properties.thumbnailKey,
                                 fromTable: CPYClipTable.tableName,
                                 where: condition).map { $0.stringValue }
     }
@@ -284,6 +354,23 @@ extension ClipDB {
     func ftsCount() throws -> Int {
         try db.getValue(on: CPYClipFtsTable.Properties.dataHash.count(),
                         fromTable: CPYClipFtsTable.tableName).intValue
+    }
+
+    /// Payload rows whose clip is gone. Every delete path is supposed to take its payload with
+    /// it, so this is 0 unless one of them regressed.
+    func orphanedContentCount() throws -> Int {
+        let liveHashes = StatementSelect()
+            .select(CPYClipTable.Properties.dataHash)
+            .from(CPYClipTable.tableName)
+        return try db.getValue(on: CPYClipContentTable.Properties.dataHash.count(),
+                               fromTable: CPYClipContentTable.tableName,
+                               where: CPYClipContentTable.Properties.dataHash.notIn(liveHashes)).intValue
+    }
+
+    /// Rows in the payload side table.
+    func contentCount() throws -> Int {
+        try db.getValue(on: CPYClipContentTable.Properties.dataHash.count(),
+                        fromTable: CPYClipContentTable.tableName).intValue
     }
     #endif
 }

@@ -31,12 +31,6 @@ struct MenuPane: View {
     private var showToolTipOnMenuItem = true
     @AppStorage(Preferences.Menu.maxLengthOfToolTip)
     private var maxLengthOfToolTip = 500
-    @AppStorage(Preferences.Menu.showColorPreviewInTheMenu)
-    private var showColorPreviewInTheMenu = true
-    @AppStorage(Preferences.Menu.showImageInTheMenu)
-    private var showImageInTheMenu = true
-    @AppStorage(Preferences.Menu.thumbnailLength)
-    private var thumbnailLength = 32
 
     var body: some View {
         Form {
@@ -49,7 +43,6 @@ struct MenuPane: View {
 
             Section(L10n.Preferences.Menu.SectionHeader.menuItems) {
                 Toggle(L10n.Preferences.Menu.ToggleLabel.showIcon, isOn: $showIconInTheMenu)
-                Toggle(L10n.Preferences.Menu.ToggleLabel.showColorPreview, isOn: $showColorPreviewInTheMenu)
                 Toggle(L10n.Preferences.Menu.ToggleLabel.showAlertBeforeClear, isOn: $showAlertBeforeClearHistory)
 
                 Toggle(L10n.Preferences.Menu.ToggleLabel.addNumericKeys, isOn: $addNumericKeyEquivalents)
@@ -69,13 +62,6 @@ struct MenuPane: View {
                 NumberRow(L10n.Preferences.Menu.UnitLabel.tooltipLength, unit: L10n.Preferences.Menu.Unit.chars,
                           range: 1...9999, value: $maxLengthOfToolTip)
                     .disabled(!showToolTipOnMenuItem)
-            }
-
-            Section(L10n.Preferences.Menu.SectionHeader.image) {
-                Toggle(L10n.Preferences.Menu.ToggleLabel.showImage, isOn: $showImageInTheMenu)
-                NumberRow(L10n.Preferences.Menu.UnitLabel.thumbnailLength, unit: L10n.Preferences.Menu.Unit.pixel,
-                          range: 1...999, value: $thumbnailLength)
-                    .disabled(!showImageInTheMenu)
             }
         }
         .formStyle(.grouped)

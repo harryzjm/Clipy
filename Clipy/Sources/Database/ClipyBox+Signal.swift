@@ -38,30 +38,6 @@ extension ClipyBox {
             }
         }
     }
-
-    /// Emits the whole snippet graph whenever any folder or snippet changes.
-    func observeSnippets(observeOn scheduler: ImmediateSchedulerType? = nil) -> Observable<[CPYFolder]> {
-        snippetTransactionSignal(observeOn: scheduler) { observer, transaction in
-            let view = try MutableSnippetMenuView(service: transaction)
-
-            let tracker = transaction.service.viewTracker
-            let queue = transaction.service.queue
-
-            let (index, signal) = tracker.addView(view)
-            observer.onNext(view.folders)
-
-            let disposable = signal.subscribe { immutable in
-                observer.onNext(immutable.folders)
-            }
-
-            return Disposables.create {
-                disposable.dispose()
-                queue.dispatch {
-                    tracker.removeView(index)
-                }
-            }
-        }
-    }
 }
 
 // MARK: - Plumbing
@@ -76,21 +52,6 @@ fileprivate extension ClipyBox {
         transactionSignal(userInteractive: userInteractive,
                           observeOn: scheduler,
                           service: clip,
-                          file: file,
-                          function: function,
-                          line: line,
-                          f)
-    }
-
-    func snippetTransactionSignal<T>(userInteractive: Bool = false,
-                                     observeOn scheduler: ImmediateSchedulerType? = nil,
-                                     file: String = #file,
-                                     function: String = #function,
-                                     line: Int = #line,
-                                     _ f: @escaping (AnyObserver<T>, SnippetServiceTransaction) throws -> Disposable) -> Observable<T> {
-        transactionSignal(userInteractive: userInteractive,
-                          observeOn: scheduler,
-                          service: snippet,
                           file: file,
                           function: function,
                           line: line,

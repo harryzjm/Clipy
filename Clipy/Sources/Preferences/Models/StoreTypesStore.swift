@@ -16,10 +16,10 @@ import SwiftUI
 @Observable
 final class StoreTypesStore {
 
-    /// Driven by `CPYClipData.availableTypesString` so the pane can never drift out of sync with
+    /// Driven by `TypeContent.availableTypesString` so the pane can never drift out of sync with
     /// the types `ClipService` actually checks. The old xib hard-coded seven checkboxes and
     /// omitted PNG, leaving it permanently enabled with no way to turn it off.
-    let types: [String] = CPYClipData.availableTypesString
+    let types: [String] = TypeContent.availableTypesString
 
     private var storage: [String: NSNumber]
 

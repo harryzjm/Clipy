@@ -35,10 +35,16 @@ final class SnippetsEditorStore {
     var isDeleteConfirmationPresented = false
 
     /// Detached working copy, kept for the same reason the old controller kept one: the editor
-    /// writes on every keystroke, so subscribing to `observeSnippets()` would replace this array —
-    /// and with it the selection and any in-flight rename — underneath the user on each character.
+    /// writes on every keystroke, so re-reading the graph on every change would replace this
+    /// array — and with it the selection and any in-flight rename — underneath the user on each
+    /// character.
     @ObservationIgnored private var folders: [CPYFolder] = []
     @ObservationIgnored private let disposeBag = DisposeBag()
+    @ObservationIgnored private let box: ClipyBox
+
+    init(box: ClipyBox) {
+        self.box = box
+    }
 
     /// The folder a new snippet belongs to: the selected folder, or the selected snippet's owner.
     /// Mirrors the old `selectedFolder` computed property.
@@ -67,7 +73,7 @@ final class SnippetsEditorStore {
 
     /// Reloads the detached working copy. Called on every window show and after an import.
     func reload() {
-        AppEnvironment.current.box
+        box
             .snippetTransaction { try $0.fetchFolders() }
             .observe(on: MainScheduler.instance)
             .run(onNext: { [weak self] folders in
@@ -104,7 +110,7 @@ extension SnippetsEditorStore {
                 set: { newValue in
                     guard let folder = self.folder(identifier: folderIdentifier) else { return }
                     folder.title = newValue
-                    folder.merge()
+                    folder.merge(in: self.box)
                     self.rebuild()
                 })
     }
@@ -120,7 +126,7 @@ extension SnippetsEditorStore {
                 set: { newValue in
                     guard let snippet = self.snippet(identifier: snippetIdentifier) else { return }
                     snippet.content = newValue
-                    snippet.merge()
+                    snippet.merge(in: self.box)
                 })
     }
 }
@@ -147,7 +153,7 @@ extension SnippetsEditorStore {
     func addFolder() {
         let folder = CPYFolder.create(after: folders)
         folders.append(folder)
-        folder.merge()
+        folder.merge(in: box)
         rebuild()
         selection = .folder(folder.identifier)
     }
@@ -159,7 +165,7 @@ extension SnippetsEditorStore {
         }
         let snippet = folder.createSnippet()
         folder.snippets.append(snippet)
-        folder.mergeSnippet(snippet)
+        folder.mergeSnippet(snippet, in: box)
         rebuild()
         expandedFolders.insert(folder.identifier)
         selection = .snippet(snippet.identifier)
@@ -174,11 +180,11 @@ extension SnippetsEditorStore {
         case .folder(let identifier):
             guard let folder = folder(identifier: identifier) else { return }
             folder.enable.toggle()
-            folder.merge()
+            folder.merge(in: box)
         case .snippet(let identifier):
             guard let snippet = snippet(identifier: identifier) else { return }
             snippet.enable.toggle()
-            snippet.merge()
+            snippet.merge(in: box)
         case nil:
             NSSound.beep()
             return
@@ -192,7 +198,7 @@ extension SnippetsEditorStore {
         case .folder(let identifier):
             guard let folder = folder(identifier: identifier) else { return }
             folders.removeAll { $0.identifier == identifier }
-            folder.remove()
+            folder.remove(in: box)
             // Folder shortcuts are keyed by identifier in UserDefaults; skipping this leaves a
             // hot key registered forever against a folder that no longer exists.
             AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: identifier)
@@ -200,7 +206,7 @@ extension SnippetsEditorStore {
             guard let folder = folder(containing: identifier),
                   let snippet = snippet(identifier: identifier) else { return }
             folder.snippets.removeAll { $0.identifier == identifier }
-            snippet.remove()
+            snippet.remove(in: box)
         case nil:
             NSSound.beep()
             return
@@ -220,11 +226,11 @@ extension SnippetsEditorStore {
         case .folder(let identifier):
             guard let folder = folder(identifier: identifier) else { return }
             folder.title = trimmed
-            folder.merge()
+            folder.merge(in: box)
         case .snippet(let identifier):
             guard let snippet = snippet(identifier: identifier) else { return }
             snippet.title = trimmed
-            snippet.merge()
+            snippet.merge(in: box)
         case nil:
             return
         }
@@ -240,14 +246,14 @@ extension SnippetsEditorStore {
     /// `removedIndex = (index < draggedData.index) ? draggedData.index + 1 : draggedData.index`.
     func moveFolders(from source: IndexSet, to destination: Int) {
         folders.move(fromOffsets: source, toOffset: destination)
-        CPYFolder.rearrangesIndex(folders)
+        CPYFolder.rearrangesIndex(folders, in: box)
         rebuild()
     }
 
     func moveSnippets(in folderIdentifier: String, from source: IndexSet, to destination: Int) {
         guard let folder = folder(identifier: folderIdentifier) else { return }
         folder.snippets.move(fromOffsets: source, toOffset: destination)
-        folder.rearrangesSnippetIndex()
+        folder.rearrangesSnippetIndex(in: box)
         rebuild()
     }
 
@@ -268,8 +274,8 @@ extension SnippetsEditorStore {
         let destination = toFolder.snippets.count
         toFolder.snippets.append(snippet)
         fromFolder.snippets.remove(at: index)
-        toFolder.insertSnippet(snippet, index: destination)
-        fromFolder.removeSnippet(snippet)
+        toFolder.insertSnippet(snippet, index: destination, in: box)
+        fromFolder.removeSnippet(snippet, in: box)
 
         rebuild()
         expandedFolders.insert(toFolder.identifier)
@@ -294,7 +300,7 @@ extension SnippetsEditorStore {
             if let lastIndex = folders.map({ $0.index }).max() {
                 importFolders.forEach { $0.index += lastIndex }
             }
-            AppEnvironment.current.box
+            box
                 .snippetTransaction { try $0.importFolders(importFolders) }
                 .observe(on: MainScheduler.instance)
                 .run(onNext: { [weak self] in

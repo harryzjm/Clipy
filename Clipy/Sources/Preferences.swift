@@ -41,11 +41,6 @@ struct Preferences {
 
         static let showToolTipOnMenuItem = "showToolTipOnMenuItem"
         static let maxLengthOfToolTip = "maxLengthOfToolTipKey"
-
-        static let showColorPreviewInTheMenu = "kCPYPrefShowColorPreviewInTheMenu"
-
-        static let showImageInTheMenu = "showImageInTheMenu"
-        static let thumbnailLength = "thumbnailLength"
     }
 
     struct Beta {

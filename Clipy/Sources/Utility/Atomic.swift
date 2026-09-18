@@ -45,4 +45,9 @@ final class Atomic<Value> {
         value = block(value)
         return value
     }
+
+    func adapt(_ block: (inout Value) -> Void) {
+        lock.lock(); defer { lock.unlock() }
+        block(&value)
+    }
 }

@@ -12,12 +12,19 @@
 
 import Foundation
 import RxSwift
-import PINCache
 
 final class DataCleanService {
 
     // MARK: - Properties
+    private let box: ClipyBox
+    private let assetStore: ClipAssetStore
     fileprivate let cleanBag = DisposeBag()
+
+    // MARK: - Initialize
+    init(box: ClipyBox, assetStore: ClipAssetStore) {
+        self.box = box
+        self.assetStore = assetStore
+    }
 
     // MARK: - Delete Data
     /// Drops clips outside the retention window and sweeps the payload files nothing points at
@@ -32,33 +39,19 @@ final class DataCleanService {
         // runs — `clearAll()` calls this purely for that sweep.
         let threshold = days > 0 ? Int(Date().timeIntervalSince1970) - days * 86_400 : 0
 
-        AppEnvironment.current.box
+        box
             .clipTransaction { transaction -> ([String], [String]) in
                 // Drop what expired, then report what is still referenced on disk.
                 let orphanedThumbnails = try transaction.deleteExpiredClips(olderThan: threshold)
                 let referencedFiles = try transaction.referencedDataFileNames()
                 return (orphanedThumbnails, referencedFiles)
             }
-            .subscribe(onNext: { orphanedThumbnails, referencedFiles in
-                orphanedThumbnails.forEach { PINCache.shared.removeObject(forKey: $0) }
-                DataCleanService.cleanFiles(referencing: referencedFiles)
+            .subscribe(onNext: { [assetStore = self.assetStore] orphanedThumbnails, referencedFiles in
+                // Both of these are the asset queue's work now — the sweep used to delete files
+                // on the main thread.
+                assetStore.removeThumbnails(orphanedThumbnails)
+                assetStore.sweepFiles(referencing: referencedFiles)
             }, onError: { _ in })
             .disposed(by: cleanBag)
-    }
-
-    private static func cleanFiles(referencing referencedFiles: [String]) {
-        let fileManager = FileManager.default
-        guard let paths = try? fileManager.contentsOfDirectory(atPath: CPYUtilities.applicationSupportFolder()) else { return }
-
-        // Only the payload files are ours to sweep. The databases live in a `db` subdirectory of
-        // this same folder, and a blind symmetric difference would delete them.
-        let payloadFiles = paths.filter { ($0 as NSString).pathExtension == "data" }
-        let referenced = Set(referencedFiles.filter { ($0 as NSString).pathExtension == "data" })
-
-        LQueue.main.dispatch {
-            referenced.symmetricDifference(payloadFiles)
-                .map { CPYUtilities.applicationSupportFolder() + "/" + "\($0)" }
-                .forEach { CPYUtilities.deleteData(at: $0) }
-        }
     }
 }

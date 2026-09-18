@@ -13,7 +13,9 @@ import SwiftUI
 /// Cocoa Bindings against the shared `NSUserDefaultsController`.
 ///
 /// The keys and their value semantics are unchanged, so the existing `defaults.rx.observe(...)`
-/// subscriptions in `MenuManager` and `AppDelegate` keep firing as before.
+/// subscriptions in `MenuManager` (the status icon) and `AppDelegate` keep firing as before. The
+/// menu-shape keys have no subscriber at all any more — `FilterMenu` and `SnippetMenu` snapshot
+/// them when they are built, which is on every popup.
 struct GeneralPane: View {
 
     @AppStorage(Preferences.General.loginItem)
@@ -60,7 +62,7 @@ struct GeneralPane: View {
                 }
                 NumberRow(L10n.Preferences.General.UnitLabel.maxWidth, unit: L10n.Preferences.General.Unit.px,
                           range: 1...9999, value: $maxWidthOfMenuItem)
-                NumberRow(L10n.Preferences.General.UnitLabel.menuIconSize, unit: L10n.Preferences.General.Unit.px,
+                NumberRow(L10n.Preferences.General.UnitLabel.menuFontSize, unit: L10n.Preferences.General.Unit.px,
                           range: 1...100, value: $menuFontSize)
             }
         }

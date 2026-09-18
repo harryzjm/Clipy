@@ -28,7 +28,7 @@ final class SnippetsEditorWindowController: NSWindowController {
     /// Owned here rather than declared `@State` inside the view so that `showWindow(_:)` can
     /// refresh it. `@Observable` (unlike `ObservableObject`) tracks reads of a plain `let`
     /// property just as well, so the views lose nothing by it.
-    private let store = SnippetsEditorStore()
+    private let store = SnippetsEditorStore(box: AppEnvironment.current.box)
 
     init() {
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 800, height: 600),

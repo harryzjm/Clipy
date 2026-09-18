@@ -27,7 +27,7 @@ class AppDelegate: NSObject {
     // MARK: - Class Methods
     static func storeTypesDictionary() -> [String: NSNumber] {
         var storeTypes = [String: NSNumber]()
-        CPYClipData.availableTypesString.forEach { storeTypes[$0] = NSNumber(value: true) }
+        TypeContent.availableTypesString.forEach { storeTypes[$0] = NSNumber(value: true) }
         return storeTypes
     }
 
@@ -41,7 +41,7 @@ class AppDelegate: NSObject {
     }
 
     private func activateApp() {
-        NSApp.activate()
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     private func openSettingsWindow() {
@@ -69,7 +69,9 @@ class AppDelegate: NSObject {
     /// app does not get it ordered front for free — so poll briefly and order it front ourselves.
     private func bringSettingsWindowForward(retriesRemaining: Int = 20) {
         if let window = NSApp.windows.first(where: { $0.identifier?.rawValue == Constants.Application.settingsWindowIdentifier }) {
-            window.makeKeyAndOrderFront(self)
+            NSApp.activate(ignoringOtherApps: true)
+            window.orderFrontRegardless()
+            window.makeKey()
             return
         }
         guard retriesRemaining > 0 else { return }

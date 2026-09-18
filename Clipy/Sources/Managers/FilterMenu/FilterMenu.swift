@@ -24,10 +24,12 @@ class FilterMenu: NSMenu {
 
     let config: FilterMenuConfig
     let item: TextFieldMenuItem
+    let box: ClipyBox
 
     let homePath = FileManager.default.homeDirectoryForCurrentUser.absoluteString.replace(pattern: "^file://", withTemplate: "")
 
-    override init(title: String) {
+    init(title: String, box: ClipyBox) {
+        self.box = box
         config = FilterMenuConfig.current()
         let mode = config.matchMode
         let limit = config.maxShowHistory
@@ -41,8 +43,10 @@ class FilterMenu: NSMenu {
             .map { $0.trim }
             .distinctUntilChanged()
             .map { $0.isEmpty ? nil : ClipFilter(query: $0, mode: mode) }
-            .flatMapLatest { filter -> Observable<(ClipSearchResult, ClipFilter?)> in
-                AppEnvironment.current.box
+            // `[box]` rather than `self`: the subscription is held by `bag`, so capturing self
+            // here would be a cycle.
+            .flatMapLatest { [box] filter -> Observable<(ClipSearchResult, ClipFilter?)> in
+                box
                     .clipTransaction { transaction in
                         try transaction.fetchClips(filter: filter, limit: limit)
                     }
@@ -128,7 +132,7 @@ fileprivate extension FilterMenu {
         let menuItem = NSMenuItem(title: "\(begin + 1) - \(end)", action: nil)
         menuItem.attributedTitle = .init(string: menuItem.title, attributes: attributes)
         menuItem.submenu = subMenu
-        menuItem.image = self.config.showIconInTheMenu ? Asset.Common.iconFolder.image : nil
+        menuItem.image = self.config.showIconInTheMenu ? MenuIcon.folder : nil
 
         (begin ..< end).forEach { i in
             guard let clip = clipHandle(i) else { return }
@@ -178,10 +182,8 @@ fileprivate extension FilterMenu {
             menuItem.toolTip = (originTitle as NSString).substring(to: min(originTitle.count, maxLengthOfToolTip))
         }
 
-        let isImage = clip.clipType == .image && config.isShowImage
-        let isColor = clip.clipType == .color && config.isShowColorCode
-        if clip.thumbnailPath.isNotEmpty && (isImage || isColor) {
-            PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
+        if clip.thumbnailKey.isNotEmpty {
+            PINCache.shared.object(forKeyAsync: clip.thumbnailKey) { [weak menuItem] _, _, object in
                 guard let menuItem = menuItem, let image = object as? NSImage else { return }
                 MainRunLoopScheduler.perform { menuItem.image = image }
             }

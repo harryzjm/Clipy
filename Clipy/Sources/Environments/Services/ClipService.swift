@@ -12,7 +12,6 @@
 
 import Foundation
 import Cocoa
-import PINCache
 import RxSwift
 import RxCocoa
 import RxOptional
@@ -20,12 +19,20 @@ import RxOptional
 final class ClipService {
 
     // MARK: - Properties
+    private let box: ClipyBox
+    private let assetStore: ClipAssetStore
     fileprivate var cachedChangeCount = BehaviorRelay<Int>(value: 0)
     fileprivate var storeTypes = [String: NSNumber]()
     fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .userInteractive)
     fileprivate var disposeBag = DisposeBag()
     /// Long-lived, for one-shot writes that must outlive a `startMonitoring()` restart.
     fileprivate let writeBag = DisposeBag()
+
+    // MARK: - Initialize
+    init(box: ClipyBox, assetStore: ClipAssetStore) {
+        self.box = box
+        self.assetStore = assetStore
+    }
 
     // MARK: - Clips
     func startMonitoring() {
@@ -53,11 +60,10 @@ final class ClipService {
     }
 
     func clearAll() {
-        AppEnvironment.current.box
-            .clipTransaction { try $0.clearAllClips() }
-            .subscribe(onNext: { thumbnailPaths in
+        box.clipTransaction { try $0.clearAllClips() }
+            .subscribe(onNext: { [assetStore = self.assetStore] thumbnailPaths in
                 // Delete saved images
-                thumbnailPaths.forEach { PINCache.shared.removeObject(forKey: $0) }
+                assetStore.removeThumbnails(thumbnailPaths)
                 // Delete writed datas
                 AppEnvironment.current.dataCleanService.cleanDatas()
             }, onError: { _ in })
@@ -66,12 +72,11 @@ final class ClipService {
 
     func delete(with clip: CPYClip) {
         let dataHash = clip.dataHash
-        AppEnvironment.current.box
-            .clipTransaction { try $0.deleteClip(dataHash: dataHash) }
-            .subscribe(onNext: { thumbnailPath in
+        box.clipTransaction { try $0.deleteClip(dataHash: dataHash) }
+            .subscribe(onNext: { [assetStore = self.assetStore] thumbnailPath in
                 // Delete saved image
                 guard let thumbnailPath = thumbnailPath else { return }
-                PINCache.shared.removeObject(forKey: thumbnailPath)
+                assetStore.removeThumbnails([thumbnailPath])
             }, onError: { _ in })
             .disposed(by: writeBag)
     }
@@ -98,46 +103,28 @@ extension ClipService {
         guard !AppEnvironment.current.excludeAppService.copiedProcessIsExcludedApplications(pasteboard: pasteboard) else { return }
 
         // Create data
-        let data = CPYClipData(pasteboard: pasteboard, types: types)
-        save(with: data)
+        save(with: types.compactMap { TypeContent(pasteboard: pasteboard, type: $0) })
     }
 
     func create(with title: String, image: NSImage) {
         // Create only image data
-        let data = CPYClipData(title: title, image: image)
-        save(with: data)
+        save(with: [.string(title), .tiff(.init(image: image))])
     }
 
-    fileprivate func save(with data: CPYClipData) {
-        // Don't save empty string history
-        if !data.isValid { return }
+    fileprivate func save(with contents: [TypeContent]) {
+        // Nothing worth storing.
+        guard let clip = CPYClip(contents: contents) else { return }
 
-        let unixTime = Int(Date().timeIntervalSince1970)
-        let savedPath = CPYUtilities.applicationSupportFolder() + "/\(NSUUID().uuidString).data"
-        // Create clip
-        let clip = CPYClip()
-        clip.dataHash = data.identifier
-        clip.dataPath = savedPath
-        clip.title = data.stringValue?[0...10000] ?? ""
-        clip.updateTime = unixTime
-        clip.primaryType = data.primaryType?.rawValue ?? ""
+        // Ahead of the insert, and deliberately so: this buffers an overflowed payload
+        // synchronously, so anything that can see the row can already read it. The file write
+        // itself, and the thumbnail, are handed to the asset queue — neither the poll scheduler
+        // nor the main thread (`create(with:image:)`) waits on them.
+        assetStore.store(clip, contents: contents)
 
-        // Save thumbnail image
-        if let thumbnailImage = data.thumbnailImage {
-            PINCache.shared.setObjectAsync(thumbnailImage, forKey: "\(unixTime)", completion: nil)
-            clip.thumbnailPath = "\(unixTime)"
-            clip.clipType = .image
-        } else if let colorCodeImage = data.colorCodeImage {
-            PINCache.shared.setObjectAsync(colorCodeImage, forKey: "\(unixTime)", completion: nil)
-            clip.thumbnailPath = "\(unixTime)"
-            clip.clipType = .color
-        }
-
-        if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
-            try? JSONEncoder().encode(data).write(to: .init(fileURLWithPath: savedPath))
-            // The store runs on its own serial queue, so no main-thread hop is needed.
-            AppEnvironment.current.box.clipTransaction { try $0.insertClip(clip) }.run()
-        }
+        // Storing does not wait on the thumbnail either: `thumbnailKey` is derived from
+        // `updateTime`, so it is already known, and the menu reads the image back out of the
+        // cache asynchronously.
+        box.clipTransaction { try $0.insertClip(clip) }.run()
     }
 
     private func types(with pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
@@ -146,7 +133,7 @@ extension ClipService {
     }
 
     private func canSave(with type: NSPasteboard.PasteboardType) -> Bool {
-        let dictionary = CPYClipData.availableTypesDictionary
+        let dictionary = TypeContent.availableTypesDictionary
         guard let value = dictionary[type] else { return false }
         guard let number = storeTypes[value] else { return false }
         return number.boolValue

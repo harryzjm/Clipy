@@ -26,9 +26,17 @@ class StorageBox {
     #endif
 
     let path: String
+    /// SQLCipher key for every database in this box. `nil` runs them unencrypted.
+    let secretCode: Data?
+    /// Asked before a database in this box that will not open is deleted and rebuilt. It sits
+    /// beside `secretCode` because that is what it answers for: one key covers every file here,
+    /// so a key that does not match the files breaks all of them at once.
+    let recovery: DatabaseRecovery?
 
-    init(path: String) {
+    init(path: String, secretCode: Data?, recovery: DatabaseRecovery? = nil) {
         self.path = path
+        self.secretCode = secretCode
+        self.recovery = recovery
     }
 }
 

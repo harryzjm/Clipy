@@ -29,6 +29,14 @@ final class HotKeyService: NSObject {
     fileprivate(set) var restartKeyCombo: KeyCombo?
 
     fileprivate let disposeBag = DisposeBag()
+
+    private let box: ClipyBox
+
+    // MARK: - Initialize
+    init(box: ClipyBox) {
+        self.box = box
+        super.init()
+    }
 }
 
 // MARK: - Actions
@@ -191,7 +199,7 @@ extension HotKeyService {
     @objc func popupSnippetFolder(_ object: AnyObject) {
         guard let hotKey = object as? HotKey else { return }
         let identifier = hotKey.identifier
-        AppEnvironment.current.box
+        box
             .snippetTransaction { try $0.fetchFolder(identifier: identifier) }
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] folder in

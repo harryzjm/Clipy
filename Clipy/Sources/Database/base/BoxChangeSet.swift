@@ -28,17 +28,3 @@ struct ClipChangeSet {
         self.deleted = status.deleted
     }
 }
-
-/// Immutable snapshot of whether a snippet transaction changed anything.
-struct SnippetChangeSet {
-
-    let changed: Bool
-
-    var isEmpty: Bool {
-        !changed
-    }
-
-    init(status: SnippetStatus) {
-        self.changed = status.changed
-    }
-}

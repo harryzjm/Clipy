@@ -11,32 +11,8 @@
 import Foundation
 import WCDBSwift
 
-/// Records whether a transaction touched the snippet graph, so `beforeCommit` can fire the
-/// change signal that rebuilds the snippet menu.
-///
-/// The menu always redraws from the full folder list, so a coarse dirty flag carries exactly as
-/// much information as a per-row delta would.
-final class SnippetStatus {
-
-    private(set) var changed = false
-
-    var isEmpty: Bool {
-        !changed
-    }
-
-    func markChanged() {
-        changed = true
-    }
-
-    func clean() {
-        changed = false
-    }
-}
-
 /// Snippet folder / snippet store (`snippet.db`).
 final class SnippetDB: DataStore {
-
-    let status = SnippetStatus()
 
     override func migrationList() -> [Migration] {
         [
@@ -87,42 +63,35 @@ extension SnippetDB {
 extension SnippetDB {
     func upsertFolder(_ folder: CPYFolderTable) throws {
         try db.insertOrReplace(folder, intoTable: CPYFolderTable.tableName)
-        status.markChanged()
     }
 
     func upsertFolders(_ folders: [CPYFolderTable]) throws {
         guard !folders.isEmpty else { return }
         try db.insertOrReplace(folders, intoTable: CPYFolderTable.tableName)
-        status.markChanged()
     }
 
     func upsertSnippet(_ snippet: CPYSnippetTable) throws {
         try db.insertOrReplace(snippet, intoTable: CPYSnippetTable.tableName)
-        status.markChanged()
     }
 
     func upsertSnippets(_ snippets: [CPYSnippetTable]) throws {
         guard !snippets.isEmpty else { return }
         try db.insertOrReplace(snippets, intoTable: CPYSnippetTable.tableName)
-        status.markChanged()
     }
 
     func deleteFolder(identifier: String) throws {
         try db.delete(fromTable: CPYFolderTable.tableName,
                       where: CPYFolderTable.Properties.identifier == identifier)
-        status.markChanged()
     }
 
     func deleteSnippet(identifier: String) throws {
         try db.delete(fromTable: CPYSnippetTable.tableName,
                       where: CPYSnippetTable.Properties.identifier == identifier)
-        status.markChanged()
     }
 
     func deleteSnippets(folderIdentifier: String) throws {
         try db.delete(fromTable: CPYSnippetTable.tableName,
                       where: CPYSnippetTable.Properties.folderIdentifier == folderIdentifier)
-        status.markChanged()
     }
 
     /// Rewrites just the ordering column for a batch of rows, inside the caller's transaction.
@@ -134,7 +103,6 @@ extension SnippetDB {
                           with: entry.index,
                           where: CPYFolderTable.Properties.identifier == entry.identifier)
         }
-        status.markChanged()
     }
 
     func updateSnippetIndexes(_ indexes: [(identifier: String, index: Int)]) throws {
@@ -145,6 +113,5 @@ extension SnippetDB {
                           with: entry.index,
                           where: CPYSnippetTable.Properties.identifier == entry.identifier)
         }
-        status.markChanged()
     }
 }

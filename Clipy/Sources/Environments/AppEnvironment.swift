@@ -18,7 +18,11 @@ struct AppEnvironment {
     private static var stack = [Environment()]
 
     static var current: Environment {
-        return stack.last ?? Environment()
+        // `stack` is seeded with one environment and is never emptied — `popLast` has no callers
+        // and `replaceCurrent` pushes before it removes. Falling back to a fresh `Environment()`
+        // here would build a second `ClipyBox` over the same files, and the two would never see
+        // each other's changes.
+        return stack.last!
     }
 
     // MARK: - Stacks
@@ -36,43 +40,51 @@ struct AppEnvironment {
         stack.remove(at: stack.count - 2)
     }
 
-    static func push(clipService: ClipService = current.clipService,
+    static func push(secretService: SecretService = current.secretService,
+                     box: ClipyBox = current.box,
+                     assetStore: ClipAssetStore = current.assetStore,
+                     clipService: ClipService = current.clipService,
                      hotKeyService: HotKeyService = current.hotKeyService,
                      dataCleanService: DataCleanService = current.dataCleanService,
                      pasteService: PasteService = current.pasteService,
                      excludeAppService: ExcludeAppService = current.excludeAppService,
                      accessibilityService: AccessibilityService = current.accessibilityService,
                      menuManager: MenuManager = current.menuManager,
-                     box: ClipyBox = current.box,
                      defaults: UserDefaults = current.defaults) {
-        push(environment: Environment(clipService: clipService,
+        push(environment: Environment(secretService: secretService,
+                                      box: box,
+                                      assetStore: assetStore,
+                                      clipService: clipService,
                                       hotKeyService: hotKeyService,
                                       dataCleanService: dataCleanService,
                                       pasteService: pasteService,
                                       excludeAppService: excludeAppService,
                                       accessibilityService: accessibilityService,
                                       menuManager: menuManager,
-                                      box: box,
                                       defaults: defaults))
     }
 
-    static func replaceCurrent(clipService: ClipService = current.clipService,
+    static func replaceCurrent(secretService: SecretService = current.secretService,
+                               box: ClipyBox = current.box,
+                               assetStore: ClipAssetStore = current.assetStore,
+                               clipService: ClipService = current.clipService,
                                hotKeyService: HotKeyService = current.hotKeyService,
                                dataCleanService: DataCleanService = current.dataCleanService,
                                pasteService: PasteService = current.pasteService,
                                excludeAppService: ExcludeAppService = current.excludeAppService,
                                accessibilityService: AccessibilityService = current.accessibilityService,
                                menuManager: MenuManager = current.menuManager,
-                               box: ClipyBox = current.box,
                                defaults: UserDefaults = current.defaults) {
-        replaceCurrent(environment: Environment(clipService: clipService,
+        replaceCurrent(environment: Environment(secretService: secretService,
+                                                box: box,
+                                                assetStore: assetStore,
+                                                clipService: clipService,
                                                 hotKeyService: hotKeyService,
                                                 dataCleanService: dataCleanService,
                                                 pasteService: pasteService,
                                                 excludeAppService: excludeAppService,
                                                 accessibilityService: accessibilityService,
                                                 menuManager: menuManager,
-                                                box: box,
                                                 defaults: defaults))
     }
 
@@ -82,14 +94,16 @@ struct AppEnvironment {
             excludeApplications = applications
         }
         let excludeAppService = ExcludeAppService(applications: excludeApplications)
-        return Environment(clipService: current.clipService,
+        return Environment(secretService: current.secretService,
+                           box: current.box,
+                           assetStore: current.assetStore,
+                           clipService: current.clipService,
                            hotKeyService: current.hotKeyService,
                            dataCleanService: current.dataCleanService,
                            pasteService: current.pasteService,
                            excludeAppService: excludeAppService,
                            accessibilityService: current.accessibilityService,
                            menuManager: current.menuManager,
-                           box: current.box,
                            defaults: current.defaults)
     }
 

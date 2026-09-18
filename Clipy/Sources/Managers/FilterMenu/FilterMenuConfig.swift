@@ -18,8 +18,6 @@ struct FilterMenuConfig {
     let addNumericKeyEquivalents: Bool
 
     let isShowToolTip: Bool
-    let isShowImage: Bool
-    let isShowColorCode: Bool
 
     let maxWidthOfMenuItem: CGFloat
 
@@ -40,8 +38,6 @@ struct FilterMenuConfig {
             isMarkWithNumber: defaults.bool(forKey: Preferences.Menu.menuItemsAreMarkedWithNumbers),
             addNumericKeyEquivalents: defaults.bool(forKey: Preferences.Menu.addNumericKeyEquivalents),
             isShowToolTip: defaults.bool(forKey: Preferences.Menu.showToolTipOnMenuItem),
-            isShowImage: defaults.bool(forKey: Preferences.Menu.showImageInTheMenu),
-            isShowColorCode: defaults.bool(forKey: Preferences.Menu.showColorPreviewInTheMenu),
             maxWidthOfMenuItem: CGFloat(defaults.float(forKey: Preferences.General.maxWidthOfMenuItem)),
             placeInLine: defaults.integer(forKey: Preferences.Menu.numberOfItemsPlaceInline),
             placeInsideFolder: defaults.integer(forKey: Preferences.Menu.numberOfItemsPlaceInsideFolder),

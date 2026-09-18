@@ -25,11 +25,12 @@ final class CPYClip {
     }
 
     // MARK: - Properties
-    var dataPath = ""
-    var title = ""
     var dataHash = ""
+    var title = ""
     var primaryType = ""
     var updateTime = 0
-    var thumbnailPath = ""
+    var thumbnailKey = ""
     var clipType: ClipType = .text
+    var dataPath = ""
+    var content: Data?
 }

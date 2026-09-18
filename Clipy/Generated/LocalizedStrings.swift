@@ -23,6 +23,18 @@ internal enum L10n {
       /// Alert – clear clipboard history
       internal static let message = L10n.tr("Localizable", "alert.clearHistory.message", fallback: "Are you sure you want to clear your clipboard history?")
     }
+    internal enum DatabaseReset {
+      /// The database file is damaged, so nothing in it can be read. Clipy cannot save or paste anything until it is deleted and started over. The clipboard history and snippets it holds are unreadable either way.
+      internal static let corrupted = L10n.tr("Localizable", "alert.databaseReset.corrupted", fallback: "The database file is damaged, so nothing in it can be read. Clipy cannot save or paste anything until it is deleted and started over. The clipboard history and snippets it holds are unreadable either way.")
+      /// Delete and Start Over
+      internal static let delete = L10n.tr("Localizable", "alert.databaseReset.delete", fallback: "Delete and Start Over")
+      /// Keep the File
+      internal static let keep = L10n.tr("Localizable", "alert.databaseReset.keep", fallback: "Keep the File")
+      /// The database is encrypted with a key this Mac's keychain no longer hands out, so nothing in it can be read. Clipy cannot save or paste anything until it is deleted and started over. The clipboard history and snippets it holds are unreadable either way.
+      internal static let keyMismatch = L10n.tr("Localizable", "alert.databaseReset.keyMismatch", fallback: "The database is encrypted with a key this Mac's keychain no longer hands out, so nothing in it can be read. Clipy cannot save or paste anything until it is deleted and started over. The clipboard history and snippets it holds are unreadable either way.")
+      /// Alert – unreadable database
+      internal static let title = L10n.tr("Localizable", "alert.databaseReset.title", fallback: "Clipy can't open its database.")
+    }
     internal enum DeleteSnippet {
       /// Alert – delete snippet / folder
       internal static let message = L10n.tr("Localizable", "alert.deleteSnippet.message", fallback: "Are you sure want to delete this item?")
@@ -177,8 +189,8 @@ internal enum L10n {
         internal static let maxDisplaySize = L10n.tr("Localizable", "preferences.general.unitLabel.maxDisplaySize", fallback: "Max display clipboard size:")
         /// Max width of menu item:
         internal static let maxWidth = L10n.tr("Localizable", "preferences.general.unitLabel.maxWidth", fallback: "Max width of menu item:")
-        /// The menu icon size
-        internal static let menuIconSize = L10n.tr("Localizable", "preferences.general.unitLabel.menuIconSize", fallback: "The menu icon size")
+        /// The menu font size
+        internal static let menuFontSize = L10n.tr("Localizable", "preferences.general.unitLabel.menuFontSize", fallback: "The menu font size")
       }
     }
     internal enum Menu {
@@ -189,8 +201,6 @@ internal enum L10n {
       internal enum SectionHeader {
         /// Filter
         internal static let filter = L10n.tr("Localizable", "preferences.menu.sectionHeader.filter", fallback: "Filter")
-        /// Image
-        internal static let image = L10n.tr("Localizable", "preferences.menu.sectionHeader.image", fallback: "Image")
         /// Preferences – Menu pane
         internal static let layout = L10n.tr("Localizable", "preferences.menu.sectionHeader.layout", fallback: "Layout")
         /// Menu Items
@@ -205,12 +215,8 @@ internal enum L10n {
         internal static let markWithNumbers = L10n.tr("Localizable", "preferences.menu.toggleLabel.markWithNumbers", fallback: "Mark menu items with numbers")
         /// Show alert panel before clear history
         internal static let showAlertBeforeClear = L10n.tr("Localizable", "preferences.menu.toggleLabel.showAlertBeforeClear", fallback: "Show alert panel before clear history")
-        /// Show color code preview
-        internal static let showColorPreview = L10n.tr("Localizable", "preferences.menu.toggleLabel.showColorPreview", fallback: "Show color code preview")
         /// Display icons in menu items
         internal static let showIcon = L10n.tr("Localizable", "preferences.menu.toggleLabel.showIcon", fallback: "Display icons in menu items")
-        /// Show Image
-        internal static let showImage = L10n.tr("Localizable", "preferences.menu.toggleLabel.showImage", fallback: "Show Image")
         /// Show tool tip on a menu item
         internal static let showToolTip = L10n.tr("Localizable", "preferences.menu.toggleLabel.showToolTip", fallback: "Show tool tip on a menu item")
       }
@@ -225,8 +231,6 @@ internal enum L10n {
         internal static let folderItems = L10n.tr("Localizable", "preferences.menu.unitLabel.folderItems", fallback: "Number of items place inside a folder:")
         /// Number of items place inline:
         internal static let inlineItems = L10n.tr("Localizable", "preferences.menu.unitLabel.inlineItems", fallback: "Number of items place inline:")
-        /// Length:
-        internal static let thumbnailLength = L10n.tr("Localizable", "preferences.menu.unitLabel.thumbnailLength", fallback: "Length:")
         /// Max length of tool tip string:
         internal static let tooltipLength = L10n.tr("Localizable", "preferences.menu.unitLabel.tooltipLength", fallback: "Max length of tool tip string:")
       }

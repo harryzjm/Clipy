@@ -62,6 +62,13 @@
 "alert.accessibility.message" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
 "alert.accessibility.openPreferences" = "Open System Preferences";
 
+/* Alert – unreadable database */
+"alert.databaseReset.title" = "Clipy can't open its database.";
+"alert.databaseReset.keyMismatch" = "The database is encrypted with a key this Mac's keychain no longer hands out, so nothing in it can be read. Clipy cannot save or paste anything until it is deleted and started over. The clipboard history and snippets it holds are unreadable either way.";
+"alert.databaseReset.corrupted" = "The database file is damaged, so nothing in it can be read. Clipy cannot save or paste anything until it is deleted and started over. The clipboard history and snippets it holds are unreadable either way.";
+"alert.databaseReset.keep" = "Keep the File";
+"alert.databaseReset.delete" = "Delete and Start Over";
+
 /* Alert – delete snippet / folder */
 "alert.deleteSnippet.message" = "Are you sure want to delete this item?";
 
@@ -80,7 +87,7 @@
 "preferences.general.statusType.white" = "White";
 "preferences.general.unitLabel.maxWidth" = "Max width of menu item:";
 "preferences.general.unit.px" = "px";
-"preferences.general.unitLabel.menuIconSize" = "The menu icon size";
+"preferences.general.unitLabel.menuFontSize" = "The menu font size";
 
 /* Preferences – Menu pane */
 "preferences.menu.sectionHeader.layout" = "Layout";
@@ -88,7 +95,6 @@
 "preferences.menu.unitLabel.folderItems" = "Number of items place inside a folder:";
 "preferences.menu.sectionHeader.menuItems" = "Menu Items";
 "preferences.menu.toggleLabel.showIcon" = "Display icons in menu items";
-"preferences.menu.toggleLabel.showColorPreview" = "Show color code preview";
 "preferences.menu.toggleLabel.showAlertBeforeClear" = "Show alert panel before clear history";
 "preferences.menu.toggleLabel.addNumericKeys" = "Add key equivalents to numeric keys";
 "preferences.menu.toggleLabel.markWithNumbers" = "Mark menu items with numbers";
@@ -98,9 +104,6 @@
 "preferences.menu.toggleLabel.showToolTip" = "Show tool tip on a menu item";
 "preferences.menu.unitLabel.tooltipLength" = "Max length of tool tip string:";
 "preferences.menu.unit.chars" = "chars";
-"preferences.menu.sectionHeader.image" = "Image";
-"preferences.menu.toggleLabel.showImage" = "Show Image";
-"preferences.menu.unitLabel.thumbnailLength" = "Length:";
 "preferences.menu.unit.pixel" = "pixel";
 
 /* Preferences – Type pane */

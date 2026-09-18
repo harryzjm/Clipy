@@ -90,11 +90,11 @@ extension String {
                                               options: matchingOptions,
                                               range: .init(location: 0, length: count))
             else { return nil }
-            return (1..<result.numberOfRanges).lazy.compactMap { i in
+            return (1..<result.numberOfRanges).firstMap { i in
                 let range = result.range(at: i)
                 guard range.location != NSNotFound else { return nil }
                 return (self as NSString).substring(with: range)
-            }.first
+            }
         } catch {
             lError(error)
             return nil

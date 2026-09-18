@@ -37,27 +37,3 @@ final class ClipViewTracker {
         views.remove(index)
     }
 }
-
-/// Holds the live snippet views and replays each committed transaction into them.
-final class SnippetViewTracker {
-
-    typealias Record = (MutableSnippetMenuView, PublishRelay<MutableSnippetMenuView.Immutable>)
-
-    private let views = Bag<Record>()
-
-    func updateViews(currentTransaction: SnippetServiceTransaction, change: SnippetChangeSet) {
-        for (view, pipe) in views.copyItems() where view.replay(service: currentTransaction, change: change) {
-            pipe.accept(view.immutableView())
-        }
-    }
-
-    func addView(_ view: MutableSnippetMenuView) -> (Bag<Record>.Index, Observable<MutableSnippetMenuView.Immutable>) {
-        let record: Record = (view, PublishRelay<MutableSnippetMenuView.Immutable>())
-        let index = views.add(record)
-        return (index, record.1.asObservable())
-    }
-
-    func removeView(_ index: Bag<Record>.Index) {
-        views.remove(index)
-    }
-}

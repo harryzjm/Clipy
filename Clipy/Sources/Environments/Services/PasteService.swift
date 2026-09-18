@@ -17,6 +17,10 @@ import Sauce
 final class PasteService {
 
     // MARK: - Properties
+    /// Where an overflowed payload is read back from. Injected rather than reached for, so the
+    /// one production call to `CPYClip.loadContents(assetStore:)` names the same store the
+    /// capture path wrote through.
+    private let assetStore: ClipAssetStore
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
     fileprivate var isPastePlainText: Bool {
         guard AppEnvironment.current.defaults.bool(forKey: Preferences.Beta.pastePlainText) else { return false }
@@ -35,6 +39,11 @@ final class PasteService {
 
         let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Preferences.Beta.pasteAndDeleteHistoryModifier)
         return isPressedModifier(modifierSetting)
+    }
+
+    // MARK: - Initialize
+    init(assetStore: ClipAssetStore) {
+        self.assetStore = assetStore
     }
 
     // MARK: - Modifiers
@@ -56,38 +65,29 @@ final class PasteService {
 // MARK: - Copy
 extension PasteService {
     func paste(with clip: CPYClip) {
-        do {
-            let data = try Data(contentsOf: .init(fileURLWithPath: clip.dataPath))
-            let clipData = try JSONDecoder().decode(CPYClipData.self, from: data)
+        // Handling modifier actions
+        let isPastePlainText = self.isPastePlainText
+        let isPasteAndDeleteHistory = self.isPasteAndDeleteHistory
+        let isDeleteHistory = self.isDeleteHistory
+        guard isPastePlainText || isPasteAndDeleteHistory || isDeleteHistory else {
+            copyToPasteboard(with: clip)
+            paste()
+            return
+        }
 
-            // Handling modifier actions
-            let isPastePlainText = self.isPastePlainText
-            let isPasteAndDeleteHistory = self.isPasteAndDeleteHistory
-            let isDeleteHistory = self.isDeleteHistory
-            guard isPastePlainText || isPasteAndDeleteHistory || isDeleteHistory else {
-                copyToPasteboard(with: clip)
-                paste()
-                return
-            }
-
-            // Increment change count for don't copy paste item
-            if isPasteAndDeleteHistory {
-                AppEnvironment.current.clipService.incrementChangeCount()
-            }
-            // Paste history
-            if isPastePlainText {
-                copyToPasteboard(with: clipData.stringValue)
-                paste()
-            } else if isPasteAndDeleteHistory {
-                copyToPasteboard(with: clip)
-                paste()
-            }
-            // Delete clip
-            if isDeleteHistory || isPasteAndDeleteHistory {
-                AppEnvironment.current.clipService.delete(with: clip)
-            }
-        } catch {
-            lError(error)
+        // Increment change count for don't copy paste item
+        if isPasteAndDeleteHistory {
+            AppEnvironment.current.clipService.incrementChangeCount()
+        }
+        // Paste history. `copyToPasteboard(with:)` applies the plain-text setting itself, so both
+        // cases go through the same call — and the payload is decoded exactly once, there.
+        if isPastePlainText || isPasteAndDeleteHistory {
+            copyToPasteboard(with: clip)
+            paste()
+        }
+        // Delete clip
+        if isDeleteHistory || isPasteAndDeleteHistory {
+            AppEnvironment.current.clipService.delete(with: clip)
         }
     }
 
@@ -100,25 +100,22 @@ extension PasteService {
         pasteboard.setString(string, forType: .string)
     }
 
+    /// The one place a stored payload is decoded — everywhere else `CPYClip.content` stays an
+    /// opaque blob.
     func copyToPasteboard(with clip: CPYClip) {
         lock.lock(); defer { lock.unlock() }
 
-        do {
-            let data = try Data(contentsOf: .init(fileURLWithPath: clip.dataPath))
-            let clipData = try JSONDecoder().decode(CPYClipData.self, from: data)
-            if isPastePlainText {
-                copyToPasteboard(with: clipData.stringValue)
-                return
-            }
+        // A missing or unreadable payload is already logged by `loadContents()`.
+        guard let contents = clip.loadContents(assetStore: assetStore) else { return }
+        if isPastePlainText {
+            copyToPasteboard(with: contents.stringValue)
+            return
+        }
 
-            let pasteboard = NSPasteboard.general
-            let types = clipData.content.compactMap(\.toPasteboardType)
-            pasteboard.declareTypes(types, owner: nil)
-            clipData.content.forEach { type in
-                type.recover(to: pasteboard)
-            }
-        } catch {
-            lError(error)
+        let pasteboard = NSPasteboard.general
+        pasteboard.declareTypes(contents.compactMap(\.toPasteboardType), owner: nil)
+        contents.forEach { type in
+            type.recover(to: pasteboard)
         }
     }
 }

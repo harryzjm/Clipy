@@ -22,7 +22,7 @@ final class ClipComponentService: ComponentService {
     weak var box: ClipyBox!
 
     lazy fileprivate(set) var clipDb: ClipDB = {
-        .init(rootPath: box.path, name: "clip.db", store: box.store)
+        .init(rootPath: box.path, name: "clip.db", secretCode: box.secretCode, store: box.store, recovery: box.recovery)
     }()
 
     let inter = ComponentServiceInternal()

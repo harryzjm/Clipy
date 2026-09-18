@@ -20,61 +20,61 @@ extension CPYFolder {
         return folder
     }
 
-    func merge() {
+    func merge(in box: ClipyBox) {
         let table = toTable
-        AppEnvironment.current.box.snippetTransaction { try $0.snippetDb.upsertFolder(table) }.run()
+        box.snippetTransaction { try $0.snippetDb.upsertFolder(table) }.run()
     }
 
-    func remove() {
+    func remove(in box: ClipyBox) {
         let identifier = self.identifier
-        AppEnvironment.current.box.snippetTransaction { try $0.removeFolder(identifier: identifier) }.run()
+        box.snippetTransaction { try $0.removeFolder(identifier: identifier) }.run()
     }
 
     /// Appends a snippet to this folder.
-    func mergeSnippet(_ snippet: CPYSnippet) {
+    func mergeSnippet(_ snippet: CPYSnippet, in box: ClipyBox) {
         // Re-parent the live object too, so a later `merge()` from the editor does not write the
         // stale owner back.
         snippet.folderIdentifier = identifier
         let copy = CPYSnippet(copying: snippet)
         let identifier = self.identifier
-        AppEnvironment.current.box.snippetTransaction { try $0.appendSnippet(copy, folderIdentifier: identifier) }.run()
+        box.snippetTransaction { try $0.appendSnippet(copy, folderIdentifier: identifier) }.run()
     }
 
     /// Moves a snippet into this folder at `index`, renumbering the folder afterwards.
-    func insertSnippet(_ snippet: CPYSnippet, index: Int) {
+    func insertSnippet(_ snippet: CPYSnippet, index: Int, in box: ClipyBox) {
         snippet.folderIdentifier = identifier
         let copy = CPYSnippet(copying: snippet)
         let identifier = self.identifier
-        AppEnvironment.current.box.snippetTransaction {
+        box.snippetTransaction {
             try $0.insertSnippet(copy, folderIdentifier: identifier, index: index)
         }.run()
     }
 
     /// Detaches a snippet from this folder. A no-op if it has already been re-parented, which is
     /// what makes the editor's insert-then-remove cross-folder move safe.
-    func removeSnippet(_ snippet: CPYSnippet) {
+    func removeSnippet(_ snippet: CPYSnippet, in box: ClipyBox) {
         let identifier = snippet.identifier
         let folderIdentifier = self.identifier
-        AppEnvironment.current.box.snippetTransaction {
+        box.snippetTransaction {
             try $0.removeSnippet(identifier: identifier, fromFolder: folderIdentifier)
         }.run()
     }
 
     /// Renumbers folders from the array order, in one transaction.
-    static func rearrangesIndex(_ folders: [CPYFolder]) {
+    static func rearrangesIndex(_ folders: [CPYFolder], in box: ClipyBox) {
         folders.enumerated().forEach { $0.element.index = $0.offset }
         let snapshot = folders.map { CPYFolder(shallowCopying: $0) }
-        AppEnvironment.current.box.snippetTransaction { try $0.rearrangeFolders(snapshot) }.run()
+        box.snippetTransaction { try $0.rearrangeFolders(snapshot) }.run()
     }
 
     /// Renumbers this folder's snippets from the array order, in one transaction.
-    func rearrangesSnippetIndex() {
+    func rearrangesSnippetIndex(in box: ClipyBox) {
         snippets.enumerated().forEach {
             $0.element.index = $0.offset
             $0.element.folderIdentifier = identifier
         }
         let snapshot = snippets.map { CPYSnippet(copying: $0) }
-        AppEnvironment.current.box.snippetTransaction { try $0.rearrangeSnippets(snapshot) }.run()
+        box.snippetTransaction { try $0.rearrangeSnippets(snapshot) }.run()
     }
 }
 
