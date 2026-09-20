@@ -12,12 +12,6 @@
 
 import Cocoa
 
-/// Domain projection of `CPYSnippetTable`.
-///
-/// The `NSObject` inheritance is vestigial: it existed so the old `NSOutlineView`-based snippets
-/// editor could use instances directly as items, which needed stable `isEqual:` identity. The
-/// SwiftUI editor projects these into value types instead, so the base class and the
-/// `@objc dynamic` property attributes could be dropped in a follow-up.
 final class CPYSnippet: NSObject {
 
     // MARK: - Properties
@@ -41,6 +35,14 @@ final class CPYSnippet: NSObject {
         content = other.content
         identifier = other.identifier
         folderIdentifier = other.folderIdentifier
+    }
+}
+
+extension CPYSnippet {
+    var displayTitle: String {
+        guard title.isEmpty else { return title }
+        let derived = content.firstLine
+        return derived.isEmpty ? L10n.Snippets.Sidebar.untitled : derived
     }
 }
 

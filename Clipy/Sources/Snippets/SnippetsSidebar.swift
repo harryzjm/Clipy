@@ -26,6 +26,7 @@ struct SnippetsSidebar: View {
                         SnippetsSidebarRow(title: snippet.title,
                                            isFolder: false,
                                            isEnabled: snippet.enable,
+                                           isEffectivelyEnabled: snippet.isEffectivelyEnabled,
                                            selection: .snippet(snippet.id),
                                            parentIdentifier: folder.id,
                                            store: store)
@@ -36,6 +37,7 @@ struct SnippetsSidebar: View {
                     SnippetsSidebarRow(title: folder.title,
                                        isFolder: true,
                                        isEnabled: folder.enable,
+                                       isEffectivelyEnabled: folder.enable,
                                        selection: .folder(folder.id),
                                        parentIdentifier: nil,
                                        store: store)
@@ -48,16 +50,15 @@ struct SnippetsSidebar: View {
     }
 }
 
-/// One row, plus its inline rename editor and context menu.
-///
-/// Reproduces what `CPYSnippetsEditorCell.draw(withFrame:in:)` did by hand: folders drew an icon
-/// and `Asset.Color.clipy`, snippets drew neither, and a disabled item of either kind drew in
-/// `.disabledControlTextColor`.
 private struct SnippetsSidebarRow: View {
 
     let title: String
     let isFolder: Bool
+    /// The item's own flag: what the context menu's Enable/Disable item toggles.
     let isEnabled: Bool
+    /// What the row draws with. Identical for a folder; for a snippet it also folds in the owning
+    /// folder's flag, because a disabled folder takes its whole submenu out of `SnippetMenu`.
+    let isEffectivelyEnabled: Bool
     let selection: SnippetsSelection
     let parentIdentifier: String?
 
@@ -83,8 +84,6 @@ private struct SnippetsSidebarRow: View {
                     isFocused = true
                 }
                 .onSubmit { store.commitRename(draft) }
-                // `control(_:textShouldEndEditing:)` also committed when the field editor lost
-                // focus; `.onSubmit` alone does not fire for that.
                 .onChange(of: isFocused) { _, focused in
                     guard !focused, store.renamingID == selection else { return }
                     store.commitRename(draft)
@@ -99,9 +98,10 @@ private struct SnippetsSidebarRow: View {
                 Text(title)
                     .foregroundStyle(titleColor)
             }
-            // `simultaneousGesture`, not `onTapGesture`: a plain tap gesture swallows the single
-            // click and the `List` never updates its selection.
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
             .simultaneousGesture(TapGesture(count: 2).onEnded { beginRename() })
+            .simultaneousGesture(TapGesture(count: 1).onEnded { store.selection = selection })
         }
     }
 
@@ -133,12 +133,11 @@ private struct SnippetsSidebarRow: View {
     }
 
     private var titleColor: SwiftUI.Color {
-        guard isEnabled else { return SwiftUI.Color(nsColor: .disabledControlTextColor) }
-        return isFolder ? SwiftUI.Color(nsColor: Asset.Color.clipy.color) : .primary
+        isEffectivelyEnabled ? .primary : SwiftUI.Color(nsColor: .disabledControlTextColor)
     }
 
     private var iconColor: SwiftUI.Color {
-        isEnabled ? SwiftUI.Color(nsColor: Asset.Color.clipy.color) : SwiftUI.Color(nsColor: .disabledControlTextColor)
+        isEffectivelyEnabled ? .secondary : SwiftUI.Color(nsColor: .disabledControlTextColor)
     }
 
     private func beginRename() {

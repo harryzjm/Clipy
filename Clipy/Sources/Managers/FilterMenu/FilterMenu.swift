@@ -17,7 +17,7 @@ import RxCocoa
 import RxOptional
 import PINCache
 
-class FilterMenu: NSMenu {
+class FilterMenu: NSMenu, FilterableMenu {
     fileprivate let bag = DisposeBag()
 
     fileprivate let filterRelay = BehaviorRelay<String>(value: "")
@@ -83,13 +83,6 @@ class FilterMenu: NSMenu {
 
     func update(filter: String) {
         filterRelay.accept(filter)
-    }
-
-    func highlight(menuItem: NSMenuItem?) {
-        let highlightItem = NSSelectorFromString("highlightItem:")
-        if responds(to: highlightItem) {
-            perform(highlightItem, with: menuItem)
-        }
     }
 }
 

@@ -56,7 +56,6 @@ extension CPYFolder: Codable {
         title = try container.decode(String.self, forKey: .title)
         identifier = try container.decode(String.self, forKey: .identifier)
         snippets = try container.decodeIfPresent([CPYSnippet].self, forKey: .snippets) ?? []
-        // Imported snippets carry no owner; wire them to this folder.
         snippets.forEach { $0.folderIdentifier = identifier }
     }
 
@@ -74,7 +73,7 @@ extension CPYFolder: Codable {
 extension CPYFolder {
     func createSnippet() -> CPYSnippet {
         let snippet = CPYSnippet()
-        snippet.title = "untitled snippet"
+        snippet.title = ""
         snippet.index = snippets.count
         snippet.folderIdentifier = identifier
         return snippet

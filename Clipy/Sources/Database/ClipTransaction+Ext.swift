@@ -55,16 +55,15 @@ extension ClipServiceTransaction {
         return thumbnailPath.flatMap { $0.isEmpty ? nil : $0 }
     }
 
-    /// Clears the whole history, returning the thumbnail cache keys that are now orphaned.
-    @discardableResult
-    func clearAllClips() throws -> [String] {
-        let thumbnailPaths = try clipDb.fetchThumbnailPaths()
+    /// Clears the whole history. Nothing is reported back: a wipe leaves no survivors, so the
+    /// thumbnails and payload files go as a whole through `ClipAssetStore.removeAllAssets()`
+    /// rather than being tracked row by row.
+    func clearAllClips() throws {
         try clipDb.deleteAllClips()
         #if DEBUG
         let orphans = try clipDb.orphanedContentCount()
         assert(orphans == 0, "clip_content left behind after clearing history: \(orphans) rows")
         #endif
-        return thumbnailPaths
     }
 
     /// Drops everything older than `updateTime`, returning the thumbnail cache keys that are

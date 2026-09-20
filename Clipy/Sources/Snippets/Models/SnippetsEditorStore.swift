@@ -10,66 +10,58 @@ import AppKit
 import SwiftUI
 import Magnet
 import RxSwift
+import RxCocoa
 import UniformTypeIdentifiers
 
-/// Backing store for the snippets editor.
-///
-/// Replaces the state that used to live on `CPYSnippetsEditorWindowController`: the `folders`
-/// working copy, the `selectedFolder` / `selectedSnippet` computed properties that type-tested
-/// `outlineView.item(atRow:)`, and the body of every IBAction.
 @Observable
 final class SnippetsEditorStore {
 
-    /// The value-type projection the sidebar reads.
-    ///
-    /// `CPYFolder` and `CPYSnippet` are `NSObject` subclasses with `@objc dynamic` properties;
-    /// they are not `@Observable`, so `folder.title = "x"` notifies nobody. Rather than make the
-    /// model observable, the graph is re-projected after every mutation. SwiftUI then diffs
-    /// values, `List` identity is a stable identifier string, and there is no way to write to the
-    /// model and silently fail to redraw.
+    /// The sidebar's model — and, because `folders` is `@ObservationIgnored`, the store's only
+    /// observable copy of the graph. Anything a view redraws on has to be a field of `FolderRow` /
+    /// `SnippetRow`, or the `distinctUntilChanged()` in `bind()` will swallow the change.
     private(set) var rows: [FolderRow] = []
 
-    var selection: SnippetsSelection?
+    /// Derived; never written by hand. See `SelectionState`.
+    private(set) var selectionState = SelectionState()
+
+    var selection: SnippetsSelection? {
+        didSet {
+            guard selection != oldValue else { return }
+            selectionRelay.accept(selection)
+        }
+    }
     var expandedFolders: Set<String> = []
     var renamingID: SnippetsSelection?
     var isDeleteConfirmationPresented = false
+    var isImportConfirmationPresented = false
 
-    /// Detached working copy, kept for the same reason the old controller kept one: the editor
-    /// writes on every keystroke, so re-reading the graph on every change would replace this
-    /// array — and with it the selection and any in-flight rename — underneath the user on each
-    /// character.
+    /// The detached working copy. Still `@ObservationIgnored`: it holds classes mutated in place,
+    /// so observing it would buy nothing. `publish()` is what makes a change visible.
     @ObservationIgnored private var folders: [CPYFolder] = []
+    /// Decoded but not yet written. Staged by `stageImport(from:)` and applied only once the
+    /// confirmation alert comes back — `importFolders` upserts by identifier, so an accidental drop
+    /// would otherwise overwrite existing folders with no undo.
+    @ObservationIgnored private var pendingImportFolders: [CPYFolder] = []
+    /// The folder graph as a signal, re-emitted by `publish()` after every mutation.
+    ///
+    /// The payload is the live graph, not a snapshot — two emissions are always the same objects —
+    /// so nothing downstream may retain it or compare two of them. Dedupe the *projections*.
+    @ObservationIgnored private let foldersRelay = BehaviorRelay<[CPYFolder]>(value: [])
+    @ObservationIgnored private let selectionRelay = BehaviorRelay<SnippetsSelection?>(value: nil)
     @ObservationIgnored private let disposeBag = DisposeBag()
     @ObservationIgnored private let box: ClipyBox
 
     init(box: ClipyBox) {
         self.box = box
+        bind()
     }
 
-    /// The folder a new snippet belongs to: the selected folder, or the selected snippet's owner.
-    /// Mirrors the old `selectedFolder` computed property.
-    var enclosingFolderIdentifier: String? {
-        switch selection {
-        case .folder(let identifier):
-            return identifier
-        case .snippet(let identifier):
-            return folder(containing: identifier)?.identifier
-        case nil:
-            return nil
-        }
-    }
+    /// Forwarders onto the derived `selectionState`. Observable now, because `selectionState` is a
+    /// stored property the pipeline writes — not a computed read of the ignored `folders` graph.
+    var enclosingFolderIdentifier: String? { selectionState.enclosingFolderIdentifier }
 
     /// `enable` of the selected item, for the toolbar's toggle icon. `nil` when nothing is selected.
-    var isSelectionEnabled: Bool? {
-        switch selection {
-        case .folder(let identifier):
-            return folder(identifier: identifier)?.enable
-        case .snippet(let identifier):
-            return snippet(identifier: identifier)?.enable
-        case nil:
-            return nil
-        }
-    }
+    var isSelectionEnabled: Bool? { selectionState.isSelectionEnabled }
 
     /// Reloads the detached working copy. Called on every window show and after an import.
     func reload() {
@@ -79,7 +71,7 @@ final class SnippetsEditorStore {
             .run(onNext: { [weak self] folders in
                 guard let self else { return }
                 self.folders = folders
-                self.rebuild()
+                self.publish()
                 // `windowDidLoad` selected the first folder; keep any existing selection on reshow.
                 if self.selection == nil, let first = folders.first {
                     self.selection = .folder(first.identifier)
@@ -111,23 +103,20 @@ extension SnippetsEditorStore {
                     guard let folder = self.folder(identifier: folderIdentifier) else { return }
                     folder.title = newValue
                     folder.merge(in: self.box)
-                    self.rebuild()
+                    self.publish()
                 })
     }
 
-    /// Snippet body. Writes on every keystroke, exactly as the old
-    /// `textView(_:shouldChangeTextIn:replacementString:)` did — `merge()` is fire-and-forget onto
-    /// the box queue, so the keystroke never waits on I/O, and there is no debounce window in
-    /// which a close or quit could lose the last edit.
-    ///
-    /// No `rebuild()`: `SnippetRow` does not carry `content`, so the sidebar cannot be stale.
-    func contentBinding(for snippetIdentifier: String) -> Binding<String> {
-        Binding(get: { self.snippet(identifier: snippetIdentifier)?.content ?? "" },
-                set: { newValue in
-                    guard let snippet = self.snippet(identifier: snippetIdentifier) else { return }
-                    snippet.content = newValue
-                    snippet.merge(in: self.box)
-                })
+    func content(for snippetIdentifier: String) -> String {
+        snippet(identifier: snippetIdentifier)?.content ?? ""
+    }
+
+    func updateContent(_ newValue: String, for snippetIdentifier: String) {
+        guard let snippet = snippet(identifier: snippetIdentifier) else { return }
+        let titleBefore = snippet.displayTitle
+        snippet.content = newValue
+        snippet.merge(in: box)
+        if snippet.displayTitle != titleBefore { publish() }
     }
 }
 
@@ -154,19 +143,19 @@ extension SnippetsEditorStore {
         let folder = CPYFolder.create(after: folders)
         folders.append(folder)
         folder.merge(in: box)
-        rebuild()
+        publish()
         selection = .folder(folder.identifier)
     }
 
     func addSnippet() {
-        guard let identifier = enclosingFolderIdentifier, let folder = folder(identifier: identifier) else {
+        guard let folder = enclosingFolder else {
             NSSound.beep()
             return
         }
         let snippet = folder.createSnippet()
         folder.snippets.append(snippet)
         folder.mergeSnippet(snippet, in: box)
-        rebuild()
+        publish()
         expandedFolders.insert(folder.identifier)
         selection = .snippet(snippet.identifier)
     }
@@ -189,7 +178,7 @@ extension SnippetsEditorStore {
             NSSound.beep()
             return
         }
-        rebuild()
+        publish()
     }
 
     /// Deletes the selected item. The confirmation alert lives in the view.
@@ -212,7 +201,7 @@ extension SnippetsEditorStore {
             return
         }
         selection = nil
-        rebuild()
+        publish()
     }
 
     /// Commits an inline rename. Empty titles are refused, as the old
@@ -234,7 +223,7 @@ extension SnippetsEditorStore {
         case nil:
             return
         }
-        rebuild()
+        publish()
     }
 }
 
@@ -247,14 +236,14 @@ extension SnippetsEditorStore {
     func moveFolders(from source: IndexSet, to destination: Int) {
         folders.move(fromOffsets: source, toOffset: destination)
         CPYFolder.rearrangesIndex(folders, in: box)
-        rebuild()
+        publish()
     }
 
     func moveSnippets(in folderIdentifier: String, from source: IndexSet, to destination: Int) {
         guard let folder = folder(identifier: folderIdentifier) else { return }
         folder.snippets.move(fromOffsets: source, toOffset: destination)
         folder.rearrangesSnippetIndex(in: box)
-        rebuild()
+        publish()
     }
 
     /// Moves a snippet to another folder, appending it at the end. Replaces the cross-folder drag
@@ -277,7 +266,7 @@ extension SnippetsEditorStore {
         toFolder.insertSnippet(snippet, index: destination, in: box)
         fromFolder.removeSnippet(snippet, in: box)
 
-        rebuild()
+        publish()
         expandedFolders.insert(toFolder.identifier)
         selection = .snippet(snippetIdentifier)
     }
@@ -286,6 +275,7 @@ extension SnippetsEditorStore {
 // MARK: - Import / Export
 extension SnippetsEditorStore {
 
+    /// Picking a file only stages it; `confirmPendingImport()` is what writes.
     func importSnippets() {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
@@ -294,27 +284,78 @@ extension SnippetsEditorStore {
 
         guard panel.runModal() == .OK, let url = panel.urls.first else { return }
 
+        stageImport(from: url)
+    }
+
+    /// The single gate both the toolbar button and the window's drop destination go through.
+    /// Returns whether `url` was accepted, so a drop can refuse the file and let the Finder animate
+    /// it back. A file that will not parse is rejected quietly — beep and log, no alert.
+    @discardableResult
+    func stageImport(from url: URL) -> Bool {
+        // A second staged import would silently replace the first while its alert is still up.
+        guard !isImportConfirmationPresented else { return false }
+        guard Self.isSnippetsFile(url) else {
+            NSSound.beep()
+            lError("Not a JSON file: \(url.lastPathComponent)")
+            return false
+        }
+
         do {
-            let data = try Data(contentsOf: url)
-            let importFolders = try JSONDecoder().decode([CPYFolder].self, from: data)
-            if let lastIndex = folders.map({ $0.index }).max() {
-                importFolders.forEach { $0.index += lastIndex }
+            let importFolders = try Self.decodeFolders(at: url)
+            guard !importFolders.isEmpty else {
+                NSSound.beep()
+                lError("No folders in \(url.lastPathComponent)")
+                return false
             }
-            box
-                .snippetTransaction { try $0.importFolders(importFolders) }
-                .observe(on: MainScheduler.instance)
-                .run(onNext: { [weak self] in
-                    self?.reload()
-                }, onError: { [weak self] error in
-                    NSSound.beep()
-                    lError(error)
-                    self?.reload()
-                })
-                .disposed(by: disposeBag)
+            pendingImportFolders = importFolders
+            isImportConfirmationPresented = true
+            return true
         } catch {
             NSSound.beep()
             lError(error)
+            return false
         }
+    }
+
+    func cancelPendingImport() {
+        pendingImportFolders = []
+    }
+
+    func confirmPendingImport() {
+        let importFolders = pendingImportFolders
+        pendingImportFolders = []
+        guard !importFolders.isEmpty else { return }
+
+        // Offset against the working copy as of *now*, not as of the drop.
+        if let lastIndex = folders.map({ $0.index }).max() {
+            importFolders.forEach { $0.index += lastIndex }
+        }
+        box
+            .snippetTransaction { try $0.importFolders(importFolders) }
+            .observe(on: MainScheduler.instance)
+            .run(onNext: { [weak self] in
+                self?.reload()
+            }, onError: { [weak self] error in
+                NSSound.beep()
+                lError(error)
+                self?.reload()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    /// The drop destination's filter. Falls back to the extension for a URL the file system will not
+    /// answer a content type for.
+    static func isSnippetsFile(_ url: URL) -> Bool {
+        if let type = (try? url.resourceValues(forKeys: [.contentTypeKey]))?.contentType {
+            return type.conforms(to: .json)
+        }
+        return url.pathExtension.lowercased() == "json"
+    }
+
+    /// Split out of `stageImport(from:)` so the file format can be tested without a window.
+    static func decodeFolders(at url: URL) throws -> [CPYFolder] {
+        let data = try Data(contentsOf: url)
+        return try JSONDecoder().decode([CPYFolder].self, from: data)
     }
 
     /// The exported shape is the hand-written `CodingKeys` on `CPYFolder` / `CPYSnippet`, which is
@@ -345,8 +386,51 @@ extension SnippetsEditorStore {
 // MARK: - Lookup
 private extension SnippetsEditorStore {
 
-    func rebuild() {
-        rows = folders.map(FolderRow.init(folder:))
+    /// Both derived pipelines, built once.
+    ///
+    /// No `observe(on:)` anywhere — `BehaviorRelay` delivers synchronously on the calling thread,
+    /// and three callers (`addFolder`, `addSnippet`, `moveSnippet`) set `selection` on the line
+    /// after `publish()`; with an async hop `List` would be handed a tag for a row it has not seen
+    /// in `rows` yet and would drop it.
+    ///
+    /// Both sinks are write-only: they assign one observed property and call nothing else. A sink
+    /// that re-entered a relay would deliver values out of order.
+    func bind() {
+        foldersRelay
+            .map { $0.map(FolderRow.init(folder:)) }
+            .distinctUntilChanged()
+            .run(onNext: { [weak self] rows in self?.rows = rows })
+            .disposed(by: disposeBag)
+
+        // Load-bearing dedupe, not an optimisation: `combineLatest` fires on either input, and
+        // `titleBinding` publishes on every keystroke — without it the toolbar would invalidate
+        // once per character typed into the folder title field.
+        Observable
+            .combineLatest(foldersRelay, selectionRelay) { SelectionState(folders: $0, selection: $1) }
+            .distinctUntilChanged()
+            .run(onNext: { [weak self] state in self?.selectionState = state })
+            .disposed(by: disposeBag)
+    }
+
+    /// Re-emits the working copy after an in-place mutation, which is what drives `rows` and
+    /// `selectionState`. Replaces `rebuild()` — the projection itself now lives in `bind()`,
+    /// declared once. Main thread only; every caller already is.
+    func publish() {
+        foldersRelay.accept(folders)
+    }
+
+    /// Model-side twin of `SelectionState.enclosingFolderIdentifier`. Store internals read the
+    /// working copy directly and only the views read the derived state, so a missed `publish()`
+    /// can leave the UI stale but can never make a mutation write to the wrong folder.
+    var enclosingFolder: CPYFolder? {
+        switch selection {
+        case .folder(let identifier):
+            return folder(identifier: identifier)
+        case .snippet(let identifier):
+            return folder(containing: identifier)
+        case nil:
+            return nil
+        }
     }
 
     func folder(identifier: String) -> CPYFolder? {

@@ -115,6 +115,19 @@ extension ClipAssetStore {
         }
     }
 
+    /// Drops every asset any clip could own: the whole `file/` directory and the entire
+    /// thumbnail cache.
+    ///
+    /// `sweepFiles(referencing:)`'s mark-and-sweep exists because expiry deletes by predicate and
+    /// Swift never learns which rows went — a wipe has no survivors to protect, so it does not
+    /// need it. The directory goes as a whole; `writePayload` recreates it on the next capture.
+    func removeAllAssets() {
+        queue.dispatchAsync { [root = self.root] in
+            CPYUtilities.deleteData(at: (root as NSString).appendingPathComponent(Self.directoryName))
+            PINCache.shared.removeAllObjects()
+        }
+    }
+
     /// Deletes every payload file in `file/` that no row points at any more.
     ///
     /// Mark-and-sweep rather than deleting alongside the row, because expiry deletes by predicate

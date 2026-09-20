@@ -332,15 +332,12 @@ extension ClipDB {
                         fromTable: CPYClipTable.tableName).intValue
     }
 
-    /// Non-empty thumbnail cache keys, optionally restricted to clips older than `updateTime`.
-    func fetchThumbnailPaths(olderThan updateTime: Int? = nil) throws -> [String] {
-        var condition = CPYClipTable.Properties.thumbnailKey != ""
-        if let updateTime = updateTime {
-            condition = condition && CPYClipTable.Properties.updateTime < updateTime
-        }
-        return try db.getColumn(on: CPYClipTable.Properties.thumbnailKey,
-                                fromTable: CPYClipTable.tableName,
-                                where: condition).map { $0.stringValue }
+    /// Non-empty thumbnail cache keys for clips older than `updateTime`.
+    func fetchThumbnailPaths(olderThan updateTime: Int) throws -> [String] {
+        try db.getColumn(on: CPYClipTable.Properties.thumbnailKey,
+                         fromTable: CPYClipTable.tableName,
+                         where: CPYClipTable.Properties.thumbnailKey != ""
+                             && CPYClipTable.Properties.updateTime < updateTime).map { $0.stringValue }
     }
 
     func fetchAllDataPaths() throws -> [String] {

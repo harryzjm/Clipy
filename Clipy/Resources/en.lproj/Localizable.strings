@@ -44,6 +44,7 @@
 "snippets.sidebar.contextMenu.disable" = "Disable";
 "snippets.sidebar.contextMenu.moveToFolder" = "Move to Folder";
 "snippets.sidebar.contextMenu.delete" = "Delete";
+"snippets.sidebar.untitled" = "Untitled Snippet";
 
 /* Snippets – editor content */
 "snippets.emptyContentPlaceholder" = "Please fill in the contents of the snippet";
@@ -71,6 +72,10 @@
 
 /* Alert – delete snippet / folder */
 "alert.deleteSnippet.message" = "Are you sure want to delete this item?";
+
+/* Alert – import snippets */
+"alert.importSnippets.title" = "Import Snippets";
+"alert.importSnippets.message" = "Folders and snippets in this file replace any existing ones with the same identifier.";
 
 /* Preferences – General pane */
 "preferences.general.sectionHeader.behavior" = "Behavior";

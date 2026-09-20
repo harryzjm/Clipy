@@ -53,6 +53,13 @@ extension String {
          return trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    var firstLine: String {
+        let string = trim as NSString
+        var lineStart = 0, lineEnd = 0, contentsEnd = 0
+        string.getLineStart(&lineStart, end: &lineEnd, contentsEnd: &contentsEnd, for: NSRange(location: 0, length: 0))
+        return (lineEnd == string.length ? string as String : string.substring(to: contentsEnd)).trim
+    }
+
     func replace(pattern: String, options: NSRegularExpression.Options = [], withTemplate templ: String) -> String {
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: options)

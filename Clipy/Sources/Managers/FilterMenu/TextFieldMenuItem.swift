@@ -112,7 +112,7 @@ class TextFieldContentView: NSView, NSTextFieldDelegate {
     }
 
     @objc func fireNotification() {
-        guard let menu = enclosingMenuItem?.menu as? FilterMenu else { return }
+        guard let menu = enclosingMenuItem?.menu as? FilterableMenu else { return }
         menu.update(filter: queryTF.stringValue)
     }
 

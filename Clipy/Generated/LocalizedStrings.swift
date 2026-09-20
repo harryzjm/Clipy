@@ -39,6 +39,12 @@ internal enum L10n {
       /// Alert – delete snippet / folder
       internal static let message = L10n.tr("Localizable", "alert.deleteSnippet.message", fallback: "Are you sure want to delete this item?")
     }
+    internal enum ImportSnippets {
+      /// Folders and snippets in this file replace any existing ones with the same identifier.
+      internal static let message = L10n.tr("Localizable", "alert.importSnippets.message", fallback: "Folders and snippets in this file replace any existing ones with the same identifier.")
+      /// Alert – import snippets
+      internal static let title = L10n.tr("Localizable", "alert.importSnippets.title", fallback: "Import Snippets")
+    }
     internal enum LoginItem {
       /// Don't Launch
       internal static let dontLaunch = L10n.tr("Localizable", "alert.loginItem.dontLaunch", fallback: "Don't Launch")
@@ -288,6 +294,8 @@ internal enum L10n {
       }
     }
     internal enum Sidebar {
+      /// Untitled Snippet
+      internal static let untitled = L10n.tr("Localizable", "snippets.sidebar.untitled", fallback: "Untitled Snippet")
       internal enum ContextMenu {
         /// Delete
         internal static let delete = L10n.tr("Localizable", "snippets.sidebar.contextMenu.delete", fallback: "Delete")

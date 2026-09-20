@@ -61,11 +61,10 @@ final class ClipService {
 
     func clearAll() {
         box.clipTransaction { try $0.clearAllClips() }
-            .subscribe(onNext: { [assetStore = self.assetStore] thumbnailPaths in
-                // Delete saved images
-                assetStore.removeThumbnails(thumbnailPaths)
-                // Delete writed datas
-                AppEnvironment.current.dataCleanService.cleanDatas()
+            .subscribe(onNext: { [assetStore = self.assetStore] in
+                // Nothing survives the wipe, so there is nothing to mark and sweep: drop `file/`
+                // and the thumbnail cache wholesale.
+                assetStore.removeAllAssets()
             }, onError: { _ in })
             .disposed(by: writeBag)
     }
