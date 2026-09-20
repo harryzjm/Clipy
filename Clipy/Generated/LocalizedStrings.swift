@@ -93,6 +93,8 @@ internal enum L10n {
     internal static let general = L10n.tr("Localizable", "preferences.general", fallback: "General")
     /// Shortcuts
     internal static let shortcuts = L10n.tr("Localizable", "preferences.shortcuts", fallback: "Shortcuts")
+    /// Snippets
+    internal static let snippets = L10n.tr("Localizable", "preferences.snippets", fallback: "Snippets")
     /// Type
     internal static let type = L10n.tr("Localizable", "preferences.type", fallback: "Type")
     internal enum Beta {
@@ -251,6 +253,20 @@ internal enum L10n {
         internal static let snippets = L10n.tr("Localizable", "preferences.shortcuts.recorderLabel.snippets", fallback: "Snippets:")
       }
     }
+    internal enum Snippets {
+      internal enum SectionHeader {
+        /// Preferences – Snippets pane
+        internal static let editor = L10n.tr("Localizable", "preferences.snippets.sectionHeader.editor", fallback: "Snippet Editor")
+      }
+      internal enum ToggleLabel {
+        /// Show line numbers
+        internal static let showGutter = L10n.tr("Localizable", "preferences.snippets.toggleLabel.showGutter", fallback: "Show line numbers")
+        /// Show minimap
+        internal static let showMinimap = L10n.tr("Localizable", "preferences.snippets.toggleLabel.showMinimap", fallback: "Show minimap")
+        /// Wrap long lines
+        internal static let wrapLines = L10n.tr("Localizable", "preferences.snippets.toggleLabel.wrapLines", fallback: "Wrap long lines")
+      }
+    }
     internal enum TypePane {
       internal enum SectionHeader {
         /// Preferences – Type pane
@@ -275,6 +291,10 @@ internal enum L10n {
         internal static let description = L10n.tr("Localizable", "snippets.detail.noSelection.description", fallback: "Select a folder or a snippet to edit.")
         /// Snippets – detail view
         internal static let title = L10n.tr("Localizable", "snippets.detail.noSelection.title", fallback: "No Selection")
+      }
+      internal enum Snippet {
+        /// Language:
+        internal static let languageLabel = L10n.tr("Localizable", "snippets.detail.snippet.languageLabel", fallback: "Language:")
       }
     }
     internal enum Editor {

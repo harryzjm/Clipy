@@ -19,6 +19,12 @@ final class SnippetDB: DataStore {
             .init(version: 1) { db in
                 try db.create(table: CPYFolderTable.tableName, of: CPYFolderTable.self)
                 try db.create(table: CPYSnippetTable.tableName, of: CPYSnippetTable.self)
+            },
+            // `snippet.language`. `create(table:of:)` reconciles an existing table against the
+            // model, adding the columns it is missing — which is why re-running migration 1's
+            // statement is the whole migration rather than a hand-written ALTER.
+            .init(version: 2) { db in
+                try db.create(table: CPYSnippetTable.tableName, of: CPYSnippetTable.self)
             }
         ]
     }

@@ -89,33 +89,33 @@ private struct SnippetContentView: View {
     let store: SnippetsEditorStore
 
     @State private var content: String
+    @State private var languageIdentifier: String
 
     init(snippetIdentifier: String, store: SnippetsEditorStore) {
         self.snippetIdentifier = snippetIdentifier
         self.store = store
         _content = State(initialValue: store.content(for: snippetIdentifier))
+        _languageIdentifier = State(initialValue: store.language(for: snippetIdentifier))
     }
 
     var body: some View {
-        TextEditor(text: $content)
-            .font(.system(size: 14))
-            .scrollContentBackground(.hidden)
-            .overlay(alignment: .topLeading) {
-                if content.isEmpty {
-                    Text(L10n.Snippets.emptyContentPlaceholder)
-                        .font(.system(size: 14))
-                        .foregroundStyle(SwiftUI.Color(nsColor: .placeholderTextColor))
-                        .padding(.leading, 5)
-                        .allowsHitTesting(false)
-                }
-            }
-            .padding(8)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(SwiftUI.Color(nsColor: .textBackgroundColor),
-                        in: RoundedRectangle(cornerRadius: 8))
-            .padding(10)
-            .onChange(of: content) { _, newValue in
-                store.updateContent(newValue, for: snippetIdentifier)
-            }
+        VStack(alignment: .leading, spacing: 8) {
+            SnippetLanguagePicker(languageIdentifier: $languageIdentifier)
+
+            SnippetSourceEditor(text: $content,
+                                languageIdentifier: languageIdentifier,
+                                placeholder: L10n.Snippets.emptyContentPlaceholder)
+                // The editor paints its own theme background edge to edge, so the rounded card
+                // the old `TextEditor` sat on has to be a clip rather than a backing shape.
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .padding(10)
+        .onChange(of: content) { _, newValue in
+            store.updateContent(newValue, for: snippetIdentifier)
+        }
+        .onChange(of: languageIdentifier) { _, newValue in
+            store.updateLanguage(newValue, for: snippetIdentifier)
+        }
     }
 }

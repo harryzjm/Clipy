@@ -16,7 +16,7 @@ import SwiftUI
 struct PreferencesRootView: View {
 
     enum Pane: String, CaseIterable, Identifiable {
-        case general, menu, type, excluded, shortcuts, beta
+        case general, menu, type, excluded, snippets, shortcuts, beta
 
         var id: Self { self }
 
@@ -26,6 +26,7 @@ struct PreferencesRootView: View {
             case .menu: return L10n.Common.menu
             case .type: return L10n.Preferences.type
             case .excluded: return L10n.Preferences.excluded
+            case .snippets: return L10n.Preferences.snippets
             case .shortcuts: return L10n.Preferences.shortcuts
             case .beta: return L10n.Preferences.beta
             }
@@ -39,6 +40,7 @@ struct PreferencesRootView: View {
             case .menu: return "list.bullet"
             case .type: return "doc.on.doc"
             case .excluded: return "nosign"
+            case .snippets: return "note.text"
             case .shortcuts: return "command"
             case .beta: return "flask"
             }
@@ -72,6 +74,7 @@ struct PreferencesRootView: View {
         case .menu: MenuPane()
         case .type: TypePane()
         case .excluded: ExcludeAppPane()
+        case .snippets: SnippetsPane()
         case .shortcuts: ShortcutsPane()
         case .beta: BetaPane()
         }

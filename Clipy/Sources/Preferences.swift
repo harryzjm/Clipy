@@ -43,6 +43,12 @@ struct Preferences {
         static let maxLengthOfToolTip = "maxLengthOfToolTipKey"
     }
 
+    struct Snippets {
+        static let editorShowGutter = "snippetEditorShowGutter"
+        static let editorWrapLines = "snippetEditorWrapLines"
+        static let editorShowMinimap = "snippetEditorShowMinimap"
+    }
+
     struct Beta {
         static let pastePlainText = "kCPYBetaPastePlainText"
         static let pastePlainTextModifier = "kCPYBetaPastePlainTextModifier"

@@ -21,6 +21,7 @@ struct CPYSnippetTable: TableCodable, Equatable {
     var enable: Bool = true
     var title: String = ""
     var content: String = ""
+    var language: String = CPYSnippet.plainTextLanguage
 
     enum CodingKeys: String, CodingTableKey {
         typealias Root = CPYSnippetTable
@@ -31,9 +32,16 @@ struct CPYSnippetTable: TableCodable, Equatable {
         case enable
         case title
         case content
+        case language
 
         static let objectRelationalMapping = TableBinding(CodingKeys.self) {
             BindColumnConstraint(.identifier, isPrimary: true, isNotNull: true)
+            // The SQL default is what every row written before migration 2 gets: WCDB adds the
+            // column with this `ALTER TABLE`, so an existing snippet reads back as plain text
+            // rather than as NULL decoded into an empty string no language matches.
+            BindColumnConstraint(.language,
+                                 isNotNull: true,
+                                 defaultTo: LiteralValue(CPYSnippet.plainTextLanguage))
             BindIndex(folderIdentifier, namedWith: "_folderIdentifierIndex")
         }
     }
@@ -49,6 +57,7 @@ extension CPYSnippetTable {
         snippet.enable = enable
         snippet.title = title
         snippet.content = content
+        snippet.language = language
         return snippet
     }
 }
@@ -62,6 +71,7 @@ extension CPYSnippet {
         table.enable = enable
         table.title = title
         table.content = content
+        table.language = language
         return table
     }
 }

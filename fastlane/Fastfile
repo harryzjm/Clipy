@@ -45,12 +45,19 @@ platform :mac do
   ####################### PRIVATE LANES ########################
 
   private_lane :scan_clipy do
+    # Silences SwiftLintPlugin, a build-tool plugin that only lints the vendored CodeEdit*
+    # package sources and fails afterwards on an output directory it never creates. Has to be a
+    # real environment variable — the plugin runs before build settings exist.
+    ENV["DISABLE_SWIFTLINT"] = "1"
     scan(
       workspace: "Clipy.xcworkspace",
       scheme: "Clipy",
       skip_build: true,
       verbose: true,
-      clean: true
+      clean: true,
+      # CodeEditSourceEditor's dependency graph applies an unvalidated SwiftPM build-tool plugin
+      # (SwiftLintPlugin). Xcode prompts for trust; xcodebuild just fails without this.
+      xcargs: "-skipPackagePluginValidation -skipMacroValidation"
     )
   end
 

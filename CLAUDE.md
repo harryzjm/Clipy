@@ -2,23 +2,24 @@ Clipy is a macOS menu-bar clipboard manager (a fork of Clipy/Clipy). App target 
 
 ## Commands
 
-Dependencies are CocoaPods; **always open/build `Clipy.xcworkspace`, never `Clipy.xcodeproj`.**
+Most dependencies are CocoaPods; **always open/build `Clipy.xcworkspace`, never `Clipy.xcodeproj`.**
 
 ```bash
 bundle install && bundle exec pod install --repo-update
 ```
 
 ```bash
-xcodebuild -workspace Clipy.xcworkspace -scheme Clipy -configuration Debug build
+DISABLE_SWIFTLINT=1 xcodebuild -workspace Clipy.xcworkspace -scheme Clipy -configuration Debug -skipPackagePluginValidation -skipMacroValidation build
 ```
 
+- **SPM alongside CocoaPods:** `CodeEditSourceEditor` (the snippet editor) is a Swift package pinned to an exact version on the `Clipy` target — the only one, and the reason for the two `-skip…` flags above: its graph applies an unvalidated build-tool plugin (`SwiftLintPlugin`), which `xcodebuild` refuses rather than prompting about. `DISABLE_SWIFTLINT=1` turns that plugin off — it lints only the vendored package sources, and on Xcode 27 it reports a failure after a clean run because it declares an `Output` directory it never creates (the build still succeeds). It must be a real environment variable: passing it as a build setting does nothing, because the plugin runs at planning time. Add or bump packages by editing the `PACKAGES` list in [script/add_spm_package.rb](script/add_spm_package.rb) and running it (`bundle exec ruby script/add_spm_package.rb`), never by hand-editing the pbxproj. CocoaPods never touches the SPM objects, so `pod install` preserves them. `Package.resolved` lives at `Clipy.xcworkspace/xcshareddata/swiftpm/Package.resolved` and is committed — building `-project Clipy.xcodeproj` instead would write a second, divergent one. Every product resolves as a static library, so nothing is embedded or separately signed. The first resolve is slow: `CodeEditLanguages` keeps a 34 MB tree-sitter xcframework per tag, so its bare clone is multiple GB.
 - **Lint:** `swiftlint` (config `.swiftlint.yml`, scoped to `Clipy/Sources`). Note the Xcode `SwiftLint` build phase runs `swiftlint --fix` from the *system* PATH (`/opt/homebrew/bin`), so every build rewrites source files in place — expect a dirty tree after building. `bundle exec danger` lints via the Pods binary instead.
 - **Codegen:** the `SwiftGen` build phase runs `${PODS_ROOT}/SwiftGen/bin/swiftgen` against `swiftgen.yml` on every build, regenerating `Clipy/Generated/LocalizedStrings.swift` (from `Clipy/Resources/en.lproj/Localizable.strings`) and `Clipy/Generated/AssetsImages.swift` (from `Images.xcassets`). Edit the sources, never the generated files. 
 - **Tests:** `ClipyTests` is a unit test bundle hosted inside `Clipy.app` (`TEST_HOST`/`BUNDLE_LOADER`), added via CocoaPods `inherit! :search_paths` rather than its own pod list — it gets the app's pods (RxSwift, WCDB.swift, MMKV, …) through search paths and links them at runtime through the host process, so `@testable import Clipy` and `import RxSwift` both work without re-embedding frameworks. Run with:
   ```bash
-  xcodebuild -workspace Clipy.xcworkspace -scheme Clipy -configuration Debug -destination 'platform=macOS' test
+  DISABLE_SWIFTLINT=1 xcodebuild -workspace Clipy.xcworkspace -scheme Clipy -configuration Debug -destination 'platform=macOS' -skipPackagePluginValidation -skipMacroValidation test
   ```
-  `fastlane test` (`scan`) also targets it now, though `scan_clipy` passes `skip_build: true` so a `build-for-testing` needs to happen first.
+  `fastlane test` (`scan`) also targets it now, though `scan_clipy` passes `skip_build: true` so a `build-for-testing` needs to happen first; it forwards the package-plugin flags through `xcargs`.
 - Deployment target is **macOS 14.0** (Podfile pins Pods to the same). The README's "macOS 10.15 / Xcode 12.3" line is stale.
 
 ## Architecture
@@ -77,6 +78,8 @@ Search modes live in `FilterMatchMode` (`like` / `glob` / `fts`). Adding one mea
 
 ### Preferences and snippets UI
 Preference **keys** are string constants in [Preferences.swift](Clipy/Sources/Preferences.swift); **defaults** are registered in `CPYUtilities.registerUserDefaultKeys()`. Both must be updated when adding a setting. The UI is SwiftUI panes under `Sources/Preferences/Panes/`, listed in `PreferencesRootView.Pane`. The snippets editor is a separate `SnippetsEditorWindowController.shared` hosting SwiftUI over an `@Observable SnippetsEditorStore`, which deliberately keeps a **detached working copy** of the folder graph rather than subscribing to `observeSnippets()` — otherwise each keystroke would replace the array and drop the selection.
+
+The snippet body is edited in `CodeEditSourceEditor`. [SnippetSourceEditor.swift](Clipy/Sources/Snippets/SnippetSourceEditor.swift) is the **only** file allowed to name a `CodeEdit*` type: everywhere else a language is a `TreeSitterLanguage` raw value in a `String` (`CPYSnippet.language`, default `"plainText"`), which keeps the package out of the model and database layers and out of `ClipyTests`, which does not link it. That string is a persisted identifier in three places at once — the `snippet.language` column, the exported snippets JSON (optional on decode, so files written before it existed still import), and `UserDefaults` — so it must not be renamed. The editor's chrome (gutter, wrapping, minimap) is three `Preferences.Snippets` keys read straight from `@AppStorage`, so a toggle in the new Snippets preference pane lands on an open editor.
 
 ## Conventions
 

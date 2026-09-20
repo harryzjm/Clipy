@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		10E7EA1CFEB63B8DB6E402A9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA99C45A858705CD92A2D11 /* Cocoa.framework */; };
+		3B69CF1CEB9E3352425AC635 /* CodeEditSourceEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 4AD01DDA5385B99D4479CBE7 /* CodeEditSourceEditor */; };
 		641B1194322A0370A2EC81A9 /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BF75291AF5FA2517626BCD3 /* Pods_ClipyTests.framework */; };
 		746DC3493B1D5C2D8A44E59A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E0EC8D4A192DBBCF30E3326 /* XCTest.framework */; };
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
@@ -104,6 +105,7 @@
 				FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */,
 				FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */,
 				B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */,
+				3B69CF1CEB9E3352425AC635 /* CodeEditSourceEditor in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,6 +213,9 @@
 				56E279E55E884AB58470C4F0 /* Clipy */,
 			);
 			name = Clipy;
+			packageProductDependencies = (
+				4AD01DDA5385B99D4479CBE7 /* CodeEditSourceEditor */,
+			);
 			productName = Clipy;
 			productReference = FAC43DC61B35D8B100C06102 /* Clipy.app */;
 			productType = "com.apple.product-type.application";
@@ -245,6 +250,9 @@
 				Base,
 			);
 			mainGroup = FAC43DBD1B35D8B100C06102;
+			packageReferences = (
+				70262ADB2E07967389EC8044 /* XCRemoteSwiftPackageReference "CodeEditSourceEditor" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
 			projectDirPath = "";
@@ -665,6 +673,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		70262ADB2E07967389EC8044 /* XCRemoteSwiftPackageReference "CodeEditSourceEditor" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CodeEditApp/CodeEditSourceEditor";
+			requirement = {
+				kind = exactVersion;
+				version = 0.15.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4AD01DDA5385B99D4479CBE7 /* CodeEditSourceEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 70262ADB2E07967389EC8044 /* XCRemoteSwiftPackageReference "CodeEditSourceEditor" */;
+			productName = CodeEditSourceEditor;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FAC43DBE1B35D8B100C06102 /* Project object */;
 }

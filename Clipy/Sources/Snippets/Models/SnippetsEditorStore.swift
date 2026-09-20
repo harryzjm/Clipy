@@ -107,6 +107,17 @@ extension SnippetsEditorStore {
         snippet.merge(in: box)
         if snippet.displayTitle != titleBefore { publish() }
     }
+
+    func language(for snippetIdentifier: String) -> String {
+        snippet(identifier: snippetIdentifier)?.language ?? CPYSnippet.plainTextLanguage
+    }
+
+    /// No `publish()`: nothing the sidebar or the toolbar projects reads the language.
+    func updateLanguage(_ newValue: String, for snippetIdentifier: String) {
+        guard let snippet = snippet(identifier: snippetIdentifier) else { return }
+        snippet.language = newValue
+        snippet.merge(in: box)
+    }
 }
 
 // MARK: - Hot keys

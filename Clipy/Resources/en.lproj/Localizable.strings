@@ -17,6 +17,7 @@
 "preferences.type" = "Type";
 "preferences.shortcuts" = "Shortcuts";
 "preferences.excluded" = "Excluded Apps";
+"preferences.snippets" = "Snippets";
 "preferences.beta" = "Beta";
 
 /* Preferences – Excluded Apps pane */
@@ -29,6 +30,7 @@
 "snippets.detail.folder.title" = "Folder";
 "snippets.detail.folder.titleLabel" = "Title";
 "snippets.detail.folder.shortcutLabel" = "Shortcut";
+"snippets.detail.snippet.languageLabel" = "Language:";
 
 /* Snippets – editor toolbar */
 "snippets.editor.title" = "Snippet Editor";
@@ -129,6 +131,12 @@
 "preferences.shortcuts.recorderLabel.history" = "History:";
 "preferences.shortcuts.recorderLabel.snippets" = "Snippets:";
 "preferences.shortcuts.recorderLabel.restart" = "Restart:";
+
+/* Preferences – Snippets pane */
+"preferences.snippets.sectionHeader.editor" = "Snippet Editor";
+"preferences.snippets.toggleLabel.showGutter" = "Show line numbers";
+"preferences.snippets.toggleLabel.wrapLines" = "Wrap long lines";
+"preferences.snippets.toggleLabel.showMinimap" = "Show minimap";
 
 /* Preferences – Beta pane */
 "preferences.beta.sectionHeader.action" = "Action";

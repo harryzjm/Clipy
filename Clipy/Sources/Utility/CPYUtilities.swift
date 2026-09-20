@@ -44,6 +44,11 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showToolTipOnMenuItem)
         defaultValues.updateValue(NSNumber(value: 500), forKey: Preferences.Menu.maxLengthOfToolTip)
 
+        /* Snippets */
+        defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Snippets.editorShowGutter)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Snippets.editorWrapLines)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Snippets.editorShowMinimap)
+
         /* Beta */
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Beta.pastePlainText)
         defaultValues.updateValue(NSNumber(value: 0), forKey: Preferences.Beta.pastePlainTextModifier)
