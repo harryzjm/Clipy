@@ -23,6 +23,10 @@ class AppDelegate: NSObject {
     // MARK: - Properties
     let screenshotObserver = ScreenShotObserver()
     let disposeBag = DisposeBag()
+    /// Built on demand and released when the window closes, so every open starts from a fresh
+    /// store. Held here rather than in a `shared` on the controller purely to keep the editor to
+    /// one window at a time — see `SnippetsEditorWindowController`.
+    private var snippetsEditorWindowController: SnippetsEditorWindowController?
 
     // MARK: - Class Methods
     static func storeTypesDictionary() -> [String: NSNumber] {
@@ -82,7 +86,15 @@ class AppDelegate: NSObject {
 
     @objc func showSnippetEditorWindow() {
         activateApp()
-        SnippetsEditorWindowController.shared.showWindow(self)
+        let controller = snippetsEditorWindowController ?? makeSnippetsEditorWindowController()
+        controller.showWindow(self)
+    }
+
+    private func makeSnippetsEditorWindowController() -> SnippetsEditorWindowController {
+        let controller = SnippetsEditorWindowController()
+        controller.onWindowClose = { [weak self] in self?.snippetsEditorWindowController = nil }
+        snippetsEditorWindowController = controller
+        return controller
     }
 
     @objc func terminate() {

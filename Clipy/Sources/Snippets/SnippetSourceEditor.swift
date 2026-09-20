@@ -62,6 +62,7 @@ struct SnippetSourceEditor: View {
                     .foregroundStyle(SwiftUI.Color(nsColor: .placeholderTextColor))
                     .padding(.leading, textLeadingInset)
                     .padding(.top, 1)
+                    .padding(.leading, 16)
                     .allowsHitTesting(false)
             }
         }

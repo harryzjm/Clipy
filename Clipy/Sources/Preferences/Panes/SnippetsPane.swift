@@ -17,7 +17,7 @@ import SwiftUI
 struct SnippetsPane: View {
 
     @AppStorage(Preferences.Snippets.editorShowGutter)
-    private var editorShowGutter = true
+    private var editorShowGutter = false
     @AppStorage(Preferences.Snippets.editorWrapLines)
     private var editorWrapLines = true
     @AppStorage(Preferences.Snippets.editorShowMinimap)
