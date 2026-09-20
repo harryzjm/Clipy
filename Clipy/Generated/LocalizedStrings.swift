@@ -296,6 +296,12 @@ internal enum L10n {
     internal enum Sidebar {
       /// Untitled Snippet
       internal static let untitled = L10n.tr("Localizable", "snippets.sidebar.untitled", fallback: "Untitled Snippet")
+      internal enum Accessibility {
+        /// Collapse
+        internal static let collapse = L10n.tr("Localizable", "snippets.sidebar.accessibility.collapse", fallback: "Collapse")
+        /// Expand
+        internal static let expand = L10n.tr("Localizable", "snippets.sidebar.accessibility.expand", fallback: "Expand")
+      }
       internal enum ContextMenu {
         /// Delete
         internal static let delete = L10n.tr("Localizable", "snippets.sidebar.contextMenu.delete", fallback: "Delete")

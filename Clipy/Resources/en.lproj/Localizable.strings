@@ -45,6 +45,8 @@
 "snippets.sidebar.contextMenu.moveToFolder" = "Move to Folder";
 "snippets.sidebar.contextMenu.delete" = "Delete";
 "snippets.sidebar.untitled" = "Untitled Snippet";
+"snippets.sidebar.accessibility.expand" = "Expand";
+"snippets.sidebar.accessibility.collapse" = "Collapse";
 
 /* Snippets – editor content */
 "snippets.emptyContentPlaceholder" = "Please fill in the contents of the snippet";

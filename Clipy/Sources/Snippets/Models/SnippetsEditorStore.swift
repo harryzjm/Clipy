@@ -84,17 +84,6 @@ final class SnippetsEditorStore {
 // MARK: - Bindings
 extension SnippetsEditorStore {
 
-    func expansionBinding(for folderIdentifier: String) -> Binding<Bool> {
-        Binding(get: { self.expandedFolders.contains(folderIdentifier) },
-                set: { isExpanded in
-                    if isExpanded {
-                        self.expandedFolders.insert(folderIdentifier)
-                    } else {
-                        self.expandedFolders.remove(folderIdentifier)
-                    }
-                })
-    }
-
     /// Folder title. The old xib had an `NSTextField` here with no action or delegate connected,
     /// so the right-hand title field looked editable but silently did nothing; this one works.
     func titleBinding(for folderIdentifier: String) -> Binding<String> {
@@ -246,29 +235,85 @@ extension SnippetsEditorStore {
         publish()
     }
 
-    /// Moves a snippet to another folder, appending it at the end. Replaces the cross-folder drag
-    /// the outline view supported; the entry point is now the row's "Move to Folder" menu.
-    ///
-    /// The order of the two store calls is load-bearing: `insertSnippet` re-parents the row, which
-    /// is what makes the following `removeSnippet` on the source folder a documented no-op (see
-    /// `CPYFolder.removeSnippet(_:)`). Swapping them deletes the snippet.
-    func moveSnippet(_ snippetIdentifier: String, toFolder folderIdentifier: String) {
-        guard let fromFolder = folder(containing: snippetIdentifier),
-              let toFolder = folder(identifier: folderIdentifier),
-              fromFolder.identifier != toFolder.identifier,
-              let index = fromFolder.snippets.firstIndex(where: { $0.identifier == snippetIdentifier })
+    /// Drop-driven folder reorder. Because the offsets above are pre-removal, "immediately
+    /// before the target" is the target's own index and "after" is one past it, in both drag
+    /// directions: [A,B,C] with A before C is `toOffset` 2 → [B,A,C]; C before A is 0 → [C,A,B].
+    func moveFolder(_ identifier: String, relativeTo targetIdentifier: String, position: SnippetsDropPosition) {
+        guard identifier != targetIdentifier,
+              let from = folders.firstIndex(where: { $0.identifier == identifier }),
+              let target = folders.firstIndex(where: { $0.identifier == targetIdentifier })
         else { return }
 
-        let snippet = fromFolder.snippets[index]
-        let destination = toFolder.snippets.count
-        toFolder.snippets.append(snippet)
-        fromFolder.snippets.remove(at: index)
-        toFolder.insertSnippet(snippet, index: destination, in: box)
-        fromFolder.removeSnippet(snippet, in: box)
+        let destination = position == .before ? target : target + 1
+        // Both of these land the folder back where it started, at the cost of a renumber.
+        guard destination != from, destination != from + 1 else { return }
+
+        moveFolders(from: IndexSet(integer: from), to: destination)
+    }
+
+    /// Drop-driven snippet move: a reorder when both snippets share a folder, a re-parent at that
+    /// position when they do not — the half `.onMove` could not express at all.
+    func moveSnippet(_ identifier: String, relativeTo targetIdentifier: String, position: SnippetsDropPosition) {
+        guard identifier != targetIdentifier,
+              let source = folder(containing: identifier),
+              let destination = folder(containing: targetIdentifier),
+              let from = source.snippets.firstIndex(where: { $0.identifier == identifier }),
+              let target = destination.snippets.firstIndex(where: { $0.identifier == targetIdentifier })
+        else { return }
+
+        let slot = position == .before ? target : target + 1
+        if source.identifier == destination.identifier {
+            guard slot != from, slot != from + 1 else { return }
+            moveSnippets(in: source.identifier, from: IndexSet(integer: from), to: slot)
+            return
+        }
+        reparent(source.snippets[from], from: source, to: destination, at: slot)
+    }
+
+    /// Appends a snippet to another folder: the "Move to Folder" menu, and a drop onto a folder
+    /// row — the only way to reach a collapsed or empty folder, which has no snippet row to aim at.
+    func moveSnippet(_ snippetIdentifier: String, toFolder folderIdentifier: String) {
+        guard let source = folder(containing: snippetIdentifier),
+              let destination = folder(identifier: folderIdentifier),
+              source.identifier != destination.identifier,
+              let snippet = source.snippets.first(where: { $0.identifier == snippetIdentifier })
+        else { return }
+
+        reparent(snippet, from: source, to: destination, at: destination.snippets.count)
+    }
+
+    /// The one cross-folder path, shared by both drops and the menu. The order of the store
+    /// calls is load-bearing: `insertSnippet` re-parents the row, which
+    /// is what makes the following `removeSnippet` on the source folder a documented no-op (see
+    /// `CPYFolder.removeSnippet(_:)`). Swapping them deletes the snippet.
+    private func reparent(_ snippet: CPYSnippet, from source: CPYFolder, to destination: CPYFolder, at index: Int) {
+        guard source !== destination,
+              let from = source.snippets.firstIndex(where: { $0.identifier == snippet.identifier })
+        else { return }
+
+        source.snippets.remove(at: from)
+        let slot = max(0, min(index, destination.snippets.count))
+        destination.snippets.insert(snippet, at: slot)
+
+        destination.insertSnippet(snippet, index: slot, in: box)
+        source.removeSnippet(snippet, in: box)
+        // The source keeps a hole in its `index` sequence, and `appendSnippet` picks a new
+        // snippet's index from the row *count* — a hole collides on the next Add Snippet.
+        source.rearrangesSnippetIndex(in: box)
 
         publish()
-        expandedFolders.insert(toFolder.identifier)
-        selection = .snippet(snippetIdentifier)
+
+        // Two `@Observable` writes a same-folder reorder never makes, and an animated row move
+        // is the one thing they can disturb: even a redundant write invalidates everything
+        // reading them inside the transaction the move is animating in. So write only on a real
+        // change, and let the selection land after the move is committed — on `RunLoop.main` in
+        // `.common`, since a drag is tracking and the main queue may not be drained.
+        if !expandedFolders.contains(destination.identifier) {
+            expandedFolders.insert(destination.identifier)
+        }
+        let moved = SnippetsSelection.snippet(snippet.identifier)
+        guard selection != moved else { return }
+        RunLoop.main.perform(inModes: [.common]) { [weak self] in self?.selection = moved }
     }
 }
 

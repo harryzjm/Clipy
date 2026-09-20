@@ -76,11 +76,31 @@ class ClipDBTestCase: XCTestCase {
                     ignoreTransaction: Bool = false,
                     timeout: TimeInterval = 30,
                     _ body: @escaping (ClipServiceTransaction) throws -> T) throws -> T {
+        try awaitValue(name, timeout: timeout,
+                       (box ?? self.box).clipTransaction(ignoreTransaction: ignoreTransaction, body))
+    }
+
+    /// The snippet-side twin of `perform`. Snippets have their own serial queue and their own
+    /// database file, so a fetch through here also serialises behind the fire-and-forget writes
+    /// the editor store makes (`CPYFolder.merge(in:)` and friends) — which is what lets a test
+    /// assert that a reorder actually reached the disk.
+    @discardableResult
+    func performSnippet<T>(_ name: String,
+                           on box: ClipyBox? = nil,
+                           ignoreTransaction: Bool = false,
+                           timeout: TimeInterval = 30,
+                           _ body: @escaping (SnippetServiceTransaction) throws -> T) throws -> T {
+        try awaitValue(name, timeout: timeout,
+                       (box ?? self.box).snippetTransaction(ignoreTransaction: ignoreTransaction, body))
+    }
+
+    /// Blocks the main thread until `observable` produces, rethrowing whatever it threw.
+    private func awaitValue<T>(_ name: String, timeout: TimeInterval, _ observable: Observable<T>) throws -> T {
         let expectation = expectation(description: name)
         var value: T?
         var caughtError: Error?
 
-        (box ?? self.box).clipTransaction(ignoreTransaction: ignoreTransaction, body)
+        observable
             .subscribe(onNext: {
                 value = $0
                 expectation.fulfill()
