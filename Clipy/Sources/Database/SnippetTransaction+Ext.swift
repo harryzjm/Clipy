@@ -60,6 +60,14 @@ extension SnippetServiceTransaction {
         try snippetDb.deleteFolder(identifier: identifier)
     }
 
+    /// Empties the whole snippet library — both tables. What goes in afterwards is the caller's
+    /// call: a replacing import runs this and `importFolders(_:)` inside one transaction closure,
+    /// so a failure half way through rolls the old graph back.
+    func clearAllFolders() throws {
+        try snippetDb.deleteAllSnippets()
+        try snippetDb.deleteAllFolders()
+    }
+
     /// Rewrites `folder.index` from the array order, in one transaction.
     func rearrangeFolders(_ folders: [CPYFolder]) throws {
         let indexes = folders.enumerated().map { (identifier: $0.element.identifier, index: $0.offset) }

@@ -7,6 +7,7 @@
 /* Status bar menu */
 "menu.preferences" = "Preferences...";
 "menu.snippets" = "Snippets...";
+"menu.clearSnippets" = "Clear Snippets";
 "menu.restart" = "Restart";
 "menu.quit" = "Quit";
 "menu.historyTitle" = "History";
@@ -79,7 +80,9 @@
 
 /* Alert – import snippets */
 "alert.importSnippets.title" = "Import Snippets";
-"alert.importSnippets.message" = "Folders and snippets in this file replace any existing ones with the same identifier.";
+"alert.importSnippets.message" = "Insert adds these folders and snippets, replacing any existing ones with the same identifier. Replace deletes every existing folder and snippet first.";
+"alert.importSnippets.insert" = "Insert";
+"alert.importSnippets.replace" = "Replace All";
 
 /* Preferences – General pane */
 "preferences.general.sectionHeader.behavior" = "Behavior";

@@ -131,6 +131,26 @@ class AppDelegate: NSObject {
         AppEnvironment.current.clipService.clearAll()
     }
 
+    /// No confirmation, by design — the status menu's twin of Clear History, which only asks
+    /// because it has a preference to ask. Deliberately not routed through the editor: the window
+    /// may well be closed, so the write goes straight to the box and the editor, if one is open,
+    /// is told to re-read afterwards.
+    @objc func deleteAllSnippets() {
+        AppEnvironment.current.box
+            .snippetTransaction { try $0.clearAllFolders() }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in
+                // Folder shortcuts outlive their folders otherwise; they are keyed by identifier
+                // in UserDefaults, and every folder just went away.
+                AppEnvironment.current.hotKeyService.unregisterAllSnippetHotKeys()
+                self?.snippetsEditorWindowController?.resetAndReload()
+            }, onError: { error in
+                NSSound.beep()
+                lError(error)
+            })
+            .disposed(by: disposeBag)
+    }
+
     @objc func selectClipMenuItem(_ sender: NSMenuItem) {
         guard let primaryKey = sender.representedObject as? String else {
             lError("Cannot fetch clip primary key")

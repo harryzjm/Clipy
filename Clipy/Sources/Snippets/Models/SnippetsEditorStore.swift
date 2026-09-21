@@ -79,6 +79,16 @@ final class SnippetsEditorStore {
             })
             .disposed(by: disposeBag)
     }
+
+    /// `reload()` for the case where the library was swapped out wholesale — a replacing import, or
+    /// the status menu's Delete All Snippets. Both leave `selection` and `expandedFolders` pointing
+    /// at identifiers that no longer exist, and `reload()` only picks a new selection when there is
+    /// none, so the detail pane would otherwise sit empty on a row the sidebar no longer draws.
+    func resetAndReload() {
+        selection = nil
+        expandedFolders = []
+        reload()
+    }
 }
 
 // MARK: - Bindings
@@ -377,20 +387,50 @@ extension SnippetsEditorStore {
         pendingImportFolders = []
     }
 
-    func confirmPendingImport() {
+    /// `.insert` upserts the file on top of what is there; `.replace` makes the file the whole
+    /// library. Only the write and what it invalidates differ — the error path is shared, and both
+    /// end in a re-read, because either way the working copy no longer matches the database.
+    func confirmPendingImport(mode: SnippetImportMode) {
         let importFolders = pendingImportFolders
         pendingImportFolders = []
         guard !importFolders.isEmpty else { return }
 
-        // Offset against the working copy as of *now*, not as of the drop.
-        if let lastIndex = folders.map({ $0.index }).max() {
-            importFolders.forEach { $0.index += lastIndex }
+        // Identifiers the import does not carry over. Read before the write, used after it.
+        let droppedFolders = mode == .replace
+            ? folders.map { $0.identifier }.filter { identifier in
+                !importFolders.contains { $0.identifier == identifier }
+            }
+            : []
+
+        if mode == .insert {
+            // Offset against the working copy as of *now*, not as of the drop. A replacing import
+            // has nothing to append after, so the file's own indices are the order.
+            if let lastIndex = folders.map({ $0.index }).max() {
+                importFolders.forEach { $0.index += lastIndex }
+            }
         }
+
         box
-            .snippetTransaction { try $0.importFolders(importFolders) }
+            .snippetTransaction { transaction in
+                // One closure, one transaction: a failure between the two rolls the old graph back.
+                if mode == .replace {
+                    try transaction.clearAllFolders()
+                }
+                try transaction.importFolders(importFolders)
+            }
             .observe(on: MainScheduler.instance)
             .run(onNext: { [weak self] in
-                self?.reload()
+                // Folder shortcuts are keyed by identifier in UserDefaults, exactly as in
+                // `deleteSelection()`; a folder the import dropped would keep one forever. After
+                // the write, so a failed import never costs the user a hot key.
+                droppedFolders.forEach {
+                    AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: $0)
+                }
+                guard mode == .replace else {
+                    self?.reload()
+                    return
+                }
+                self?.resetAndReload()
             }, onError: { [weak self] error in
                 NSSound.beep()
                 lError(error)

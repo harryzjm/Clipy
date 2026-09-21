@@ -54,7 +54,11 @@ struct SnippetsEditorView: View {
         }
         .alert(L10n.Alert.ImportSnippets.title, isPresented: $store.isImportConfirmationPresented) {
             Button(L10n.Common.cancel, role: .cancel) { store.cancelPendingImport() }
-            Button(L10n.Snippets.Editor.Toolbar.`import`) { store.confirmPendingImport() }
+            Button(L10n.Alert.ImportSnippets.insert) { store.confirmPendingImport(mode: .insert) }
+            // Destructive: it drops every folder and snippet the user already has, with no undo.
+            Button(L10n.Alert.ImportSnippets.replace, role: .destructive) {
+                store.confirmPendingImport(mode: .replace)
+            }
         } message: {
             Text(L10n.Alert.ImportSnippets.message)
         }

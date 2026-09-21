@@ -75,6 +75,13 @@ final class SnippetsEditorWindowController: NSWindowController {
         super.showWindow(sender)
         window?.makeKeyAndOrderFront(self)
     }
+
+    /// Re-reads the graph after something outside this window emptied it — the status menu's
+    /// Delete All Snippets. The store is private because it is this window's detached working copy;
+    /// this is the one thing an outsider is allowed to ask of it.
+    func resetAndReload() {
+        store.resetAndReload()
+    }
 }
 
 extension SnippetsEditorWindowController: NSWindowDelegate {

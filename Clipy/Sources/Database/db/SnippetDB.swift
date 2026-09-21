@@ -100,6 +100,16 @@ extension SnippetDB {
                       where: CPYSnippetTable.Properties.folderIdentifier == folderIdentifier)
     }
 
+    /// A `DELETE` with no `WHERE` — the shape SQLite's truncate optimization targets — rather than
+    /// a predicate that happens to match every row. Same reasoning as `ClipDB.deleteAllClips()`.
+    func deleteAllSnippets() throws {
+        try db.delete(fromTable: CPYSnippetTable.tableName)
+    }
+
+    func deleteAllFolders() throws {
+        try db.delete(fromTable: CPYFolderTable.tableName)
+    }
+
     /// Rewrites just the ordering column for a batch of rows, inside the caller's transaction.
     func updateFolderIndexes(_ indexes: [(identifier: String, index: Int)]) throws {
         guard !indexes.isEmpty else { return }

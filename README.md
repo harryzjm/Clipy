@@ -13,7 +13,7 @@ Clipy is a Clipboard extension app for macOS.
 
 ---
 
-__Requirement__: macOS 10.15 Catalina or higher
+__Requirement__: macOS 10.14 Catalina or higher
 
 __Distribution Site__ : <https://clipy-app.com>
 
@@ -24,17 +24,18 @@ __Distribution Site__ : <https://clipy-app.com>
 
 
 ### Development Environment
-* macOS 10.15 Catalina
-* Xcode 12.3
+* macOS 10.14 Catalina
+* Xcode 27.0
 * Swift 5
 
 ### Why have this fork
 1. May be [github.com/Clipy/Clipy](https://github.com/Clipy/Clipy) is abandoned?
-2. Add encryption and save the main key into keychain
+2. Add **encryption** and save the main key into keychain
 3. Add search function
 4. Support dark mode
 5. Support Search Mode (Like, Glob, FTS)
-6. Update third-party libraries
+6. Massive buff snippets
+7. Update third-party libraries
 
 ### Translate old snippets  
 ```shell

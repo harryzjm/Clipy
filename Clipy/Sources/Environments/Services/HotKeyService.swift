@@ -187,6 +187,13 @@ extension HotKeyService {
         folderKeyCombos = keyCombos
     }
 
+    /// Drops every folder shortcut at once, for the paths that empty the whole snippet library.
+    /// Assigning `nil` is what removes the defaults key rather than leaving an empty dictionary.
+    func unregisterAllSnippetHotKeys() {
+        folderKeyCombos?.keys.forEach { HotKeyCenter.shared.unregisterHotKey(with: $0) }
+        folderKeyCombos = nil
+    }
+
     func unregisterSnippetHotKey(with identifier: String) {
         // Unregister
         HotKeyCenter.shared.unregisterHotKey(with: identifier)

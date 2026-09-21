@@ -29,6 +29,15 @@ enum SnippetsSelection: Hashable {
     }
 }
 
+/// What an import file does to the library it lands in. Picked in the confirmation alert, so both
+/// the toolbar's Import button and the window's drop destination offer the same two.
+enum SnippetImportMode {
+    /// Upsert by identifier, appended after what is already there. The historical behaviour.
+    case insert
+    /// The file *is* the library: everything existing is dropped first.
+    case replace
+}
+
 /// Value-type projection of `CPYSnippet` for the sidebar.
 ///
 /// See `SnippetsEditorStore.rows` for why the editor does not hand `CPYSnippet` to SwiftUI

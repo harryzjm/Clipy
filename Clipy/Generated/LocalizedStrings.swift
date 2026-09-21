@@ -40,8 +40,12 @@ internal enum L10n {
       internal static let message = L10n.tr("Localizable", "alert.deleteSnippet.message", fallback: "Are you sure want to delete this item?")
     }
     internal enum ImportSnippets {
-      /// Folders and snippets in this file replace any existing ones with the same identifier.
-      internal static let message = L10n.tr("Localizable", "alert.importSnippets.message", fallback: "Folders and snippets in this file replace any existing ones with the same identifier.")
+      /// Insert
+      internal static let insert = L10n.tr("Localizable", "alert.importSnippets.insert", fallback: "Insert")
+      /// Insert adds these folders and snippets, replacing any existing ones with the same identifier. Replace deletes every existing folder and snippet first.
+      internal static let message = L10n.tr("Localizable", "alert.importSnippets.message", fallback: "Insert adds these folders and snippets, replacing any existing ones with the same identifier. Replace deletes every existing folder and snippet first.")
+      /// Replace All
+      internal static let replace = L10n.tr("Localizable", "alert.importSnippets.replace", fallback: "Replace All")
       /// Alert – import snippets
       internal static let title = L10n.tr("Localizable", "alert.importSnippets.title", fallback: "Import Snippets")
     }
@@ -71,6 +75,8 @@ internal enum L10n {
     internal static let addButton = L10n.tr("Localizable", "excludedApps.addButton", fallback: "Add")
   }
   internal enum Menu {
+    /// Clear Snippets
+    internal static let clearSnippets = L10n.tr("Localizable", "menu.clearSnippets", fallback: "Clear Snippets")
     /// History
     internal static let historyTitle = L10n.tr("Localizable", "menu.historyTitle", fallback: "History")
     /// Status bar menu
