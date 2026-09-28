@@ -26,6 +26,8 @@ struct FilterMenuConfig {
     let maxShowHistory: Int
 
     let matchMode: FilterMatchMode
+    /// Only consulted in `.fts` mode, where it decides how the query is split into tokens.
+    let ftsTokenizer: ClipFtsTokenizer
 
     let showIconInTheMenu: Bool
 
@@ -43,6 +45,7 @@ struct FilterMenuConfig {
             placeInsideFolder: defaults.integer(forKey: Preferences.Menu.numberOfItemsPlaceInsideFolder),
             maxShowHistory: defaults.integer(forKey: Preferences.General.maxShowHistorySize),
             matchMode: FilterMatchMode(rawValue: defaults.integer(forKey: Preferences.Menu.filterMatchMode)) ?? .like,
+            ftsTokenizer: defaults.string(forKey: Preferences.Menu.ftsTokenizer).flatMap(ClipFtsTokenizer.init(rawValue:)) ?? .verbatim,
             showIconInTheMenu: defaults.bool(forKey: Preferences.Menu.showIconInTheMenu),
             menuFontSize: CGFloat(defaults.float(forKey: Preferences.General.menuFontSize)))
     }

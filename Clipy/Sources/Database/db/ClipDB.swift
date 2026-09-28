@@ -10,6 +10,7 @@
 
 import Foundation
 import WCDBSwift
+import MMKV
 
 /// Records what a transaction changed, so `beforeCommit` can turn it into a change signal.
 ///
@@ -51,11 +52,25 @@ final class ClipDB: DataStore {
     fileprivate static let markOpen = "\u{2}"
     fileprivate static let markClose = "\u{3}"
 
-    /// The tokenizer is registered globally inside WCDB, but still has to be attached to this
+    /// A Pinyin index is useless until WCDB has its dictionary — rows written before it would be
+    /// indexed with no tokens at all — so it is loaded here, once the probe and the migrations
+    /// have run and before any transaction can reach this store.
+    override init(rootPath: String, name: String, secretCode: Data? = nil, store: MMKV, recovery: DatabaseRecovery? = nil) {
+        super.init(rootPath: rootPath, name: name, secretCode: secretCode, store: store, recovery: recovery)
+        if (try? ftsTokenizer()) == .pinyin {
+            _ = PinyinDictionary.loaded
+        }
+    }
+
+    /// Tokenizers are registered globally inside WCDB, but still have to be attached to this
     /// database's handle — without it both creating and querying `clip_fts` fail with an unknown
     /// tokenizer. Runs before `migrationList()`, which is what migration 1 needs.
+    ///
+    /// Both are attached whichever one `clip_fts` uses: switching drops the old table, and
+    /// dropping an fts5 table instantiates its tokenizer first.
     override func configCustomDatabase(_ db: Database) throws {
         db.add(tokenizer: BuiltinTokenizer.Verbatim)
+        db.add(tokenizer: BuiltinTokenizer.Pinyin)
         db.setAutoMergeFTS5Index(enable: true)
     }
 

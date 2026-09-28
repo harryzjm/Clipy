@@ -48,6 +48,8 @@ struct PreferencesRootView: View {
     }
 
     @State private var selection: Pane? = .general
+    /// Outlives pane switches; applied only when the window closes — see `FtsTokenizerDraft`.
+    @State private var tokenizerDraft = FtsTokenizerDraft()
 
     private var current: Pane { selection ?? .general }
 
@@ -65,6 +67,11 @@ struct PreferencesRootView: View {
                 .frame(minWidth: 480, maxWidth: .infinity, minHeight: 420, maxHeight: .infinity)
         }
         .frame(minWidth: 680, minHeight: 470)
+        .environment(tokenizerDraft)
+        .background(WindowCloseObserver { [tokenizerDraft] in
+            // Out of `willClose`: `settle()` may put up a modal alert.
+            DispatchQueue.main.async { tokenizerDraft.settle() }
+        })
     }
 
     @ViewBuilder

@@ -57,6 +57,14 @@
 /* Alert – clear clipboard history */
 "alert.clearHistory.message" = "Are you sure you want to clear your clipboard history?";
 
+/* Alert – switch the FTS tokenizer */
+"alert.switchTokenizer.title" = "Switch FTS Tokenizer";
+"alert.switchTokenizer.message" = "Switching to %@ clears your clipboard history and rebuilds the search index. This cannot be undone.";
+"alert.switchTokenizer.confirm" = "Switch";
+
+/* Alert – clear snippets */
+"alert.clearSnippets.message" = "Are you sure you want to delete every snippet and folder?";
+
 /* Alert – add to login items */
 "alert.loginItem.title" = "Launch Clipy on system startup?";
 "alert.loginItem.message" = "You can change this setting in the Preferences if you want.";
@@ -112,6 +120,8 @@
 "preferences.menu.toggleLabel.markWithNumbers" = "Mark menu items with numbers";
 "preferences.menu.sectionHeader.filter" = "Filter";
 "preferences.menu.pickerLabel.matchMode" = "Match mode:";
+"preferences.menu.pickerLabel.tokenizer" = "Tokenizer:";
+"preferences.menu.tokenizer.pendingNote" = "Applied when you close Settings. Changing the tokenizer clears your clipboard history.";
 "preferences.menu.sectionHeader.toolTip" = "Tool Tip";
 "preferences.menu.toggleLabel.showToolTip" = "Show tool tip on a menu item";
 "preferences.menu.unitLabel.tooltipLength" = "Max length of tool tip string:";

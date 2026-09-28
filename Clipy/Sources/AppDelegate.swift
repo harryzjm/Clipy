@@ -108,34 +108,16 @@ class AppDelegate: NSObject {
     }
 
     @objc func clearAllHistory() {
-        let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Preferences.Menu.showAlertBeforeClearHistory)
-        if isShowAlert {
-            let alert = NSAlert()
-            alert.messageText = L10n.Common.clearHistory
-            alert.informativeText = L10n.Alert.ClearHistory.message
-            alert.addButton(withTitle: L10n.Common.clearHistory)
-            alert.addButton(withTitle: L10n.Common.cancel)
-            alert.showsSuppressionButton = true
-
-            NSApp.activate(ignoringOtherApps: true)
-
-            let result = alert.runModal()
-            if result != NSApplication.ModalResponse.alertFirstButtonReturn { return }
-
-            if alert.suppressionButton?.state == NSControl.StateValue.on {
-                AppEnvironment.current.defaults.set(false, forKey: Preferences.Menu.showAlertBeforeClearHistory)
-            }
-            AppEnvironment.current.defaults.synchronize()
-        }
+        guard NSAlert.confirmDestructive(title: L10n.Common.clearHistory, message: L10n.Alert.ClearHistory.message) else { return }
 
         AppEnvironment.current.clipService.clearAll()
     }
 
-    /// No confirmation, by design — the status menu's twin of Clear History, which only asks
-    /// because it has a preference to ask. Deliberately not routed through the editor: the window
-    /// may well be closed, so the write goes straight to the box and the editor, if one is open,
-    /// is told to re-read afterwards.
+    /// Deliberately not routed through the editor: the window may well be closed, so the write
+    /// goes straight to the box and the editor, if one is open, is told to re-read afterwards.
     @objc func deleteAllSnippets() {
+        guard NSAlert.confirmDestructive(title: L10n.Menu.clearSnippets, message: L10n.Alert.ClearSnippets.message) else { return }
+
         AppEnvironment.current.box
             .snippetTransaction { try $0.clearAllFolders() }
             .observe(on: MainScheduler.instance)
@@ -251,6 +233,7 @@ extension AppDelegate: NSApplicationDelegate {
         bind()
 
         // Services
+        AppEnvironment.current.clipService.syncFtsTokenizerPreference()
         AppEnvironment.current.clipService.startMonitoring()
         AppEnvironment.current.dataCleanService.cleanDatas()
         AppEnvironment.current.excludeAppService.startMonitoring()

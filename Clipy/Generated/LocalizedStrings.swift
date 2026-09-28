@@ -23,6 +23,10 @@ internal enum L10n {
       /// Alert – clear clipboard history
       internal static let message = L10n.tr("Localizable", "alert.clearHistory.message", fallback: "Are you sure you want to clear your clipboard history?")
     }
+    internal enum ClearSnippets {
+      /// Alert – clear snippets
+      internal static let message = L10n.tr("Localizable", "alert.clearSnippets.message", fallback: "Are you sure you want to delete every snippet and folder?")
+    }
     internal enum DatabaseReset {
       /// The database file is damaged, so nothing in it can be read. Clipy cannot save or paste anything until it is deleted and started over. The clipboard history and snippets it holds are unreadable either way.
       internal static let corrupted = L10n.tr("Localizable", "alert.databaseReset.corrupted", fallback: "The database file is damaged, so nothing in it can be read. Clipy cannot save or paste anything until it is deleted and started over. The clipboard history and snippets it holds are unreadable either way.")
@@ -58,6 +62,16 @@ internal enum L10n {
       internal static let message = L10n.tr("Localizable", "alert.loginItem.message", fallback: "You can change this setting in the Preferences if you want.")
       /// Alert – add to login items
       internal static let title = L10n.tr("Localizable", "alert.loginItem.title", fallback: "Launch Clipy on system startup?")
+    }
+    internal enum SwitchTokenizer {
+      /// Switch
+      internal static let confirm = L10n.tr("Localizable", "alert.switchTokenizer.confirm", fallback: "Switch")
+      /// Switching to %@ clears your clipboard history and rebuilds the search index. This cannot be undone.
+      internal static func message(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "alert.switchTokenizer.message", String(describing: p1), fallback: "Switching to %@ clears your clipboard history and rebuilds the search index. This cannot be undone.")
+      }
+      /// Alert – switch the FTS tokenizer
+      internal static let title = L10n.tr("Localizable", "alert.switchTokenizer.title", fallback: "Switch FTS Tokenizer")
     }
   }
   internal enum Common {
@@ -211,6 +225,8 @@ internal enum L10n {
       internal enum PickerLabel {
         /// Match mode:
         internal static let matchMode = L10n.tr("Localizable", "preferences.menu.pickerLabel.matchMode", fallback: "Match mode:")
+        /// Tokenizer:
+        internal static let tokenizer = L10n.tr("Localizable", "preferences.menu.pickerLabel.tokenizer", fallback: "Tokenizer:")
       }
       internal enum SectionHeader {
         /// Filter
@@ -233,6 +249,10 @@ internal enum L10n {
         internal static let showIcon = L10n.tr("Localizable", "preferences.menu.toggleLabel.showIcon", fallback: "Display icons in menu items")
         /// Show tool tip on a menu item
         internal static let showToolTip = L10n.tr("Localizable", "preferences.menu.toggleLabel.showToolTip", fallback: "Show tool tip on a menu item")
+      }
+      internal enum Tokenizer {
+        /// Applied when you close Settings. Changing the tokenizer clears your clipboard history.
+        internal static let pendingNote = L10n.tr("Localizable", "preferences.menu.tokenizer.pendingNote", fallback: "Applied when you close Settings. Changing the tokenizer clears your clipboard history.")
       }
       internal enum Unit {
         /// chars

@@ -24,13 +24,19 @@ import WCDBSwift
 /// fresh rowid without firing AFTER DELETE for the row it dropped. Writing the rowid explicitly
 /// and clearing the stale row in a BEFORE INSERT trigger keeps the mirror honest without taking
 /// on that constraint.
+///
+/// The tokenizer below is only what migration 1 creates the table with. Users can switch it to
+/// `BuiltinTokenizer.Pinyin` (`ClipFtsTokenizer`), which rebuilds the table under the same name
+/// and columns via `ClipDB.recreateFtsIndex(tokenizer:)`. The table's own schema is the record
+/// of which one it has — read it with `ClipDB.ftsTokenizer()`, never off this binding.
 struct CPYClipFtsTable: TableCodable {
 
     static let tableName = "clip_fts"
 
     /// `title` must stay the first case. A virtual table's column order follows declaration
     /// order, and `highlight(clip_fts, 0, …)` addresses the column by number — reordering these
-    /// would silently highlight `data_hash` instead.
+    /// would silently highlight `data_hash` instead. `ClipDB.recreateFtsIndex(tokenizer:)` spells
+    /// the same order out by hand.
     var title: String = ""
     var dataHash: String = ""
 

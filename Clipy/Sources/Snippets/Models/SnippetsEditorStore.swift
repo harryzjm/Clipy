@@ -341,7 +341,8 @@ extension SnippetsEditorStore {
 // MARK: - Import / Export
 extension SnippetsEditorStore {
 
-    /// Picking a file only stages it; `confirmPendingImport()` is what writes.
+    /// Picking a file only stages it; `confirmPendingImport()` is what writes — immediately when
+    /// there is nothing to overwrite, otherwise once the insert/replace alert comes back.
     func importSnippets() {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
@@ -355,7 +356,8 @@ extension SnippetsEditorStore {
 
     /// The single gate both the toolbar button and the window's drop destination go through.
     /// Returns whether `url` was accepted, so a drop can refuse the file and let the Finder animate
-    /// it back. A file that will not parse is rejected quietly — beep and log, no alert.
+    /// it back. A file that will not parse is rejected quietly — beep and log, no alert. An empty
+    /// library skips the confirmation and imports straight away; there is nothing to lose yet.
     @discardableResult
     func stageImport(from url: URL) -> Bool {
         // A second staged import would silently replace the first while its alert is still up.
@@ -374,6 +376,13 @@ extension SnippetsEditorStore {
                 return false
             }
             pendingImportFolders = importFolders
+            // Nothing to replace, so the two modes do the same thing and the alert would be a
+            // question with one answer. `.insert` on an empty library is that answer: no existing
+            // folder to upsert over, and `clearAllFolders()` would have nothing to clear.
+            guard !folders.isEmpty else {
+                confirmPendingImport(mode: .insert)
+                return true
+            }
             isImportConfirmationPresented = true
             return true
         } catch {

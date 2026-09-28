@@ -40,6 +40,7 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showAlertBeforeClearHistory)
 
         defaultValues.updateValue(NSNumber(value: FilterMatchMode.like.rawValue), forKey: Preferences.Menu.filterMatchMode)
+        defaultValues.updateValue(ClipFtsTokenizer.verbatim.rawValue as NSString, forKey: Preferences.Menu.ftsTokenizer)
 
         defaultValues.updateValue(NSNumber(value: true), forKey: Preferences.Menu.showToolTipOnMenuItem)
         defaultValues.updateValue(NSNumber(value: 500), forKey: Preferences.Menu.maxLengthOfToolTip)

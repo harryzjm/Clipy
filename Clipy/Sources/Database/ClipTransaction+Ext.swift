@@ -98,3 +98,27 @@ extension ClipServiceTransaction {
             .filter { $0.isNotEmpty }
     }
 }
+
+// MARK: - FTS tokenizer
+extension ClipServiceTransaction {
+
+    /// What `clip_fts` is actually built with — see `ClipDB.ftsTokenizer()`.
+    func ftsTokenizer() throws -> ClipFtsTokenizer {
+        try clipDb.ftsTokenizer()
+    }
+
+    /// Clears the whole history and rebuilds `clip_fts`, empty, under `tokenizer`.
+    ///
+    /// One transaction for both, so there is never a moment where rows indexed by one tokenizer
+    /// sit in a table read by the other. Clearing goes through `clearAllClips()`, so live menus
+    /// see the usual `.all` change; the files and thumbnails are the caller's to drop, exactly as
+    /// for a plain clear — see `ClipService.switchFtsTokenizer(to:completion:)`.
+    func switchFtsTokenizer(to tokenizer: ClipFtsTokenizer) throws {
+        try clearAllClips()
+        try clipDb.recreateFtsIndex(tokenizer: tokenizer)
+        #if DEBUG
+        let actual = try clipDb.ftsTokenizer()
+        assert(actual == tokenizer, "clip_fts recreated as \(actual), expected \(tokenizer)")
+        #endif
+    }
+}

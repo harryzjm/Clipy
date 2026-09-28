@@ -66,13 +66,17 @@ enum FilterMatchMode: Int, CaseIterable, Identifiable {
 struct ClipFilter {
     let query: String
     let mode: FilterMatchMode
+    /// How `clip_fts` tokenizes, and so how an `.fts` query has to be spelled. Ignored by
+    /// `.like` / `.glob`.
+    let tokenizer: ClipFtsTokenizer
     /// The text fts5 reported as actually hit in one particular title. Always empty for
     /// `.like` / `.glob`, whose spans are derived from the query instead.
     let matchedTerms: [String]
 
-    init(query: String, mode: FilterMatchMode, matchedTerms: [String] = []) {
+    init(query: String, mode: FilterMatchMode, tokenizer: ClipFtsTokenizer = .verbatim, matchedTerms: [String] = []) {
         self.query = query
         self.mode = mode
+        self.tokenizer = tokenizer
         self.matchedTerms = matchedTerms
     }
 
@@ -90,7 +94,7 @@ struct ClipFilter {
     /// Attaches one row's hits. A no-op outside `.fts`, which is the only mode that has any.
     func marking(_ terms: [String]) -> ClipFilter {
         guard mode == .fts else { return self }
-        return ClipFilter(query: query, mode: mode, matchedTerms: terms)
+        return ClipFilter(query: query, mode: mode, tokenizer: tokenizer, matchedTerms: terms)
     }
 
     /// Every span to mark in `text`, ordered by start and non-overlapping. Empty means mark
@@ -168,15 +172,42 @@ private extension ClipFilter {
 // MARK: - FTS
 private extension ClipFilter {
     /// Turns the raw field text into an FTS5 MATCH expression: split on whitespace, each piece
-    /// escaped into a prefix phrase, which FTS5 then ANDs together.
+    /// becomes a prefix phrase (or, for pinyin, an OR of them), and FTS5 ANDs the pieces together.
     ///
-    /// The quoting is the safety-critical part — a bare `"`, `(`, `-` or `OR` reads as query
-    /// syntax, and typing one character at a time would walk through a series of syntax errors.
-    /// The trailing `*` is what makes search-as-you-type useful: `hel` matches `hello`.
+    /// The trailing `*` is what makes search-as-you-type useful: `hel` matches `hello`, `zhongg`
+    /// matches `中国`.
     var ftsMatchExpression: String {
-        query.split(whereSeparator: \.isWhitespace)
-            .map { "\"\($0.replacingOccurrences(of: "\"", with: "\"\""))\"*" }
-            .joined(separator: " ")
+        let pieces = query.split(whereSeparator: \.isWhitespace)
+        switch tokenizer {
+        case .verbatim:
+            // The quoting is the safety-critical part — a bare `"`, `(`, `-` or `OR` reads as
+            // query syntax, and typing one character at a time would walk through a series of
+            // syntax errors.
+            return pieces
+                .map { "\"\($0.replacingOccurrences(of: "\"", with: "\"\""))\"*" }
+                .joined(separator: " ")
+        case .pinyin:
+            return Self.pinyinMatchExpression(for: pieces)
+        }
+    }
+
+    /// Each piece is expanded into every way to read it as characters — `xian` is `"xian"*` or
+    /// `"xi an"*` — one phrase per reading, ORed. The index holds a token per character, so the
+    /// phrase's adjacency is what ties the syllables to consecutive characters.
+    ///
+    /// Empty — which the caller turns into "no hits" — as soon as one piece cannot be pinyin at
+    /// all: the Pinyin index holds nothing but Chinese characters, so a piece like `2024` or
+    /// `中` could never match, and the AND would fail anyway. The tokens are plain `[a-z]`, so
+    /// there is nothing left to quote.
+    static func pinyinMatchExpression(for pieces: [Substring]) -> String {
+        var groups: [String] = []
+        for piece in pieces {
+            let phrases = PinyinQuery.phrases(for: String(piece))
+                .map { "\"\($0.joined(separator: " "))\"*" }
+            guard !phrases.isEmpty else { return "" }
+            groups.append(phrases.count == 1 ? phrases[0] : "(\(phrases.joined(separator: " OR ")))")
+        }
+        return groups.joined(separator: " AND ")
     }
 
     /// Every occurrence of every hit fts5 reported, merged where they overlap.
