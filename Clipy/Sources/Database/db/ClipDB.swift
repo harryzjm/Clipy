@@ -52,25 +52,12 @@ final class ClipDB: DataStore {
     fileprivate static let markOpen = "\u{2}"
     fileprivate static let markClose = "\u{3}"
 
-    /// A Pinyin index is useless until WCDB has its dictionary — rows written before it would be
-    /// indexed with no tokens at all — so it is loaded here, once the probe and the migrations
-    /// have run and before any transaction can reach this store.
-    override init(rootPath: String, name: String, secretCode: Data? = nil, store: MMKV, recovery: DatabaseRecovery? = nil) {
-        super.init(rootPath: rootPath, name: name, secretCode: secretCode, store: store, recovery: recovery)
-        if (try? ftsTokenizer()) == .pinyin {
-            _ = PinyinDictionary.loaded
-        }
-    }
-
-    /// Tokenizers are registered globally inside WCDB, but still have to be attached to this
+    /// `ClipyTokenizer` is registered globally inside WCDB, but still has to be attached to this
     /// database's handle — without it both creating and querying `clip_fts` fail with an unknown
     /// tokenizer. Runs before `migrationList()`, which is what migration 1 needs.
-    ///
-    /// Both are attached whichever one `clip_fts` uses: switching drops the old table, and
-    /// dropping an fts5 table instantiates its tokenizer first.
     override func configCustomDatabase(_ db: Database) throws {
-        db.add(tokenizer: BuiltinTokenizer.Verbatim)
-        db.add(tokenizer: BuiltinTokenizer.Pinyin)
+        _ = ClipyTokenizer.registered
+        db.add(tokenizer: ClipyTokenizer.name)
         db.setAutoMergeFTS5Index(enable: true)
     }
 
@@ -407,6 +394,10 @@ private extension ClipDB {
     /// Ordering by `update_time` instead would sort the whole match set, because an fts5 table
     /// cannot index that column. The second query then orders by `update_time` off `clip`'s own
     /// index, which agrees with the rowid ordering the hits were limited by.
+    ///
+    /// A prefix term stops early only while its length has a prefix index (`prefix='1 2'` — see
+    /// `CPYClipFtsTable`); a longer prefix is merged in full before the first row comes back, but
+    /// by then it matches only a handful of terms.
     ///
     /// The second query carries no `LIMIT` and needs none: `matchedTerms` is built from the
     /// first query's rows, so it holds at most `limit` entries.

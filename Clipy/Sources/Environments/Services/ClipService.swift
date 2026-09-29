@@ -69,45 +69,6 @@ final class ClipService {
             .disposed(by: writeBag)
     }
 
-    /// Rebuilds `clip_fts` under `tokenizer`, clearing the whole history with it.
-    ///
-    /// The preference is written only once the transaction has committed, so it never names a
-    /// tokenizer the index does not have. On failure it is left alone and `completion` gets
-    /// `false`. `completion` runs on main.
-    func switchFtsTokenizer(to tokenizer: ClipFtsTokenizer, completion: ((Bool) -> Void)? = nil) {
-        box.clipTransaction { try $0.switchFtsTokenizer(to: tokenizer) }
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [assetStore = self.assetStore] in
-                // Same as `clearAll()`: nothing survives, so drop `file/` and the thumbnails whole.
-                assetStore.removeAllAssets()
-                AppEnvironment.current.defaults.set(tokenizer.rawValue, forKey: Preferences.Menu.ftsTokenizer)
-                completion?(true)
-            }, onError: { error in
-                lError("switching the FTS tokenizer to \(tokenizer) failed:", error)
-                completion?(false)
-            })
-            .disposed(by: writeBag)
-    }
-
-    /// Realigns `Preferences.Menu.ftsTokenizer` with what `clip_fts` was actually built with.
-    ///
-    /// The schema wins, and nothing is cleared: this only covers the preference having drifted —
-    /// a crash between a switch's commit and its preference write, or a history database that was
-    /// deleted or reset while the preference stayed behind. Run once at launch.
-    func syncFtsTokenizerPreference() {
-        box.clipTransaction { try $0.ftsTokenizer() }
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { tokenizer in
-                let defaults = AppEnvironment.current.defaults
-                guard defaults.string(forKey: Preferences.Menu.ftsTokenizer) != tokenizer.rawValue else { return }
-                lWarning("FTS tokenizer preference out of step with clip_fts; realigning to \(tokenizer)")
-                defaults.set(tokenizer.rawValue, forKey: Preferences.Menu.ftsTokenizer)
-            }, onError: { error in
-                lError(error)
-            })
-            .disposed(by: writeBag)
-    }
-
     func delete(with clip: CPYClip) {
         let dataHash = clip.dataHash
         box.clipTransaction { try $0.deleteClip(dataHash: dataHash) }

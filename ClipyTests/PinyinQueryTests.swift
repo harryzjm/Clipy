@@ -78,15 +78,22 @@ final class PinyinQueryTests: XCTestCase {
     }
 
     func testMatchExpressionOrsReadingsAndAndsPieces() {
-        let filter = ClipFilter(query: "xian zg", mode: .fts, tokenizer: .pinyin)
-        XCTAssertEqual(filter.pattern, "(\"xian\"* OR \"xi an\"* OR \"xia n\"*) AND \"z g\"*")
+        let filter = ClipFilter(query: "xian zg", mode: .fts)
+        XCTAssertEqual(filter.pattern, "(\"xian\"* OR \"xi an\"* OR \"xia n\"*) AND (\"zg\"* OR \"z g\"*)")
     }
 
-    func testMatchExpressionIsEmptyWhenAnyPieceIsNotPinyin() {
-        XCTAssertEqual(ClipFilter(query: "zhong 2024", mode: .fts, tokenizer: .pinyin).pattern, "")
+    /// A piece that cannot be pinyin keeps its literal reading, so digits and characters still
+    /// match as written.
+    func testNonPinyinPieceKeepsLiteralReading() {
+        XCTAssertEqual(ClipFilter(query: "zhong 2024", mode: .fts).pattern, "(\"zhong\"* OR \"z hong\"*) AND \"2024\"*")
+        XCTAssertEqual(ClipFilter(query: "中国", mode: .fts).pattern, "\"中国\"*")
     }
 
-    func testVerbatimExpressionUnchanged() {
-        XCTAssertEqual(ClipFilter(query: "hel wor", mode: .fts).pattern, "\"hel\"* \"wor\"*")
+    func testLiteralReadingComesFirst() {
+        XCTAssertEqual(ClipFilter(query: "com", mode: .fts).pattern, "(\"com\"* OR \"c o m\"*)")
+    }
+
+    func testLiteralReadingIsQuoted() {
+        XCTAssertEqual(ClipFilter(query: "a\"b", mode: .fts).pattern, "\"a\"\"b\"*")
     }
 }

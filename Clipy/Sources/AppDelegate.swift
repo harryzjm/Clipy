@@ -233,7 +233,6 @@ extension AppDelegate: NSApplicationDelegate {
         bind()
 
         // Services
-        AppEnvironment.current.clipService.syncFtsTokenizerPreference()
         AppEnvironment.current.clipService.startMonitoring()
         AppEnvironment.current.dataCleanService.cleanDatas()
         AppEnvironment.current.excludeAppService.startMonitoring()

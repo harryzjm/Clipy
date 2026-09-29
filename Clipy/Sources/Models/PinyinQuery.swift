@@ -10,13 +10,14 @@
 
 import Foundation
 
-/// Splits typed pinyin into the per-character tokens WCDB's Pinyin tokenizer indexes.
+/// Splits typed pinyin into the per-character tokens `ClipyTokenizer` indexes.
 ///
 /// The tokenizer indexes each Chinese character at its own position, with every reading and the
-/// first letter of each as colocated tokens (`重` → `zhong z chong c tong t`). In query mode it
+/// first letter of each as colocated tokens (`重` → `重 | zhong z chong c tong t`). In query mode it
 /// does nothing of the sort — it passes each run of letters through whole — so `zhongguo` has to
 /// arrive already split, as the phrase `"zhong guo"`. That split is ambiguous (`xian` is `xian`
-/// or `xi an`), so this returns every plausible reading and the caller ORs them.
+/// or `xi an`), so this returns every plausible reading and `ClipFilter` ORs them, alongside the
+/// piece as typed.
 enum PinyinQuery {
 
     /// Longer pieces are not pinyin anyone types, and bounding the input bounds the search.

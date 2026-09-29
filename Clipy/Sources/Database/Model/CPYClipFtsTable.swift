@@ -25,18 +25,20 @@ import WCDBSwift
 /// and clearing the stale row in a BEFORE INSERT trigger keeps the mirror honest without taking
 /// on that constraint.
 ///
-/// The tokenizer below is only what migration 1 creates the table with. Users can switch it to
-/// `BuiltinTokenizer.Pinyin` (`ClipFtsTokenizer`), which rebuilds the table under the same name
-/// and columns via `ClipDB.recreateFtsIndex(tokenizer:)`. The table's own schema is the record
-/// of which one it has — read it with `ClipDB.ftsTokenizer()`, never off this binding.
+/// Tokenized by `ClipyTokenizer` — words, digits, and Chinese characters both as written and by
+/// pinyin — with `prefix='1 2'`. A prefix query with no prefix index of its length has fts5 read
+/// and merge the doclist of every term it matches before the first row comes back, so `LIMIT`
+/// saves nothing; with one, `g*` is a single rowid-ordered doclist that stops after `limit`
+/// rows. The short prefixes are the ones that match hundreds of terms — every syllable and word
+/// starting with `g` — and a query of three or more letters is left to the merge, which by then
+/// covers only a handful of terms.
 struct CPYClipFtsTable: TableCodable {
 
     static let tableName = "clip_fts"
 
     /// `title` must stay the first case. A virtual table's column order follows declaration
     /// order, and `highlight(clip_fts, 0, …)` addresses the column by number — reordering these
-    /// would silently highlight `data_hash` instead. `ClipDB.recreateFtsIndex(tokenizer:)` spells
-    /// the same order out by hand.
+    /// would silently highlight `data_hash` instead.
     var title: String = ""
     var dataHash: String = ""
 
@@ -50,7 +52,8 @@ struct CPYClipFtsTable: TableCodable {
         case dataHash = "data_hash"
 
         static let objectRelationalMapping = TableBinding(CodingKeys.self) {
-            BindVirtualTable(withModule: .FTS5, and: BuiltinTokenizer.Verbatim)
+            BindVirtualTable(withModule: FTSVersion.FTS5.description,
+                             and: "tokenize = \(ClipyTokenizer.name)", "prefix = '1 2'")
             // Only `title` is searchable; `data_hash` is payload the query reads back.
             BindColumnConstraint(.dataHash, isNotIndexed: true)
         }

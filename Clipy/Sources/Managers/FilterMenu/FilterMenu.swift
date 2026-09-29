@@ -32,7 +32,6 @@ class FilterMenu: NSMenu, FilterableMenu {
         self.box = box
         config = FilterMenuConfig.current()
         let mode = config.matchMode
-        let tokenizer = config.ftsTokenizer
         let limit = config.maxShowHistory
         item = TextFieldMenuItem(title: mode.title, action: nil)
 
@@ -43,7 +42,7 @@ class FilterMenu: NSMenu, FilterableMenu {
         filterRelay
             .map { $0.trim }
             .distinctUntilChanged()
-            .map { $0.isEmpty ? nil : ClipFilter(query: $0, mode: mode, tokenizer: tokenizer) }
+            .map { $0.isEmpty ? nil : ClipFilter(query: $0, mode: mode) }
             // `[box]` rather than `self`: the subscription is held by `bag`, so capturing self
             // here would be a cycle.
             .flatMapLatest { [box] filter -> Observable<(ClipSearchResult, ClipFilter?)> in

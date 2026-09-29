@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Regenerates Clipy/Resources/pinyin.txt, the character -> readings table WCDB's Pinyin
-tokenizer indexes with (see PinyinDictionary.swift).
+"""Regenerates Clipy/Resources/pinyin.txt, the character -> readings table ClipyTokenizer
+indexes with (see PinyinDictionary.swift).
 
     python3 script/gen_pinyin_dict.py
 

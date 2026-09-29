@@ -38,9 +38,6 @@ struct Preferences {
         static let showAlertBeforeClearHistory = "kCPYPrefShowAlertBeforeClearHistoryKey"
 
         static let filterMatchMode = "filterMatchMode"
-        /// A `ClipFtsTokenizer` raw value. A mirror of `clip_fts`'s schema, written only after a
-        /// switch commits — never bind a control straight to it.
-        static let ftsTokenizer = "ftsTokenizer"
 
         static let showToolTipOnMenuItem = "showToolTipOnMenuItem"
         static let maxLengthOfToolTip = "maxLengthOfToolTipKey"
