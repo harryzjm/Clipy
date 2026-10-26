@@ -16,6 +16,12 @@ import WCDBSwift
 ///
 /// - A run of ASCII letters, or of ASCII digits, is one token, lowercased. Letters and digits
 ///   are separate runs (`abc123` is `abc` then `123`).
+/// - In a document, a letter run in camelCase takes one position per part, so a search can
+///   start at any of them: each position holds the rest of the run from that part on, with the
+///   part itself colocated (`getUserName` → `getusername | get`, `username | user`, `name`).
+///   A part starts at a capital after a lower-case letter, or at the last capital of a run of
+///   them that a lower-case letter follows (`HTTP|Server`). A run of more than
+///   `maxCamelParts` parts is mixed-case noise — a key, a token — and stays whole.
 /// - A character in `PinyinDictionary` is one token, and in a document every reading and its
 ///   initial are stacked on it as colocated tokens (`重` → `重 | zhong z chong c tong t`).
 /// - Any other letter or number (kana, `é`) is a token of its own, lowercased.
@@ -23,9 +29,14 @@ import WCDBSwift
 ///
 /// So `Complete 中国` indexes as `complete`, `中 | zhong z`, `国 | guo g`: one position each. The
 /// query side never expands a character: typed pinyin arrives as plain letter runs, already split
-/// into per-character tokens by `PinyinQuery`, and meets the readings in the index. There is no
-/// stemming — search-as-you-type matches by prefix, and a stem would cut off the word the user
-/// is still typing.
+/// into per-character tokens by `PinyinQuery`, and meets the readings in the index. Nor does it
+/// split camelCase — `UserName*` is one token, and the rest-of-run token `username` is what it
+/// meets. There is no stemming — search-as-you-type matches by prefix, and a stem would cut off
+/// the word the user is still typing.
+///
+/// `highlight()` skips colocated tokens, so a hit is marked over the position's own token: a
+/// camelCase part is marked from where it starts to the end of the run, the way a word hit is
+/// marked on the whole word.
 ///
 /// A token must stay valid until the next call, so every one is copied into `buffer`, which this
 /// instance owns.
@@ -48,6 +59,9 @@ final class ClipyTokenizer: Tokenizer {
     private static let tokenizeQuery = 0x0001
     /// `FTS5_TOKEN_COLOCATED` in fts5.h: the token shares the previous token's position.
     private static let tokenColocated: Int32 = 0x0001
+    /// More parts than this and a letter run is not split. Real identifiers rarely pass 6–8, and
+    /// the rest-of-run tokens grow with the square of the part count.
+    static let maxCamelParts = 12
 
     private var input: UnsafePointer<UInt8>?
     private var length = 0
@@ -57,6 +71,10 @@ final class ClipyTokenizer: Tokenizer {
     /// Readings still to hand out for the character just emitted, all at its position.
     private var colocated: [[UInt8]] = []
     private var colocatedIndex = 0
+    /// Where each camelCase part of the letter run just scanned starts. Every part's token runs
+    /// to the end of that run, which is `cursor` until the last part is out.
+    private var camelStarts: [Int] = []
+    private var camelIndex = 0
     private var tokenStart: Int32 = 0
     private var tokenEnd: Int32 = 0
 
@@ -79,6 +97,8 @@ final class ClipyTokenizer: Tokenizer {
         cursor = 0
         colocated = []
         colocatedIndex = 0
+        camelStarts = []
+        camelIndex = 0
     }
 
     func nextToken(ppToken: UnsafeMutablePointer<UnsafePointer<Int8>?>,
@@ -94,6 +114,9 @@ final class ClipyTokenizer: Tokenizer {
             return emit(ppToken, pnBytes, piStart, piEnd, pFlags, flags: Self.tokenColocated)
         }
         guard let input else { return .Done }
+        if camelIndex < camelStarts.count {
+            return emitCamelPart(of: input, ppToken, pnBytes, piStart, piEnd, pFlags)
+        }
 
         while cursor < length {
             let start = cursor
@@ -107,6 +130,14 @@ final class ClipyTokenizer: Tokenizer {
                 cursor += 1
                 while cursor < length, Self.wordClass(of: input[cursor]) == isDigit {
                     cursor += 1
+                }
+                if !isDigit && !isQuery {
+                    let starts = Self.camelStarts(in: input + start, count: cursor - start)
+                    if starts.count > 1 {
+                        camelStarts = starts.map { start + $0 }
+                        camelIndex = 0
+                        return emitCamelPart(of: input, ppToken, pnBytes, piStart, piEnd, pFlags)
+                    }
                 }
                 store(UnsafeBufferPointer(start: input + start, count: cursor - start), lowercased: true)
                 return emit(ppToken, pnBytes, piStart, piEnd, pFlags, from: start)
@@ -147,9 +178,31 @@ private extension ClipyTokenizer {
             buffer = .allocate(capacity: capacity)
         }
         for (offset, byte) in bytes.enumerated() {
-            buffer[offset] = lowercased && byte >= 0x41 && byte <= 0x5A ? byte | 0x20 : byte
+            buffer[offset] = lowercased ? Self.asciiLowercased(byte) : byte
         }
         tokenLength = bytes.count
+    }
+
+    /// The camelCase part at `camelIndex`, as the rest of the run from its start, with the part
+    /// alone queued as colocated — unless it is the last part, which already is the rest.
+    func emitCamelPart(of input: UnsafePointer<UInt8>,
+                       _ ppToken: UnsafeMutablePointer<UnsafePointer<Int8>?>,
+                       _ pnBytes: UnsafeMutablePointer<Int32>,
+                       _ piStart: UnsafeMutablePointer<Int32>,
+                       _ piEnd: UnsafeMutablePointer<Int32>,
+                       _ pFlags: UnsafeMutablePointer<Int32>?) -> TokenizerErrorCode {
+        let start = camelStarts[camelIndex]
+        camelIndex += 1
+        if camelIndex < camelStarts.count {
+            let part = UnsafeBufferPointer(start: input + start, count: camelStarts[camelIndex] - start)
+            colocated = [part.map(Self.asciiLowercased)]
+            colocatedIndex = 0
+        } else {
+            camelStarts = []
+            camelIndex = 0
+        }
+        store(UnsafeBufferPointer(start: input + start, count: cursor - start), lowercased: true)
+        return emit(ppToken, pnBytes, piStart, piEnd, pFlags, from: start)
     }
 
     /// A token at a fresh position, spanning `start ..< cursor` of the input.
@@ -191,6 +244,30 @@ private extension ClipyTokenizer {
         case 0x41...0x5A, 0x61...0x7A: return false
         default: return nil
         }
+    }
+
+    static func isUppercase(_ byte: UInt8) -> Bool {
+        byte >= 0x41 && byte <= 0x5A
+    }
+
+    static func asciiLowercased(_ byte: UInt8) -> UInt8 {
+        isUppercase(byte) ? byte | 0x20 : byte
+    }
+
+    /// Where each camelCase part of an ASCII letter run starts, `0` first: at a capital after a
+    /// lower-case letter (`get|User`), and at the last capital of a run of them that a
+    /// lower-case letter follows (`HTTP|Server`). Just `[0]` — keep the run whole — when there
+    /// are more than `maxCamelParts`.
+    static func camelStarts(in bytes: UnsafePointer<UInt8>, count: Int) -> [Int] {
+        var starts = [0]
+        for index in 1..<max(count, 1) where isUppercase(bytes[index]) {
+            let afterLower = !isUppercase(bytes[index - 1])
+            let beforeLower = index + 1 < count && !isUppercase(bytes[index + 1])
+            guard afterLower || beforeLower else { continue }
+            starts.append(index)
+            if starts.count > maxCamelParts { return [0] }
+        }
+        return starts
     }
 
     /// Decodes one multi-byte UTF-8 sequence. `nil` for a malformed or truncated one, which the

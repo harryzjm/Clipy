@@ -179,7 +179,8 @@ private extension ClipFilter {
     ///   characters.
     ///
     /// So `com` is `("com"* OR "c o m"*)`. The trailing `*` is what makes search-as-you-type
-    /// useful: `hel` matches `hello`, `zhongg` matches `中国`.
+    /// useful: `hel` matches `hello`, `zhongg` matches `中国`, and `name` matches `getUserName`,
+    /// whose every camelCase part the index can be searched from.
     ///
     /// A piece is never split into a word followed by pinyin: `Completez` does not find
     /// `Complete中国` — that has to be typed as `Complete zg`. Every letter run also parses as

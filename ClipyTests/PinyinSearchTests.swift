@@ -158,6 +158,69 @@ final class PinyinSearchTests: ClipDBTestCase {
         let ranges = filter.marking(terms).highlightRanges(in: title)
         XCTAssertEqual(ranges.map { String(title[$0]) }, ["Complete"])
     }
+
+    // MARK: - Camel case
+
+    /// Every part of a camelCase word is a prefix to search from, typed in any case and run on
+    /// into the parts after it — but not from inside a part.
+    func testCamelCasePartsMatchByPrefix() throws {
+        try insertClip(hash: "a", title: "let x = getUserName()", updateTime: 1)
+
+        for query in ["get", "getuser", "user", "UserName", "username", "userna", "name", "NAME"] {
+            XCTAssertEqual(try search(query), ["a"], query)
+        }
+        for query in ["ser", "ame", "o", "nameuser"] {
+            XCTAssertEqual(try search(query), [], query)
+        }
+    }
+
+    /// A run of capitals is one part, and the capital starting the next word goes with it.
+    func testAcronymsSplitBeforeTheNextWord() throws {
+        try insertClip(hash: "a", title: "HTTPServer", updateTime: 1)
+        try insertClip(hash: "b", title: "XMLHttpRequest", updateTime: 2)
+
+        XCTAssertEqual(Set(try search("http")), ["a", "b"])
+        XCTAssertEqual(try search("server"), ["a"])
+        XCTAssertEqual(try search("httpserver"), ["a"])
+        XCTAssertEqual(try search("request"), ["b"])
+        XCTAssertEqual(try search("httpreq"), ["b"])
+        XCTAssertEqual(try search("xml"), ["b"])
+    }
+
+    /// Past `maxCamelParts` the run is mixed-case noise and stays one word.
+    func testRunWithTooManyPartsStaysWhole() throws {
+        let noise = "aBcDeFgHiJkLmNoPqRsTuVwXyZ"
+        XCTAssertGreaterThan(noise.filter(\.isUppercase).count + 1, ClipyTokenizer.maxCamelParts)
+        try insertClip(hash: "a", title: noise, updateTime: 1)
+
+        XCTAssertEqual(try search("abcd"), ["a"])
+        XCTAssertEqual(try search("defg"), [])
+    }
+
+    /// A part is marked from where it starts to the end of the word.
+    func testCamelCaseHitIsMarkedToTheEndOfTheWord() throws {
+        let title = "getUserName"
+        try insertClip(hash: "a", title: title, updateTime: 1)
+
+        for (query, marked) in [("name", ["Name"]), ("user", ["UserName"]), ("get", ["getUserName"])] {
+            let filter = ClipFilter(query: query, mode: .fts)
+            let result = try perform("search \(query)") { try $0.fetchClips(filter: filter, limit: 10) }
+            let terms = try XCTUnwrap(result.matchedTerms["a"], query)
+            let ranges = filter.marking(terms).highlightRanges(in: title)
+            XCTAssertEqual(ranges.map { String(title[$0]) }, marked, query)
+        }
+    }
+
+    /// fts5 re-tokenizes a row to delete it, so the split has to come out the same both times.
+    func testDeletingCamelCaseRowClearsItsTokens() throws {
+        try insertClip(hash: "a", title: "getUserName", updateTime: 1)
+        try insertClip(hash: "b", title: "userName", updateTime: 2)
+
+        try perform("delete") { try $0.deleteClip(dataHash: "a") }
+
+        XCTAssertEqual(try search("get"), [])
+        XCTAssertEqual(try search("name"), ["b"])
+    }
 }
 
 // MARK: - Helpers

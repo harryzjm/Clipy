@@ -25,8 +25,8 @@ import WCDBSwift
 /// and clearing the stale row in a BEFORE INSERT trigger keeps the mirror honest without taking
 /// on that constraint.
 ///
-/// Tokenized by `ClipyTokenizer` — words, digits, and Chinese characters both as written and by
-/// pinyin — with `prefix='1 2'`. A prefix query with no prefix index of its length has fts5 read
+/// Tokenized by `ClipyTokenizer` — words (split at camelCase humps), digits, and Chinese
+/// characters both as written and by pinyin — with `prefix='1 2'`. A prefix query with no prefix index of its length has fts5 read
 /// and merge the doclist of every term it matches before the first row comes back, so `LIMIT`
 /// saves nothing; with one, `g*` is a single rowid-ordered doclist that stops after `limit`
 /// rows. The short prefixes are the ones that match hundreds of terms — every syllable and word
